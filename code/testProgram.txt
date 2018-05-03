@@ -1,0 +1,21 @@
+class A{
+    int son1;
+    int addSon(int m,int n){
+    int h = m+n;
+    return h;
+    }
+}
+int mulSon(int j,int k){
+    int g = j*k;
+    return g;
+}
+int global;
+int main() {
+   int a;
+   int b;
+   A classA;
+   a=classA.son1;
+   a = classA.addSon(a,b);
+   a = mulSon(a,b);
+    return 0;
+}
