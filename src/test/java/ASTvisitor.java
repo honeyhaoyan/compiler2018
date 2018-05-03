@@ -1,4 +1,3 @@
-import org.antlr.v4.runtime.tree.ParseTree;
 
 public class ASTvisitor {
     public void visit(Program node) throws Exception{
