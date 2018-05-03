@@ -93,7 +93,7 @@ public class ASTvisitor {
         }
     }
 
-    //scope 是这个function的scope
+    //scope
     public void visitBlock(blockDefinition node, Scope scope,String blockType,boolean returnNum,type returnType) throws Exception{
         for (statement item : node.statementSons){
             if (item instanceof assignmentStatement){

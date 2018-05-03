@@ -6,9 +6,9 @@ import java.io.*;
 
 public class Main {
     public static void main (String[] args) throws Exception {
-        InputStream is = new FileInputStream ("code/testProgram.txt");
-        //String pathname = "//testProgram.txt"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
-       // File filename = new File(pathname); // 要读取以上路径的input。txt文件
+        InputStream is = new FileInputStream ("program.txt");
+        //String pathname = "//testProgram.txt";
+       // File filename = new File(pathname);
        // InputStreamReader is = new InputStreamReader(
        //         new FileInputStream(filename));
         ANTLRInputStream input = new ANTLRInputStream (is);
