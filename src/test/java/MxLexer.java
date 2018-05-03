@@ -109,7 +109,7 @@ public class MxLexer extends Lexer {
 	@Override
 	public String getSerializedATN() { return _serializedATN; }
 
-	@Override
+	//@Override
 	public String[] getChannelNames() { return channelNames; }
 
 	@Override

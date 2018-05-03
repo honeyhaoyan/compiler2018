@@ -3,7 +3,7 @@ import org.antlr.v4.runtime.tree.*;
 import java.lang.*;
 import java.io.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-import sun.tools.java.ClassDefinition;
+
 
 public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public Program visitProgram(MxParser.ProgramContext context) {
