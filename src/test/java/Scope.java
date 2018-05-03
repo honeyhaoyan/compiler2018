@@ -12,6 +12,7 @@ public class Scope {
     Scope(){
         //scopeVariable = new ArrayList<variable>();
         variable = new HashMap<String,variable>();
+        function = new HashMap<String, functionScope>();
         name = new ArrayList<String>();
     }
     Scope findScopeFather(Scope self){
