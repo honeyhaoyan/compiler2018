@@ -5,7 +5,7 @@ import java.io.*;
 
 public class Main {
     public static void main (String[] args) throws Exception {
-        InputStream is = new FileInputStream ("program.txt");
+        InputStream is = new FileInputStream ("code/program.txt");
         //String pathname = "//testProgram.txt";
        // File filename = new File(pathname);
        // InputStreamReader is = new InputStreamReader(
