@@ -64,7 +64,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
-        System.out.println("visit DefinitionStatement");
+        //System.out.println("visit DefinitionStatement");
         definitionStatement tmp = new definitionStatement();
         type t;
         String na;
@@ -81,7 +81,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.variableSon.ty.arr.add(p);
         }
         tmp.variableSon.name=na;
-        System.out.println(na);
+        //System.out.println(na);
         return tmp;
     }
 

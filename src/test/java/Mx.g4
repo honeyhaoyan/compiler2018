@@ -98,9 +98,9 @@ statement
         :Continue Semi
         ;
     selfOperationStatement
-        :(Inc | Dec) Identifier Semi
-        |Identifier (Inc|Dec) Semi
-        |(Not | Lnot) Identifier Semi
+        :(Inc | Dec) valuebleSingleExpression Semi
+        |valuebleSingleExpression (Inc|Dec) Semi
+        |(Not | Lnot) valuebleSingleExpression Semi
         ;
 
 //expression 从上到下依次匹配，所以把优先级大的放在上面，优先级小的放在下面
@@ -126,6 +126,7 @@ valuebleSingleExpression
     |valuebleSingleExpression Land valuebleSingleExpression
     |valuebleSingleExpression Lor valuebleSingleExpression
     |callFunctionExpression
+    |OpenParen valuebleSingleExpression CloseParen
     ;
 
     variableTypeExpression
@@ -137,7 +138,7 @@ valuebleSingleExpression
             ;
         variableArrayTypeExpression
             //:(className | primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
-            :primaryType ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
+            :(primaryType|Identifier) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
             ;
 
     dotExpression
@@ -159,7 +160,7 @@ valuebleSingleExpression
         ;
 
     callFunctionExpression
-        :Identifier OpenParen valuebleListExpression CloseParen
+        :Identifier OpenParen (valuebleListExpression|valuebleSingleExpression)? CloseParen
         ;
 
 valuebleListExpression
@@ -182,7 +183,7 @@ definitionExpression  // int a(b) / int a=b
 assignExpression
     //:variableTypeExpression Assign valuebleSingleExpression
 
-    : Identifier Assign valuebleSingleExpression
+    : valuebleSingleExpression Assign valuebleSingleExpression
     //| Identifier Assign OpenCurly valuebleListExpression CloseCurly
     ;
 
