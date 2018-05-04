@@ -10,7 +10,7 @@ grammar Mx;
 
 //----------------the first floor----------------------------
 program
-    :programItem+
+    :programItem*
     //:(classDefinition|functionDefinition|globalVariable)*
     ;
 
@@ -34,7 +34,7 @@ functionDefinition
     ;
 
 globalVariable
-    :(definitionStatement|assignStatement)+
+    :(definitionStatement|assignStatement)
     ;
 
 //-----------------the third floor----------------------------

@@ -4,25 +4,25 @@ import org.antlr.v4.runtime.tree.*;
 public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public Program visitProgram(MxParser.ProgramContext context) {
         Program tmp = new Program();
-        //System.out.println("new program");
+        System.out.println("new program");
         int i=0;
         for (ParseTree item : context.programItem()){
             if (context.programItem(i).classDefinition()!=null){
-                //System.out.println("program class");
+                System.out.println("program class");
                 classDefinition classNode = (classDefinition) visit(item);
                 tmp.classSons.add(classNode);
                 tmp.sequenceSons.add(classNode);
             }
             if (context.programItem(i).functionDefinition()!=null){
-                //System.out.println("program function");
+                System.out.println("program function");
                 functionDefinition functionNode = (functionDefinition) visit(item);
                 tmp.functionSons.add(functionNode);
                 tmp.sequenceSons.add(functionNode);
             }
             if (context.programItem(i).globalVariable()!=null){
-                //System.out.println("program global variable");
+                System.out.println("program global variable");
                 variable globalVariableNode = new variable();
-                definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement(0));
+                definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement());
                 globalVariableNode = defi.variableSon;
                 tmp.variableSons.add(globalVariableNode);
                 tmp.sequenceSons.add(globalVariableNode);
@@ -64,7 +64,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
-        //System.out.println("visit DefinitionStatement");
+        System.out.println("visit DefinitionStatement");
         definitionStatement tmp = new definitionStatement();
         type t;
         String na;
@@ -81,6 +81,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.variableSon.ty.arr.add(p);
         }
         tmp.variableSon.name=na;
+        System.out.println(na);
         return tmp;
     }
 
