@@ -38,6 +38,7 @@ public class ASTvisitor {
 
     public void visitFunction1(functionDefinition node, Scope scope) throws Exception{
         String functionName = node.functionName;
+        //System.out.println(functionName);
         if (scope.name.contains(functionName)) throw new Exception("FunctionName conflicts with names that have already existed.");
         else {
             functionScope tmp = new functionScope();
@@ -45,13 +46,18 @@ public class ASTvisitor {
             tmp.functionName = functionName;
             tmp.name.add(tmp.functionName);
             tmp.returnType = node.returnType;
+            if (node.inputVariableSons!=null){
             for (variable item : node.inputVariableSons){
+                //System.out.println(item.name);
                 if (tmp.name.contains(item.name)) throw new Exception("In function, inputVariableName conflicts with names that have already existed.");
                 else {
                     tmp.name.add(item.name);
-                    tmp.inputVariable.put(item.name,item);
+                    tmp.inputVariable.put(item.ty.typeName,item);
+                    System.out.println("--------------------------------------");
+                    System.out.println(item.ty.typeName);
+                    System.out.println(tmp.functionName);
                 }
-            }
+            }}
             scope.function.put(functionName,tmp);
             scope.name.add(functionName);
         }
@@ -98,9 +104,12 @@ public class ASTvisitor {
             if (item instanceof assignmentStatement){
                 type ty1 = new type();
                 type ty2 = new type();
-                ty1 =((assignmentStatement) item).variableLe.ty;
-                ty2 = visitExpression(((assignmentStatement) item).exp,scope);
-                if (ty1!=ty2) throw new Exception("Illegal assignment.");
+                ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
+                ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
+                System.out.println("*************************");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                if (!ty1.typeName.equals(ty2.typeName)||!ty1.arr.equals(ty2.arr)) throw new Exception("Illegal assignment.");
             }
 
             if (item instanceof definitionStatement){
@@ -108,6 +117,8 @@ public class ASTvisitor {
                 va = ((definitionStatement) item).variableSon;
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
+                //System.out.println("*************************");
+                if (va.name.equals("n")) System.out.println(va.ty.typeName);
             }
 
             if (item instanceof ifStatement){
@@ -159,79 +170,356 @@ public class ASTvisitor {
             if (item instanceof newStatement){
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
-                if (!ty1.equals(ty2)) throw new Exception("NewStatement type conflict.");
+                //System.out.println(ty1.typeName);
+                //System.out.println(ty2.typeName);
+                //System.out.println(ty1.arr);
+                //System.out.println(ty2.arr);
+                if ((!ty1.typeName.equals(ty2.typeName))||!(ty1.arr.equals(ty2.arr))) throw new Exception("NewStatement type conflict.");
                 variable va = new variable();
                 va.ty=ty1;
                 va.name = ((newStatement) item).name;
+                scope.name.add(va.name);
+                scope.variable.put(va.name,va);
             }
 
             if (item instanceof selfOperationStatement){
-                variable va = ((selfOperationStatement) item).va;
-                if (va.ty.typeName!="Int") throw new Exception("Illegal selfOperation.");
+                type ty = new type();
+                if (((selfOperationStatement) item).va!=null) {
+                    variable va = ((selfOperationStatement) item).va;
+                    ty = visitExpressionVariable(va,scope);
+                }
+                else{
+                    if (((selfOperationStatement) item).exp!=null){
+                        ty = visitExpression( ((selfOperationStatement) item).exp,scope);
+                    }
+                }
+                if (ty.typeName!="Int"&&ty.arr==null) throw new Exception("Illegal selfOperation.");
             }
         }
     }
-
+/*
     public type visitExpression (expression node, Scope scope) throws Exception{
         type tmp = new type();
-        type functionTy = new type();
-        functionTy = null;
-        for (Node item : node.sons){
-            /*if (item instanceof Op){
+        //type functionTy = new type();
+        //functionTy = null;
+        //System.out.println("visit expression.");
+        System.out.println("============================================");
+        System.out.println(node.sons.toString());
+        System.out.println("============================================");
 
-            }*/
-            if (item instanceof variable){
-                type subType = scope.variable.get(((variable) item).name).ty;
-                if (functionTy==null) functionTy = subType;
+        for (Node item : node.sons){
+            if (item instanceof expression){
+                type subType = visitExpression((expression) item,scope);
+                if (tmp.typeName==null) tmp = subType;
                 else {
-                    if (!functionTy.equals(subType)) throw new Exception("Expression type conflict.");
+                    System.out.println(subType.typeName);
+                    if ((!tmp.typeName.equals(subType.typeName))||(!tmp.arr.equals(subType.arr))) throw new Exception("Expression type conflict.");
+
+                }
+            }
+            if (item instanceof Op){
+                System.out.println("visit Op.");
+                //System.out.println(((Op) item).op);
+                //System.out.println(((Op) item).op.getClass());
+                if (((Op) item).op.equals("==")||((Op) item).op.equals("!=")||((Op) item).op.equals("<")||((Op) item).op.equals(">")){
+                    tmp.typeName="Bool";
+                    //System.out.println("Be in if.");
+                    return tmp;
+                }
+                //System.out.println("Before return.");
+                //System.out.println(tmp.typeName);
+                //return tmp;
+            }
+            if (item instanceof variable){
+                //System.out.println(((variable) item).name);
+                //type subType = scope.variable.get(((variable) item).name).ty;
+                System.out.println("In variable");
+                if (((variable) item).ty!=null) {
+                    type subType = ((variable) item).ty;
+                    System.out.println(((variable) item).name);
+                    System.out.println(((variable) item).ty.typeName);
+                    if (tmp.typeName == null) tmp = subType;
+                    else {
+                        if (!tmp.equals(subType)) throw new Exception("Expression type conflict.");
+                    }
                 }
             }
             if (item instanceof constant){
+                System.out.println("visit constant");
                 String subType = ((constant) item).type;
-                if (functionTy==null) functionTy.typeName = subType;
+                if (tmp.typeName==null) {
+                    tmp.typeName = subType;
+                    //System.out.println(tmp.typeName);
+                }
                 else {
-                    if (subType!=functionTy.typeName) throw new Exception("Expression type conflict.");
+                    if (subType!=tmp.typeName) {
+                        //System.out.println(tmp.typeName);
+                        throw new Exception("Expression type conflict.");
+                    }
                 }
             }
-            /*if (item instanceof This){
+            if (item instanceof This){
 
-            }*/
-            /*if (item instanceof type){
+            }
+            if (item instanceof type){
 
-            }*/
+            }
             if (item instanceof dotVariableExpression){
                 String fatherName = ((dotVariableExpression) item).father.name;
                 String sonName = ((dotVariableExpression)item).son.name;
                 Scope scopeTmp = scope;
-                while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
-                if (!((topScope)scopeTmp).classes.containsKey(scopeTmp)) throw new Exception("Class not found");
-                else {
-                    /*((topScope)scopeTmp).classes.*/
+                String className=null;
+                while (scopeTmp.scopleType!="top") {
+                    if (scopeTmp.variable.containsKey(fatherName)){
+                        className = scopeTmp.variable.get(fatherName).ty.typeName;
+                    }
+                    //System.out.println(scopeTmp.name);
+                    scopeTmp = scopeTmp.scopeFather;
                 }
-            }/*
+                if (className!=null){
+                    if (!((topScope)scopeTmp).classes.containsKey(className)) throw new Exception("Class not found");
+                    else {
+                    if (!((topScope)scopeTmp).classes.get(className).variable.containsKey(sonName)) throw new Exception("In class, variety name not found");
+                    else {
+                        tmp = ((topScope)scopeTmp).classes.get(className).variable.get(sonName).ty;
+                        System.out.println(tmp.typeName);
+                    }
+                    }
+                }
+                else throw new Exception("variable not define");
+            }
             if (item instanceof dotFunctionExpression){
-                if (item.)
+                //if (item.)
             }
             if (item instanceof subscriptExpression){
 
             }
             if (item instanceof callFunctionExpression){
-
-            }*/
-            if (item instanceof expression){
-                type subType = visitExpression((expression) item,scope);
-                if (functionTy==null) functionTy = subType;
+                System.out.println("visit callFunctionExpression");
+                type subType = visitCallFunctionExpression((callFunctionExpression) item,scope);
+                if (tmp.typeName==null) tmp=subType;
                 else {
-                    if (!functionTy.equals(subType)) throw new Exception("Expression type conflict.");
+                    if (tmp.typeName!=subType.typeName||!tmp.arr.equals(subType.arr)){
+                        throw new Exception("In callFunction, expression type conflicts.");
+                    }
                 }
+            }
+
+        }
+        //tmp = functionTy;
+        System.out.println(tmp.typeName);
+        return tmp;
+    }
+
+    public type visitCallFunctionExpression(callFunctionExpression exp,Scope scope) throws Exception{
+        type tmp = new type();
+        type variableType = new type();
+        Scope scopeTmp = scope;
+        while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
+        if (scopeTmp.function.containsKey(exp.functionName)){
+            tmp = scopeTmp.function.get(exp.functionName).returnType;
+            int num1 = exp.expressionSons.size();
+            int num2 = scopeTmp.function.get(exp.functionName).inputVariable.size();
+            if (num1!=num2) throw new Exception("function input size error");
+            if (num1!=0){
+                System.out.println(num1);
+                System.out.println(exp.functionName);
+                for (expression item : exp.expressionSons ){
+                    variableType = visitExpression((expression) item,scope);
+                    System.out.println(variableType.typeName);
+                    if (!scopeTmp.function.get(exp.functionName).inputVariable.containsKey(variableType.typeName)){
+                        System.out.println(variableType.typeName);
+                        throw new Exception("function input variable type error.");
+                    }
+                }
+
+            }
+        }
+        else throw new Exception("call function does not exist.");
+        return tmp;
+    }
+*/
+
+    public type visitExpression (expression node, Scope scope) throws Exception{
+        type globalType = new type();
+        type subType = new type();
+        for (Node item : node.sons) {
+            if (item instanceof expression){
+                subType = visitExpression((expression) item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof Op){
+                subType = visitOp((Op)item,scope);
+                if (subType.typeName=="Bool") return subType;
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof variable){
+                System.out.println("variable");
+                subType = visitExpressionVariable((variable)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof constant){
+                subType = visitConstant((constant)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof This){
+                subType = visitThis(scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof type){
+                subType = visitType((type)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof dotVariableExpression){
+                subType = visitDotVariableExpression((dotVariableExpression)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof dotFunctionExpression){
+                subType = visitDotFunctionExpression((dotFunctionExpression)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof subscriptExpression){
+                subType = visitSubsciptionExpression((subscriptExpression)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+            if (item instanceof callFunctionExpression){
+                subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
+                globalType = checkException(globalType,subType);
+            }
+        }
+        return globalType;
+    }
+
+    public type visitOp(Op op, Scope scope)throws Exception{
+        type tmp = new type();
+        if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")){
+            tmp.typeName="Bool";
+            return tmp;
+        }
+        return tmp;
+    }
+
+    public type visitExpressionVariable(variable va, Scope scope)throws Exception{
+        //System.out.println(va.name);
+        type tmp = new type();
+        //System.out.println(va.ty.typeName);
+        if (va.ty.typeName!=null) {
+            tmp = va.ty;
+        }
+        else{
+            //System.out.println("be in else");
+            Scope scopeTmp = scope;
+            while (scopeTmp.scopleType!="top") {
+                //System.out.println(scopeTmp.name);
+                if (scopeTmp.variable.containsKey(va.name)){
+                    tmp = scopeTmp.variable.get(va.name).ty;
+                }
+                scopeTmp = scopeTmp.scopeFather;
+            }
+            if (scopeTmp.variable.containsKey(va.name)){
+                tmp = scopeTmp.variable.get(va.name).ty;
             }
         }
         return tmp;
     }
 
+    public type visitConstant(constant con, Scope scope)throws Exception{
+        type tmp = new type();
+        tmp.typeName = con.type;
+        return tmp;
+    }
+
+    public type visitThis(Scope scope)throws Exception{
+        type tmp = new type();
+        /*remain to be finished.*/
+        return tmp;
+    }
+
+    public type visitType(type ty, Scope scope)throws Exception{
+        type tmp = new type();
+        tmp = ty;
+        return tmp;
+    }
+
+    public type visitDotVariableExpression(dotVariableExpression dotVa, Scope scope)throws Exception{
+        type tmp = new type();
+        String fatherName = dotVa.father.name;
+        String sonName = dotVa.son.name;
+        Scope scopeTmp = scope;
+        String className=null;
+        while (scopeTmp.scopleType!="top") {
+            if (scopeTmp.variable.containsKey(fatherName)){
+                className = scopeTmp.variable.get(fatherName).ty.typeName;
+            }
+            scopeTmp = scopeTmp.scopeFather;
+        }
+        if (className!=null){
+            if (!((topScope)scopeTmp).classes.containsKey(className)) throw new Exception("Class not found");
+            else {
+                if (!((topScope)scopeTmp).classes.get(className).variable.containsKey(sonName)) throw new Exception("In class, variety name not found");
+                else {
+                    tmp = ((topScope)scopeTmp).classes.get(className).variable.get(sonName).ty;
+                    System.out.println(tmp.typeName);
+                }
+            }
+        }
+        else throw new Exception("variable not define");
+        return tmp;
+    }
+
+    public type visitDotFunctionExpression(dotFunctionExpression dotFun, Scope scope)throws Exception{
+        type tmp = new type();
+        return tmp;
+    }
+
+    public type visitSubsciptionExpression(subscriptExpression subExp, Scope scope)throws Exception{
+        type tmp = new type();
+        return tmp;
+    }
+
+    public type visitCallFunctionExpression(callFunctionExpression exp, Scope scope)throws Exception{
+        type tmp = new type();
+        type variableType = new type();
+        Scope scopeTmp = scope;
+        while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
+        if (scopeTmp.function.containsKey(exp.functionName)){
+            tmp = scopeTmp.function.get(exp.functionName).returnType;
+            int num1 = exp.expressionSons.size();
+            int num2 = scopeTmp.function.get(exp.functionName).inputVariable.size();
+            if (num1!=num2) throw new Exception("function input size error");
+            if (num1!=0){
+                System.out.println(num1);
+                System.out.println(exp.functionName);
+                for (expression item : exp.expressionSons ){
+                    variableType = visitExpression((expression) item,scope);
+                    System.out.println(variableType.typeName);
+                    if (!scopeTmp.function.get(exp.functionName).inputVariable.containsKey(variableType.typeName)){
+                        System.out.println(variableType.typeName);
+                        throw new Exception("function input variable type error.");
+                    }
+                }
+
+            }
+        }
+        else throw new Exception("call function does not exist.");
+        return tmp;
+    }
+
+    public type checkException (type ty1,type ty2) throws Exception{
+        type ty = new type();
+        if (ty1.typeName==null) {ty1=ty2;ty=ty2;}
+        else{
+            if (!ty1.typeName.equals(ty2.typeName)||!ty1.arr.equals(ty2.arr)) throw new Exception("expression type conflict.");
+            else ty=ty1;
+        }
+        return ty;
+    }
+
     public void visitIf(ifStatement node, Scope scope) throws Exception{
-        if (visitExpression(node.ifcondition,scope).typeName!="Bool") throw new Exception("If condition is not bool.");
+        if (visitExpression(node.ifcondition,scope).typeName!="Bool") {
+            //System.out.println(node.ifcondition.toString());
+            throw new Exception("If condition is not bool.");
+        }
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";
         ifScope.scopeFather = scope;

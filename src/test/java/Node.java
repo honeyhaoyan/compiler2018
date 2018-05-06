@@ -74,6 +74,7 @@ class type extends Node{
 
 class variable extends Node{
     type ty;
+    //String father;
     String name;
     public variable()
     {
@@ -96,12 +97,13 @@ class definitionStatement extends statement{
 }
 
 class assignmentStatement extends statement{
-    public variable variableLe;
-    public expression exp;
+    //public variable variableLe;
+    public expression expLe;
+    public expression expRi;
     public assignmentStatement(){
         super();
-        variableLe = new variable();
-        exp = new expression();
+        expLe = new expression();
+        expRi = new expression();
     }
 }
 
@@ -167,15 +169,19 @@ class newStatement extends statement{
     type newType2;
     public newStatement(){
         super();
+        newType1 = new type();
+        newType2 = new type();
     }
 }
 
 class selfOperationStatement extends statement{
     Op op;
     variable va;
+    expression exp;
     selfOperationStatement(){
         super();
         op = new Op();
+        exp = new expression();
         va = new variable();
     }
 }

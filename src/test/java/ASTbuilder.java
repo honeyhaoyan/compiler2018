@@ -55,16 +55,45 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         functionName = context.functionName().getText();
         tmp.functionName=functionName;
         tmp.returnType=(type) visit(context.variableTypeExpression());
-        for (ParseTree item : context.definitionExpression()){
-            variable inputNode = (variable)visit(item);
-            tmp.inputVariableSons.add(inputNode);
+        if (context.definitionExpression()!=null){
+            int i=0;
+            while(context.definitionExpression(i)!=null){
+                //variable inputNode = (variable)visit(item);
+                variable inputNode = new variable();
+                inputNode = visitDefinitionExpression(context.definitionExpression(i));
+                tmp.inputVariableSons.add(inputNode);
+                i++;
+            }
         }
         tmp.blockSon=(blockDefinition)visit(context.blockStatement());
         return tmp;
     }
 
+    @Override public variable visitDefinitionExpression(MxParser.DefinitionExpressionContext context){
+        variable tmp = new variable();
+        type t;
+        String na;
+        if (context.definitionNormalExpression()!=null){
+            t = visitVariableNormalTypeExpression(context.definitionNormalExpression().variableNormalTypeExpression());
+            na = context.definitionNormalExpression().Identifier().toString();
+        }
+        else {
+            t = visitVariableArrayTypeExpression(context.definitionArrayExpression().variableArrayTypeExpression());
+            na = context.definitionArrayExpression().Identifier().toString();
+        }
+        tmp.ty.typeName=t.typeName;
+        for(String p : t.arr){
+            tmp.ty.arr.add(p);
+        }
+        tmp.name=na;
+        //System.out.println(na);
+        return tmp;
+    }
+
+
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
-        //System.out.println("visit DefinitionStatement");
+        System.out.println("visit DefinitionStatement");
+        //System.out.println(context.getText());
         definitionStatement tmp = new definitionStatement();
         type t;
         String na;
@@ -74,14 +103,15 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         else {
             t = visitVariableArrayTypeExpression(context.definitionExpression().definitionArrayExpression().variableArrayTypeExpression());
-            na = context.definitionExpression().definitionNormalExpression().Identifier().toString();
+            na = context.definitionExpression().definitionArrayExpression().Identifier().toString();
         }
         tmp.variableSon.ty.typeName=t.typeName;
+        System.out.println(tmp.variableSon.ty.typeName);
         for(String p : t.arr){
             tmp.variableSon.ty.arr.add(p);
         }
         tmp.variableSon.name=na;
-        //System.out.println(na);
+        System.out.println(na);
         return tmp;
     }
 
@@ -127,24 +157,40 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public newStatement visitNewStatement(MxParser.NewStatementContext context){
         newStatement tmp = new newStatement();
         tmp.name=context.Identifier().getText();
-        tmp.newType1=(type)visit(context.variableArrayTypeExpression(0));
-        tmp.newType2=(type)visit(context.variableArrayTypeExpression(1));
+        if (context.variableTypeExpression(0).variableArrayTypeExpression()!=null){
+        tmp.newType1=(type)visit(context.variableTypeExpression(0).variableArrayTypeExpression());
+        tmp.newType2=(type)visit(context.variableTypeExpression(1).variableArrayTypeExpression());}
+        else if (context.variableTypeExpression(0).variableNormalTypeExpression()!=null){
+            //System.out.println(context.variableTypeExpression(0).variableNormalTypeExpression().Identifier().toString());
+            tmp.newType1.typeName = context.variableTypeExpression(0).variableNormalTypeExpression().Identifier().toString();
+            //tmp.newType2=(type)visit(context.variableTypeExpression(1).variableArrayTypeExpression());
+            tmp.newType2.typeName = context.variableTypeExpression(1).variableNormalTypeExpression().Identifier().toString();
+
+        }
         return tmp;
     }
 
     @Override public assignmentStatement visitAssignStatement(MxParser.AssignStatementContext context) {
         //System.out.println("visit AssignStatement");
         assignmentStatement tmp = new assignmentStatement();
-        tmp.exp = visitValuebleSingleExpression(context.assignExpression().valuebleSingleExpression());
-        tmp.variableLe.name = context.assignExpression().Identifier().toString();
+        /*
+        tmp.exp = visitValuebleSingleExpression(context.assignExpression().valuebleSingleExpression(1));
+        if (){
+        tmp.variableLe.father = context.assignExpression().valuebleSingleExpression(0).dotExpression().dotVariableExpression().className(0).toString();
+        tmp.variableLe.name = context.assignExpression().valuebleSingleExpression(0).dotExpression().dotVariableExpression().className(1).toString();}
+        else {
+
+        }*/
+        tmp.expLe = visitValuebleSingleExpression(context.assignExpression().valuebleSingleExpression(0));
+        tmp.expRi = visitValuebleSingleExpression(context.assignExpression().valuebleSingleExpression(1));
         return tmp;
     }
 
     /* Notice : it is rewritten for forStatement for(int i; i<=5; i=i+1)*/
     @Override public assignmentStatement visitAssignExpression(MxParser.AssignExpressionContext context) {
         assignmentStatement tmp = new assignmentStatement();
-        tmp.exp = visitValuebleSingleExpression(context.valuebleSingleExpression());
-        tmp.variableLe.name = context.Identifier().toString();
+        tmp.expLe = visitValuebleSingleExpression(context.valuebleSingleExpression(0));
+        tmp.expRi = visitValuebleSingleExpression(context.valuebleSingleExpression(1));
         return tmp;
     }
 
@@ -210,12 +256,17 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.Not()!=null) op.op=context.Not().toString();
         if (context.Lnot()!=null) op.op=context.Lnot().toString();
         tmp.op=op;
-        tmp.va.name=context.Identifier().toString();
+        //tmp.va.name=context.Identifier().toString();
+        if (context.dotVariableExpression()!=null) tmp.exp = visitDotVariableExpression(context.dotVariableExpression());
+        else if (context.Identifier()!=null){
+            tmp.va.name=context.Identifier().toString();
+        }
         return tmp;
     }
 
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
         //System.out.println("visit ValuebleSingleExpression");
+        //System.out.println(context.getText());
         expression tmp = new expression();
         if (context.constant()!=null) {
             constant con = new constant();
@@ -229,11 +280,14 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.Not()!=null) op.op=context.Not().toString();
             if (context.Lnot()!=null) op.op=context.Lnot().toString();
             tmp.addSon(op);
+            //System.out.println("-----------------------------------------");
             //System.out.println(op.op);
+            //System.out.println("-----------------------------------------");
         }
-        if (context.Add()!=null||context.Div()!=null||context.Equal()!=null||context.Ge()!=null||context.Gt()!=null||context.Land()!=null||context.Le()!=null||context.Lor()!=null||context.Lshift()!=null||context.Lt()!=null||context.Mod()!=null||context.Mul()!=null||context.Or()!=null||context.Rshift()!=null||context.Notequal()!=null||context.Sub()!=null||context.Xor()!=null){
+        if (context.Add()!=null||context.And()!=null||context.Div()!=null||context.Equal()!=null||context.Ge()!=null||context.Gt()!=null||context.Land()!=null||context.Le()!=null||context.Lor()!=null||context.Lshift()!=null||context.Lt()!=null||context.Mod()!=null||context.Mul()!=null||context.Or()!=null||context.Rshift()!=null||context.Notequal()!=null||context.Sub()!=null||context.Xor()!=null){
             Op op = new Op();
-            if (context.And()!=null) op.op=context.Add().toString();
+            if (context.And()!=null) op.op=context.And().toString();
+            if (context.Add()!=null) op.op=context.Add().toString();
             if (context.Div()!=null) op.op=context.Div().toString();
             if (context.Equal()!=null) op.op=context.Equal().toString();
             if (context.Ge()!=null) op.op=context.Ge().toString();
@@ -251,7 +305,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.Sub()!=null) op.op=context.Sub().toString();
             if (context.Xor()!=null) op.op=context.Xor().toString();
             tmp.addSon(op);
+            //System.out.println("-----------------------------------------");
             //System.out.println(op.op);
+            //System.out.println("-----------------------------------------");
         }
         if (context.This()!=null){
             This th = new This();
@@ -264,8 +320,13 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         if (context.dotExpression()!=null){
             if (context.dotExpression().dotVariableExpression()!=null){
+               // System.out.println("*******************************************************");
+                //System.out.println("visit dot expression");
+                //System.out.println(context.dotExpression().dotVariableExpression().className(0).Identifier().toString());
                 dotVariableExpression dotVa = new dotVariableExpression();
                 dotVa = visitDotVariableExpression(context.dotExpression().dotVariableExpression());
+                //System.out.println(dotVa.father.name);
+                //System.out.println(dotVa.son.name);
                 tmp.addSon(dotVa);
             }
             else {
@@ -311,8 +372,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public dotVariableExpression visitDotVariableExpression(MxParser.DotVariableExpressionContext context) {
         dotVariableExpression tmp = new dotVariableExpression();
-        tmp.father.name = context.className(0).toString();
-        tmp.son.name = context.className(1).toString();
+        tmp.father.name = context.className(0).Identifier().toString();
+        //System.out.println(context.className(0).Identifier().toString());
+        tmp.son.name = context.className(1).Identifier().toString();
+        //System.out.println(context.className(1).Identifier().toString());
         return tmp;
     }
 
@@ -328,11 +391,17 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         callFunctionExpression tmp = new callFunctionExpression();
         tmp.functionName = context.Identifier().toString();
         int i=0;
+        if (context.valuebleListExpression()!=null){
         for (ParseTree item : context.valuebleListExpression().valuebleSingleExpression()){
             expression exp = new expression();
             exp = visitValuebleSingleExpression(context.valuebleListExpression().valuebleSingleExpression(i));
             tmp.expressionSons.add(exp);
             i++;
+        }}
+        else if (context.valuebleSingleExpression()!=null) {
+            expression exp = new expression();
+            exp = visitValuebleSingleExpression(context.valuebleSingleExpression());
+            tmp.expressionSons.add(exp);
         }
         return tmp;
     }
@@ -349,7 +418,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit Constant");
         constant con = new constant();
         if(context.IntegerConstant()!=null){
-            con.type="IntegerConstant";
+            con.type="Int";
             con.value=context.IntegerConstant().toString();
         }
         if(context.LogicConstant()!=null){
@@ -357,7 +426,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             con.value=context.LogicConstant().toString();
         }
         if(context.StringConstant()!=null){
-            con.type="StringConstant";
+            con.type="String";
             con.value=context.StringConstant().toString();
         }
         if(context.NullConstant()!=null){

@@ -68,7 +68,7 @@ statement
         ;
 
     newStatement
-        :variableArrayTypeExpression Identifier Assign New variableArrayTypeExpression Semi
+        :variableTypeExpression Identifier Assign New variableTypeExpression Semi
         ;
 
     assignStatement
@@ -98,9 +98,9 @@ statement
         :Continue Semi
         ;
     selfOperationStatement
-        :(Inc | Dec) valuebleSingleExpression Semi
-        |valuebleSingleExpression (Inc|Dec) Semi
-        |(Not | Lnot) valuebleSingleExpression Semi
+        :(Inc | Dec) (Identifier|dotVariableExpression) Semi
+        |(Identifier|dotVariableExpression) (Inc|Dec) Semi
+        |(Not | Lnot) (Identifier|dotVariableExpression) Semi
         ;
 
 //expression 从上到下依次匹配，所以把优先级大的放在上面，优先级小的放在下面
