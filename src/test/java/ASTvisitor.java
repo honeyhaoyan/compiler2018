@@ -172,11 +172,11 @@ public class ASTvisitor {
                 type ty2 = ((newStatement) item).newType2;
                 //System.out.println(ty1.typeName);
                 //System.out.println(ty2.typeName);
-                //System.out.println(ty1.arr);
-                //System.out.println(ty2.arr);
-                if ((!ty1.typeName.equals(ty2.typeName))||!(ty1.arr.equals(ty2.arr))) throw new Exception("NewStatement type conflict.");
+                //System.out.println(ty1.arr.size());
+                //System.out.println(ty2.arr.size());
+                if ((!ty1.typeName.equals(ty2.typeName))||ty1.arr.size()!=ty2.arr.size()) throw new Exception("NewStatement type conflict.");
                 variable va = new variable();
-                va.ty=ty1;
+                va.ty=ty2;
                 va.name = ((newStatement) item).name;
                 scope.name.add(va.name);
                 scope.variable.put(va.name,va);

@@ -22,8 +22,15 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.programItem(i).globalVariable()!=null){
                 System.out.println("program global variable");
                 variable globalVariableNode = new variable();
-                definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement());
-                globalVariableNode = defi.variableSon;
+                if (context.programItem(i).globalVariable().definitionStatement()!=null){
+                    definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement());
+                    globalVariableNode = defi.variableSon;
+                }
+                else if (context.programItem(i).globalVariable().newStatement()!=null){
+                    newStatement newSta = visitNewStatement(context.programItem(i).globalVariable().newStatement());
+                    globalVariableNode.name = newSta.name;
+                    globalVariableNode.ty = newSta.newType2;
+                }
                 tmp.variableSons.add(globalVariableNode);
                 tmp.sequenceSons.add(globalVariableNode);
             }
@@ -106,12 +113,12 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             na = context.definitionExpression().definitionArrayExpression().Identifier().toString();
         }
         tmp.variableSon.ty.typeName=t.typeName;
-        System.out.println(tmp.variableSon.ty.typeName);
+        //System.out.println(tmp.variableSon.ty.typeName);
         for(String p : t.arr){
             tmp.variableSon.ty.arr.add(p);
         }
         tmp.variableSon.name=na;
-        System.out.println(na);
+        //System.out.println(na);
         return tmp;
     }
 
@@ -491,11 +498,13 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.IntegerConstant(0) != null) {
                 t.arr.add(context.IntegerConstant(0).toString());
             }
+            else t.arr.add("0");
         }
         if (context.CloseBlacket(1) != null) {
             if (context.IntegerConstant(1) != null) {
                 t.arr.add(context.IntegerConstant(1).toString());
             }
+            else t.arr.add("0");
         }
         return t;
     }

@@ -34,7 +34,7 @@ functionDefinition
     ;
 
 globalVariable
-    :(definitionStatement|assignStatement)
+    :(definitionStatement|assignStatement|newStatement)
     ;
 
 //-----------------the third floor----------------------------
