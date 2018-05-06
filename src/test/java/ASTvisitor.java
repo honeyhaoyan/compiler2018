@@ -392,8 +392,12 @@ public class ASTvisitor {
 
     public type visitOp(Op op, Scope scope)throws Exception{
         type tmp = new type();
-        if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")){
+        if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")||op.op.equals("&&")||op.op.equals("||")||op.op.equals("!")){
             tmp.typeName="Bool";
+            return tmp;
+        }
+        if (op.op.equals("+")||op.op.equals("-")||op.op.equals("/")||op.op.equals("*")||op.op.equals("++")||op.op.equals("--")||op.op.equals("&")||op.op.equals("|")||op.op.equals("^")||op.op.equals("~")||op.op.equals("<<")||op.op.equals(">>")){
+            tmp.typeName="Int";
             return tmp;
         }
         return tmp;
