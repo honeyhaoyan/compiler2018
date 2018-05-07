@@ -119,6 +119,8 @@ public class ASTvisitor {
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
                 //System.out.println("*************************");
+                System.out.println("visit definitionStatement");
+                visitExpression(((definitionStatement) item).exp,scope);
                 if (va.name.equals("n")) System.out.println(va.ty.typeName);
             }
 
@@ -234,6 +236,8 @@ public class ASTvisitor {
     }
 
     public type visitExpression (expression node, Scope scope) throws Exception{
+        System.out.println("************************************");
+        System.out.println(node.toString());
         type globalType = new type();
         type subType = new type();
         Op op = new Op();
@@ -307,9 +311,9 @@ public class ASTvisitor {
     }
 
     public type visitExpressionVariable(variable va, Scope scope)throws Exception{
-        //System.out.println(va.name);
+        System.out.println(va.name);
         type tmp = new type();
-        //System.out.println(va.ty.typeName);
+        System.out.println(va.ty.typeName);
         if (va.ty.typeName!=null) {
             tmp = va.ty;
         }
@@ -333,6 +337,7 @@ public class ASTvisitor {
     public type visitConstant(constant con, Scope scope)throws Exception{
         type tmp = new type();
         tmp.typeName = con.type;
+        System.out.println(tmp.typeName);
         return tmp;
     }
 

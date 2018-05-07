@@ -107,6 +107,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.definitionExpression().definitionNormalExpression()!=null){
             t = visitVariableNormalTypeExpression(context.definitionExpression().definitionNormalExpression().variableNormalTypeExpression());
             na = context.definitionExpression().definitionNormalExpression().Identifier().toString();
+            if (context.definitionExpression().definitionNormalExpression().valuebleSingleExpression()!=null){
+                tmp.exp = visitValuebleSingleExpression(context.definitionExpression().definitionNormalExpression().valuebleSingleExpression());
+            }
         }
         else {
             t = visitVariableArrayTypeExpression(context.definitionExpression().definitionArrayExpression().variableArrayTypeExpression());
@@ -325,9 +328,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.Sub()!=null) op.op=context.Sub().toString();
             if (context.Xor()!=null) op.op=context.Xor().toString();
             tmp.addSon(op);
-            //System.out.println("-----------------------------------------");
-            //System.out.println(op.op);
-            //System.out.println("-----------------------------------------");
+            System.out.println("-----------------------------------------");
+            System.out.println(op.op);
+            System.out.println("-----------------------------------------");
         }
         if (context.This()!=null){
             System.out.println("visit this");

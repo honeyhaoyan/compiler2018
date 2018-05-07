@@ -90,9 +90,11 @@ class constant extends Node{
 
 class definitionStatement extends statement{
     public variable variableSon;
+    public expression exp;
     public definitionStatement(){
         super();
         variableSon = new variable();
+        exp = new expression();
     }
 }
 
