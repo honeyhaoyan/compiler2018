@@ -287,7 +287,7 @@ public class ASTvisitor {
             if (op.op.equals("+")){
                 System.out.println("============================================================");
                 System.out.println(globalType.typeName);
-                if (globalType.typeName!="String"||globalType.typeName!="Int") throw new Exception("Expression type conflicts.");
+                if (!globalType.typeName.equals("String")&&!globalType.typeName.equals("Int")) throw new Exception("Expression type conflicts.");
             }
         }
         return globalType;
