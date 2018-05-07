@@ -47,6 +47,12 @@ public class ASTvisitor {
             tmp.functionName = functionName;
             tmp.name.add(tmp.functionName);
             tmp.returnType = node.returnType;
+            //System.out.println(functionName);
+            //System.out.println(tmp.returnType.typeName);
+            if (functionName.equals("main")){
+                //System.out.println("be in if");
+                if (!tmp.returnType.typeName.equals("Int")) throw new Exception("main return error");
+            }
             if (node.inputVariableSons!=null){
             for (variable item : node.inputVariableSons){
                 //System.out.println(item.name);
@@ -118,6 +124,8 @@ public class ASTvisitor {
                 va = ((definitionStatement) item).variableSon;
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
+                if (va.ty.typeName.equals("Void")) throw new Exception("Definition error: void exception.");
+                System.out.println(va.ty.typeName);
                 //System.out.println("*************************");
                 System.out.println("visit definitionStatement");
                 visitExpression(((definitionStatement) item).exp,scope);
