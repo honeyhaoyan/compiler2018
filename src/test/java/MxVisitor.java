@@ -130,6 +130,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSelfOperationStatement(MxParser.SelfOperationStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#callFunctionStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCallFunctionStatement(MxParser.CallFunctionStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#valuebleSingleExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

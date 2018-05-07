@@ -57,6 +57,7 @@ statement
     |returnStatement
     |continueStatement
     |selfOperationStatement
+    |callFunctionStatement
     ;
 
     emptyStatement
@@ -101,6 +102,9 @@ statement
         :(Inc | Dec) (Identifier|dotVariableExpression) Semi
         |(Identifier|dotVariableExpression) (Inc|Dec) Semi
         |(Not | Lnot) (Identifier|dotVariableExpression) Semi
+        ;
+    callFunctionStatement
+        :callFunctionExpression Semi
         ;
 
 //expression 从上到下依次匹配，所以把优先级大的放在上面，优先级小的放在下面
@@ -150,6 +154,7 @@ valuebleSingleExpression
             ;
         dotFunctionExpression
             :className Dot callFunctionExpression
+            |StringConstant Dot callFunctionExpression
             ;
             functionName
                 :Identifier

@@ -2,6 +2,7 @@
 public class ASTvisitor {
     public void visit(Program node) throws Exception{
         topScope top = new topScope();
+        buildInlineFunctions(top);
         for (Node item : node.sequenceSons){
             if (item instanceof classDefinition) {
                 //get className and put it into top nameset
@@ -195,150 +196,42 @@ public class ASTvisitor {
                 }
                 if (ty.typeName!="Int"&&ty.arr==null) throw new Exception("Illegal selfOperation.");
             }
+
+            if (item instanceof callFunctionStatement){
+                visitExpression(((callFunctionStatement) item).callFunc,scope);
+            }
         }
     }
-/*
-    public type visitExpression (expression node, Scope scope) throws Exception{
-        type tmp = new type();
-        //type functionTy = new type();
-        //functionTy = null;
-        //System.out.println("visit expression.");
-        System.out.println("============================================");
-        System.out.println(node.sons.toString());
-        System.out.println("============================================");
 
-        for (Node item : node.sons){
-            if (item instanceof expression){
-                type subType = visitExpression((expression) item,scope);
-                if (tmp.typeName==null) tmp = subType;
-                else {
-                    System.out.println(subType.typeName);
-                    if ((!tmp.typeName.equals(subType.typeName))||(!tmp.arr.equals(subType.arr))) throw new Exception("Expression type conflict.");
+    public void  buildInlineFunctions(topScope scope){
+        variable va = new variable();
 
-                }
-            }
-            if (item instanceof Op){
-                System.out.println("visit Op.");
-                //System.out.println(((Op) item).op);
-                //System.out.println(((Op) item).op.getClass());
-                if (((Op) item).op.equals("==")||((Op) item).op.equals("!=")||((Op) item).op.equals("<")||((Op) item).op.equals(">")){
-                    tmp.typeName="Bool";
-                    //System.out.println("Be in if.");
-                    return tmp;
-                }
-                //System.out.println("Before return.");
-                //System.out.println(tmp.typeName);
-                //return tmp;
-            }
-            if (item instanceof variable){
-                //System.out.println(((variable) item).name);
-                //type subType = scope.variable.get(((variable) item).name).ty;
-                System.out.println("In variable");
-                if (((variable) item).ty!=null) {
-                    type subType = ((variable) item).ty;
-                    System.out.println(((variable) item).name);
-                    System.out.println(((variable) item).ty.typeName);
-                    if (tmp.typeName == null) tmp = subType;
-                    else {
-                        if (!tmp.equals(subType)) throw new Exception("Expression type conflict.");
-                    }
-                }
-            }
-            if (item instanceof constant){
-                System.out.println("visit constant");
-                String subType = ((constant) item).type;
-                if (tmp.typeName==null) {
-                    tmp.typeName = subType;
-                    //System.out.println(tmp.typeName);
-                }
-                else {
-                    if (subType!=tmp.typeName) {
-                        //System.out.println(tmp.typeName);
-                        throw new Exception("Expression type conflict.");
-                    }
-                }
-            }
-            if (item instanceof This){
+        functionScope print = new functionScope();
+        va.ty.typeName="String";
+        print.inputVariable.put("String",va);
+        print.functionName = "print";
+        print.returnType.typeName = "void";
 
-            }
-            if (item instanceof type){
+        functionScope println = new functionScope();
+        va.ty.typeName="String";
+        println.inputVariable.put("String",va);
+        println.functionName = "println";
+        println.returnType.typeName = "void";
 
-            }
-            if (item instanceof dotVariableExpression){
-                String fatherName = ((dotVariableExpression) item).father.name;
-                String sonName = ((dotVariableExpression)item).son.name;
-                Scope scopeTmp = scope;
-                String className=null;
-                while (scopeTmp.scopleType!="top") {
-                    if (scopeTmp.variable.containsKey(fatherName)){
-                        className = scopeTmp.variable.get(fatherName).ty.typeName;
-                    }
-                    //System.out.println(scopeTmp.name);
-                    scopeTmp = scopeTmp.scopeFather;
-                }
-                if (className!=null){
-                    if (!((topScope)scopeTmp).classes.containsKey(className)) throw new Exception("Class not found");
-                    else {
-                    if (!((topScope)scopeTmp).classes.get(className).variable.containsKey(sonName)) throw new Exception("In class, variety name not found");
-                    else {
-                        tmp = ((topScope)scopeTmp).classes.get(className).variable.get(sonName).ty;
-                        System.out.println(tmp.typeName);
-                    }
-                    }
-                }
-                else throw new Exception("variable not define");
-            }
-            if (item instanceof dotFunctionExpression){
-                //if (item.)
-            }
-            if (item instanceof subscriptExpression){
+        functionScope getString = new functionScope();
+        getString.functionName = "getString";
+        getString.returnType.typeName = "String";
 
-            }
-            if (item instanceof callFunctionExpression){
-                System.out.println("visit callFunctionExpression");
-                type subType = visitCallFunctionExpression((callFunctionExpression) item,scope);
-                if (tmp.typeName==null) tmp=subType;
-                else {
-                    if (tmp.typeName!=subType.typeName||!tmp.arr.equals(subType.arr)){
-                        throw new Exception("In callFunction, expression type conflicts.");
-                    }
-                }
-            }
+        functionScope getInt = new functionScope();
+        getInt.functionName = "getInt";
+        getInt.returnType.typeName = "Int";
 
-        }
-        //tmp = functionTy;
-        System.out.println(tmp.typeName);
-        return tmp;
+        functionScope toString = new functionScope();
+        va.ty.typeName="Int";
+        toString.inputVariable.put("Int",va);
+        toString.functionName = "toString";
+        toString.returnType.typeName = "String";
     }
-
-    public type visitCallFunctionExpression(callFunctionExpression exp,Scope scope) throws Exception{
-        type tmp = new type();
-        type variableType = new type();
-        Scope scopeTmp = scope;
-        while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
-        if (scopeTmp.function.containsKey(exp.functionName)){
-            tmp = scopeTmp.function.get(exp.functionName).returnType;
-            int num1 = exp.expressionSons.size();
-            int num2 = scopeTmp.function.get(exp.functionName).inputVariable.size();
-            if (num1!=num2) throw new Exception("function input size error");
-            if (num1!=0){
-                System.out.println(num1);
-                System.out.println(exp.functionName);
-                for (expression item : exp.expressionSons ){
-                    variableType = visitExpression((expression) item,scope);
-                    System.out.println(variableType.typeName);
-                    if (!scopeTmp.function.get(exp.functionName).inputVariable.containsKey(variableType.typeName)){
-                        System.out.println(variableType.typeName);
-                        throw new Exception("function input variable type error.");
-                    }
-                }
-
-            }
-        }
-        else throw new Exception("call function does not exist.");
-        return tmp;
-    }
-*/
 
     public type visitExpression (expression node, Scope scope) throws Exception{
         type globalType = new type();
@@ -396,7 +289,7 @@ public class ASTvisitor {
             tmp.typeName="Bool";
             return tmp;
         }
-        if (op.op.equals("+")||op.op.equals("-")||op.op.equals("/")||op.op.equals("*")||op.op.equals("++")||op.op.equals("--")||op.op.equals("&")||op.op.equals("|")||op.op.equals("^")||op.op.equals("~")||op.op.equals("<<")||op.op.equals(">>")){
+        if (op.op.equals("-")||op.op.equals("/")||op.op.equals("*")||op.op.equals("++")||op.op.equals("--")||op.op.equals("&")||op.op.equals("|")||op.op.equals("^")||op.op.equals("~")||op.op.equals("<<")||op.op.equals(">>")){
             tmp.typeName="Int";
             return tmp;
         }
@@ -473,6 +366,74 @@ public class ASTvisitor {
 
     public type visitDotFunctionExpression(dotFunctionExpression dotFun, Scope scope)throws Exception{
         type tmp = new type();
+        type ty = new type();
+        System.out.println(dotFun.father.ty.typeName);
+        System.out.println(dotFun.father.name);
+        System.out.println(ty.arr);
+        if (dotFun.father.ty.typeName!="String") {
+            System.out.println("in if");
+            ty = visitExpressionVariable(dotFun.father,scope);
+        }
+        if (ty.arr.isEmpty()) {
+            if (dotFun.son.functionName=="size") throw new Exception("variable that is not a string uses size().");
+            else {
+                if (ty.typeName!="String"&&dotFun.father.ty.typeName!="String"){
+                Scope scopeTmp = scope;
+                while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
+                //scopeTmp = (topScope)scopeTmp;
+                if (((topScope) scopeTmp).classes.containsKey(ty.typeName)){
+                    functionScope func = new functionScope();
+                    func = ((topScope) scopeTmp).classes.get(ty.typeName).function.get(dotFun.son.functionName);
+                    tmp = func.returnType;
+                    int num1 = dotFun.son.expressionSons.size();
+                    int num2 = func.inputVariable.size();
+                    if (num1!=num2) throw new Exception("function input size error");
+                    if (num1!=0){
+                        System.out.println(num1);
+                        type variableType = new type();
+                        //System.out.println(exp.functionName);
+                        for (expression item : dotFun.son.expressionSons ){
+                            variableType = visitExpression((expression) item,scope);
+                            System.out.println(variableType.typeName);
+                            if (!func.inputVariable.containsKey(variableType.typeName)){
+                                System.out.println(variableType.typeName);
+                                throw new Exception("function input variable type error.");
+                            }
+                        }
+
+                    }
+                }
+                else throw new Exception("program does not contain the class required by this variable.");
+            }
+            else {
+                    if (dotFun.son.functionName=="length"){
+                        tmp.typeName = "Int";
+                    }
+                    if (dotFun.son.functionName=="subString"){
+                        if (dotFun.son.expressionSons.size()==2){
+                        if (visitExpression(dotFun.son.expressionSons.get(0),scope).typeName!="Int"||visitExpression(dotFun.son.expressionSons.get(1),scope).typeName!="Int"){
+                            throw new Exception("For String function subString, input variable error.");
+                        }
+                        }
+                        else throw new Exception("For String function subString, input variable error.");
+                        tmp.typeName = "String";
+                    }
+                    if (dotFun.son.functionName=="parseInt"){
+                        tmp.typeName = "Int";
+                    }
+                    if (dotFun.son.functionName=="ord"){
+                        if (dotFun.son.expressionSons.size()==1&&dotFun.son.expressionSons.contains("Int")){}
+                        else throw new Exception("For String inline function ord, input variable error.");
+                        tmp.typeName = "Int";
+                    }
+                }
+            }
+        }
+        else if (dotFun.son.functionName!="size") {
+            System.out.println(dotFun.son.functionName);
+            System.out.println(ty.arr);
+            throw new Exception("an array uses function wrongly.");
+        }
         return tmp;
     }
 

@@ -185,6 +185,13 @@ class selfOperationStatement extends statement{
         va = new variable();
     }
 }
+class callFunctionStatement extends statement{
+    callFunctionExpression callFunc;
+    callFunctionStatement(){
+        super();
+        callFunc = new callFunctionExpression();
+    }
+}
 
 class expression extends Node {
     public expression(){

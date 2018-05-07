@@ -99,7 +99,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
 
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
-        System.out.println("visit DefinitionStatement");
+        //System.out.println("visit DefinitionStatement");
         //System.out.println(context.getText());
         definitionStatement tmp = new definitionStatement();
         type t;
@@ -156,6 +156,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             if (context.statement(i).selfOperationStatement()!=null){
                 tmp.statementSons.add(visitSelfOperationStatement(context.statement(i).selfOperationStatement()));
+            }
+            if (context.statement(i).callFunctionStatement()!=null){
+                tmp.statementSons.add(visitCallFunctionStatement(context.statement(i).callFunctionStatement()));
             }
         }
         return tmp;
@@ -271,27 +274,37 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         return tmp;
     }
 
+    @Override public callFunctionStatement visitCallFunctionStatement(MxParser.CallFunctionStatementContext context) {
+        callFunctionStatement tmp = new callFunctionStatement();
+        tmp.callFunc = visitCallFunctionExpression(context.callFunctionExpression());
+        return tmp;
+    }
+
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
-        //System.out.println("visit ValuebleSingleExpression");
+        System.out.println("visit ValuebleSingleExpression");
         //System.out.println(context.getText());
         expression tmp = new expression();
         if (context.constant()!=null) {
+            System.out.println("visit constant");
+            System.out.println(context.constant().getText());
             constant con = new constant();
             con=visitConstant(context.constant());
             tmp.addSon(con);
         }
         if (context.Inc()!=null||context.Dec()!=null||context.Not()!=null||context.Lnot()!=null){
+            System.out.println("visit op");
             Op op = new Op();
             if (context.Inc()!=null) op.op=context.Inc().toString();
             if (context.Dec()!=null) op.op=context.Dec().toString();
             if (context.Not()!=null) op.op=context.Not().toString();
             if (context.Lnot()!=null) op.op=context.Lnot().toString();
             tmp.addSon(op);
-            //System.out.println("-----------------------------------------");
-            //System.out.println(op.op);
-            //System.out.println("-----------------------------------------");
+            System.out.println("-----------------------------------------");
+            System.out.println(op.op);
+            System.out.println("-----------------------------------------");
         }
         if (context.Add()!=null||context.And()!=null||context.Div()!=null||context.Equal()!=null||context.Ge()!=null||context.Gt()!=null||context.Land()!=null||context.Le()!=null||context.Lor()!=null||context.Lshift()!=null||context.Lt()!=null||context.Mod()!=null||context.Mul()!=null||context.Or()!=null||context.Rshift()!=null||context.Notequal()!=null||context.Sub()!=null||context.Xor()!=null){
+            System.out.println("visit op");
             Op op = new Op();
             if (context.And()!=null) op.op=context.And().toString();
             if (context.Add()!=null) op.op=context.Add().toString();
@@ -317,6 +330,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             //System.out.println("-----------------------------------------");
         }
         if (context.This()!=null){
+            System.out.println("visit this");
             This th = new This();
             tmp.addSon(th);
         }
@@ -387,9 +401,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public dotFunctionExpression visitDotFunctionExpression(MxParser.DotFunctionExpressionContext context) {
-        //System.out.println("visit DotFunctionExpression");
+        System.out.println("visit DotFunctionExpression");
         dotFunctionExpression tmp = new dotFunctionExpression();
-        tmp.father.name = context.className().toString();
+        if (context.className()!=null) tmp.father.name = context.className().toString();
+        if (context.StringConstant()!=null) tmp.father.ty.typeName="String";
         tmp.son = visitCallFunctionExpression(context.callFunctionExpression());
         return tmp;
     }
@@ -433,6 +448,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             con.value=context.LogicConstant().toString();
         }
         if(context.StringConstant()!=null){
+            System.out.println("be in string");
             con.type="String";
             con.value=context.StringConstant().toString();
         }
