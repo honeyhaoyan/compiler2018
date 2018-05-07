@@ -1,14 +1,18 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 class functionScope extends Scope{
     String functionName;
     type returnType;
     //List<variable>inputVariable;
-    Map<String,variable>inputVariable;
+    //Map<int,variabl>inputVariable;
+    List<String>inputVariable;
     functionScope(){
         super();
         returnType = new type();
-        inputVariable = new HashMap<String, variable>();
+        //inputVariable = new HashMap<String, variable>();
+        inputVariable = new ArrayList<>();
         scopleType = "Function";
     }
 }
