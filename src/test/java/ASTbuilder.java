@@ -170,15 +170,44 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public newStatement visitNewStatement(MxParser.NewStatementContext context){
         newStatement tmp = new newStatement();
         tmp.name=context.Identifier().getText();
+        /*
         if (context.variableTypeExpression(0).variableArrayTypeExpression()!=null){
-        tmp.newType1=(type)visit(context.variableTypeExpression(0).variableArrayTypeExpression());
-        tmp.newType2=(type)visit(context.variableTypeExpression(1).variableArrayTypeExpression());}
+            System.out.println("===================================");
+            //System.out.println(tmp.newType1.typeName);
+            //System.out.println(tmp.newType2.typeName);
+            tmp.newType1=(type)visit(context.variableTypeExpression(0).variableArrayTypeExpression());
+            if (context.variableTypeExpression(1)!=null) tmp.newType2=(type)visit(context.variableTypeExpression(1).variableArrayTypeExpression());
+            System.out.println(tmp.newType1.typeName);
+            System.out.println(tmp.newType2.typeName);
+        }
         else if (context.variableTypeExpression(0).variableNormalTypeExpression()!=null){
+            //System.out.println("****************************************");
             //System.out.println(context.variableTypeExpression(0).variableNormalTypeExpression().Identifier().toString());
             tmp.newType1.typeName = context.variableTypeExpression(0).variableNormalTypeExpression().Identifier().toString();
             //tmp.newType2=(type)visit(context.variableTypeExpression(1).variableArrayTypeExpression());
             tmp.newType2.typeName = context.variableTypeExpression(1).variableNormalTypeExpression().Identifier().toString();
-
+        }*/
+        if (context.variableTypeExpression(1)!=null) {
+            if (context.variableTypeExpression(1).variableNormalTypeExpression()!=null){
+                tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(1).variableNormalTypeExpression());
+            }
+            if (context.variableTypeExpression(1).variableArrayTypeExpression()!=null){
+                tmp.newType2 = visitVariableArrayTypeExpression(context.variableTypeExpression(1).variableArrayTypeExpression());
+            }
+            if (context.variableTypeExpression(0).variableNormalTypeExpression() != null) {
+                tmp.newType1 = visitVariableNormalTypeExpression(context.variableTypeExpression(0).variableNormalTypeExpression());
+            }
+            if (context.variableTypeExpression(0).variableArrayTypeExpression() != null) {
+                tmp.newType1 = visitVariableArrayTypeExpression(context.variableTypeExpression(0).variableArrayTypeExpression());
+            }
+        }
+        else {
+            if (context.variableTypeExpression(0).variableNormalTypeExpression() != null) {
+                tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(0).variableNormalTypeExpression());
+            }
+            if (context.variableTypeExpression(0).variableArrayTypeExpression() != null) {
+                tmp.newType2 = visitVariableArrayTypeExpression(context.variableTypeExpression(0).variableArrayTypeExpression());
+            }
         }
         return tmp;
     }
@@ -210,7 +239,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public ifStatement visitIfStatement(MxParser.IfStatementContext context) {
         //System.out.println("visit ifStatement");
         ifStatement tmp = new ifStatement();
-        tmp.ifcondition.addSon(visitValuebleSingleExpression(context.valuebleSingleExpression()));
+        tmp.ifcondition=visitValuebleSingleExpression(context.valuebleSingleExpression());
         tmp.ifblock = visitBlockStatement(context.blockStatement(0));
         if (context.blockStatement(1)!=null) tmp.elseblock = visitBlockStatement(context.blockStatement(1));
         return tmp;
@@ -284,12 +313,12 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
-        //System.out.println("visit ValuebleSingleExpression");
+        System.out.println("visit ValuebleSingleExpression");
         //System.out.println(context.getText());
         expression tmp = new expression();
         if (context.constant()!=null) {
-            //System.out.println("visit constant");
-            //System.out.println(context.constant().getText());
+            System.out.println("visit constant");
+            System.out.println(context.constant().getText());
             constant con = new constant();
             con=visitConstant(context.constant());
             tmp.addSon(con);
@@ -497,7 +526,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public type visitVariableArrayTypeExpression(MxParser.VariableArrayTypeExpressionContext context) {
-        //System.out.println("visit VariableArrayTypeExpression");
+        System.out.println("visit VariableArrayTypeExpression");
         type t = new type();
         if (context.primaryType() != null) {
             if (context.primaryType().Bool() != null) {
@@ -512,6 +541,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.primaryType().Void() != null) {
                 t.typeName = "Void";
             }
+        }
+        if (context.Identifier()!=null){
+            t.typeName = context.Identifier().toString();
         }
         if (context.CloseBlacket(0) != null) {
             if (context.IntegerConstant(0) != null) {

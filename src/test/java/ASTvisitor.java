@@ -47,6 +47,13 @@ public class ASTvisitor {
             tmp.functionName = functionName;
             tmp.name.add(tmp.functionName);
             tmp.returnType = node.returnType;
+            if (tmp.returnType.typeName!="Int"&&tmp.returnType.typeName!="String"&&tmp.returnType.typeName!="Void"){
+                String returnName = tmp.returnType.typeName;
+                Scope scopeTmp = scope;
+                while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
+                scopeTmp = (topScope)scopeTmp;
+                if (!((topScope) scopeTmp).classes.containsKey(returnName)) throw new Exception("return type error.");
+            }
             //System.out.println(functionName);
             //System.out.println(tmp.returnType.typeName);
             if (functionName.equals("main")){
@@ -141,7 +148,12 @@ public class ASTvisitor {
                 //System.out.println(va.ty.typeName);
                 //System.out.println("*************************");
                 //System.out.println("visit definitionStatement");
-                visitExpression(((definitionStatement) item).exp,scope);
+                type ty = visitExpression(((definitionStatement) item).exp,scope);
+                if (ty.typeName.equals("NullConstant")){
+                    if (va.ty.typeName.equals("Int")||va.ty.typeName.equals("Bool")||va.ty.typeName.equals("String")||va.ty.typeName.equals("LogicConstant")){
+                        throw new Exception("null to int or bool");
+                    }
+                }
                 //if (va.name.equals("n")) System.out.println(va.ty.typeName);
             }
 
@@ -192,13 +204,56 @@ public class ASTvisitor {
             }
 
             if (item instanceof newStatement){
+                /*
+                type ty1 = ((newStatement) item).newType1;
+                type ty2 = new type();
+                if (((newStatement) item).newType2.typeName!=null) ty2 = ((newStatement) item).newType2;
+                else{
+                    variable va = new variable();
+                    va.name = ((newStatement) item).name;
+                    ty2 = visitExpressionVariable(va,scope);
+                }
+                System.out.println("------------------------------------new--------------------------------");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arr.size());
+                System.out.println(ty2.arr.size());
+                if ((!ty1.typeName.equals(ty2.typeName))||ty1.arr.size()!=ty2.arr.size()) throw new Exception("NewStatement type conflict.");
+                if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
+                    Scope scopeTmp = scope;
+                    while (scopeTmp.scopleType!="top") scopeTmp=scopeTmp.scopeFather;
+                    scopeTmp = (topScope)scopeTmp;
+                    if (!((topScope) scopeTmp).classes.containsKey(ty1.typeName)) throw new Exception("No such variable type.");
+                }
+                variable va = new variable();
+                va.ty=ty2;
+                va.name = ((newStatement) item).name;
+                scope.name.add(va.name);
+                scope.variable.put(va.name,va);*/
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
-                //System.out.println(ty1.arr.size());
-                //System.out.println(ty2.arr.size());
-                if ((!ty1.typeName.equals(ty2.typeName))||ty1.arr.size()!=ty2.arr.size()) throw new Exception("NewStatement type conflict.");
+                System.out.println("------------------------------------new--------------------------------");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arr);
+                System.out.println(ty2.arr);
+                if (ty1.typeName==null){
+                    variable va = new variable();
+                    va.name = ((newStatement) item).name;
+                    ty1 = visitExpressionVariable(va,scope);
+                }
+                if (!ty1.typeName.equals(ty2.typeName)||ty1.arr.size()!=ty2.arr.size()){
+                        if (ty1.arr.isEmpty()&&!ty2.arr.isEmpty()){
+                            if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
+                                Scope scopeTmp = scope;
+                                while (scopeTmp.scopleType!="top") scopeTmp=scopeTmp.scopeFather;
+                                scopeTmp = (topScope)scopeTmp;
+                                if (!((topScope) scopeTmp).classes.containsKey(ty1.typeName)) throw new Exception("No such variable type.");
+                            }
+                        }
+                        else throw new Exception("NewStatement type conflict.");
+                    }
+                //else throw new Exception("NewStatement type conflict.");
                 variable va = new variable();
                 va.ty=ty2;
                 va.name = ((newStatement) item).name;
@@ -547,7 +602,15 @@ public class ASTvisitor {
     public void visitIf(ifStatement node, Scope scope) throws Exception{
         if (visitExpression(node.ifcondition,scope).typeName!="Bool") {
             //System.out.println(node.ifcondition.toString());
-            throw new Exception("If condition is not bool.");
+            /*
+            System.out.println(node.ifcondition.sons.toString());
+            if (node.ifcondition.toString()!="true"&&node.ifcondition.toString()!="false") throw new Exception("If condition is not bool.");
+            */
+            //System.out.println(node.ifcondition.sons.get(0));
+            //if (node.ifcondition.sons.get(0).toString()!="true"&&node.ifcondition.sons.get(0).toString()!="false"){
+            if (visitExpression(node.ifcondition,scope).typeName!="LogicConstant"){
+                throw new Exception("If condition is not bool.");
+            }
         }
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";

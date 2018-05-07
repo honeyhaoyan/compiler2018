@@ -69,7 +69,7 @@ statement
         ;
 
     newStatement
-        :variableTypeExpression Identifier Assign New variableTypeExpression Semi
+        :(variableTypeExpression)? Identifier Assign New variableTypeExpression Semi
         ;
 
     assignStatement
