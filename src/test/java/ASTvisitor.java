@@ -236,6 +236,7 @@ public class ASTvisitor {
     public type visitExpression (expression node, Scope scope) throws Exception{
         type globalType = new type();
         type subType = new type();
+        Op op = new Op();
         for (Node item : node.sons) {
             if (item instanceof expression){
                 subType = visitExpression((expression) item,scope);
@@ -245,6 +246,8 @@ public class ASTvisitor {
                 subType = visitOp((Op)item,scope);
                 if (subType.typeName=="Bool") return subType;
                 globalType = checkException(globalType,subType);
+                op = (Op)item;
+                System.out.println(op.op);
             }
             if (item instanceof variable){
                 System.out.println("variable");
@@ -278,6 +281,13 @@ public class ASTvisitor {
             if (item instanceof callFunctionExpression){
                 subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
+            }
+        }
+        if (op.op!=null){
+            if (op.op.equals("+")){
+                System.out.println("============================================================");
+                System.out.println(globalType.typeName);
+                if (globalType.typeName!="String"||globalType.typeName!="Int") throw new Exception("Expression type conflicts.");
             }
         }
         return globalType;
