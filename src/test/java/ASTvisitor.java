@@ -10,12 +10,17 @@ public class ASTvisitor {
                 visitClass1((classDefinition)item,top);
             }
         }
+        boolean flag = false;
         for (Node item : node.sequenceSons){
             //get function name and function head
-            if (item instanceof functionDefinition) visitFunction1((functionDefinition)item,top);
+            if (item instanceof functionDefinition) {
+                visitFunction1((functionDefinition)item,top);
+                if (((functionDefinition) item).functionName.equals("main")) flag = true;
+            }
             //get class variable definition (to be used in class functions) and class function definition
             if (item instanceof classDefinition) visitClass2((classDefinition)item,top);
         }
+        if (flag==false) throw new Exception("no main.");
         for (Node item : node.sequenceSons){
             //visit global variable
            // System.out.println("??????????????????????????????????");
@@ -33,6 +38,9 @@ public class ASTvisitor {
 
     public void visitClass1(classDefinition node, topScope scope) throws Exception{
         String className = node.selfName;
+        System.out.println("before check");
+        System.out.println(className);
+        checkIdentify(className);
         //System.out.println(className);
         if (scope.name.contains(className)) throw new Exception("In program, classname conflicts with names that have already existed.");
         else{
@@ -47,6 +55,7 @@ public class ASTvisitor {
 
     public void visitFunction1(functionDefinition node, Scope scope) throws Exception{
         String functionName = node.functionName;
+        checkIdentify(functionName);
         //System.out.println(functionName);
         if (scope.name.contains(functionName)) throw new Exception("FunctionName conflicts with names that have already existed.");
         else {
@@ -113,6 +122,7 @@ public class ASTvisitor {
     }
 
     public void visitVariable(variable node,Scope scope) throws Exception{
+        checkIdentify(node.name);
         if (scope.name.contains(node.name)) throw new Exception("VariableName conflicts with names that have already existed.");
         else{
             scope.variable.put(node.name,node);
@@ -137,6 +147,7 @@ public class ASTvisitor {
             if (item instanceof assignmentStatement){
                 System.out.println("*************************");
                 System.out.println("visit assignmentStatement");
+                if (((assignmentStatement) item).expLe.sons.get(0) instanceof constant) throw new Exception("constant left.");
                 type ty1 = new type();
                 type ty2 = new type();
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
@@ -150,6 +161,9 @@ public class ASTvisitor {
             if (item instanceof definitionStatement){
                 variable va = new variable();
                 va = ((definitionStatement) item).variableSon;
+                type Ty = new type();
+                Ty = visitExpressionVariable(va,scope);
+                if (Ty.typeName!=null) throw new Exception("re definition.");
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
                 //System.out.println("*************************");
@@ -285,6 +299,12 @@ public class ASTvisitor {
         }
     }
 
+    public void checkIdentify(String str) throws Exception{
+        if (str.equals("if")||str.equals("else")||str.equals("for")||str.equals("while")||str.equals("continue")||str.equals("break")||str.equals("return")||str.equals("class")||str.equals("new")||str.equals("this")||str.equals("true")||str.equals("false")||str.equals("bool")||str.equals("int")||str.equals("string")||str.equals("void")||str.equals("null")){
+            throw new Exception("name illegal");
+        }
+    }
+
     public void findClass(String className, Scope scope) throws Exception{
         Scope scopeTmp = new Scope();
         scopeTmp = scope;
@@ -411,9 +431,9 @@ public class ASTvisitor {
     }
 
     public type visitExpressionVariable(variable va, Scope scope)throws Exception{
-        //System.out.println(va.name);
+        System.out.println(va.name);
         type tmp = new type();
-        //System.out.println(va.ty.typeName);
+        System.out.println(va.ty.typeName);
         if (va.ty.typeName!=null) {
             tmp = va.ty;
         }
@@ -421,21 +441,25 @@ public class ASTvisitor {
             //System.out.println("be in else");
             Scope scopeTmp = scope;
             while (scopeTmp.scopleType!="top") {
-                //System.out.println(scopeTmp.name);
-                //System.out.println(scopeTmp.variable.isEmpty());
+                System.out.println(scopeTmp.name);
+                System.out.println(scopeTmp.variable.isEmpty());
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
-                    //System.out.println(tmp.typeName);
+                    System.out.println("----------------------------------------");
+                    System.out.println(tmp.typeName);
                 }
                 scopeTmp = scopeTmp.scopeFather;
                 //System.out.println("in while");
             }
             //System.out.println("out while");
+            System.out.println(tmp.typeName);
             if (scopeTmp.variable.containsKey(va.name)){
                 tmp = scopeTmp.variable.get(va.name).ty;
+                System.out.println(tmp.typeName);
             }
         }
         //System.out.println("before return.");
+        System.out.println(tmp.typeName);
         return tmp;
     }
 

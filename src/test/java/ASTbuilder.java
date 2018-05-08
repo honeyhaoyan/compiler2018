@@ -324,7 +324,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
         System.out.println("visit ValuebleSingleExpression");
-        System.out.println(context.getText());
+        //System.out.println(context.getText());
         expression tmp = new expression();
         if (context.constant()!=null) {
             System.out.println("visit constant");
