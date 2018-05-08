@@ -239,6 +239,8 @@ class subscriptExpression extends expression{
     expression son;
     subscriptExpression(){
         super();
+        father = new variable();
+        son = new expression();
     }
 }
 

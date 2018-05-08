@@ -402,21 +402,21 @@ public class ASTvisitor {
     }
 
     public type visitExpressionVariable(variable va, Scope scope)throws Exception{
-        System.out.println(va.name);
+        //System.out.println(va.name);
         type tmp = new type();
-        System.out.println(va.ty.typeName);
+        //System.out.println(va.ty.typeName);
         if (va.ty.typeName!=null) {
             tmp = va.ty;
         }
         else{
-            System.out.println("be in else");
+            //System.out.println("be in else");
             Scope scopeTmp = scope;
             while (scopeTmp.scopleType!="top") {
-                System.out.println(scopeTmp.name);
-                System.out.println(scopeTmp.variable.isEmpty());
+                //System.out.println(scopeTmp.name);
+                //System.out.println(scopeTmp.variable.isEmpty());
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
-                    System.out.println(tmp.typeName);
+                    //System.out.println(tmp.typeName);
                 }
                 scopeTmp = scopeTmp.scopeFather;
             }
@@ -551,7 +551,20 @@ public class ASTvisitor {
     }
 
     public type visitSubsciptionExpression(subscriptExpression subExp, Scope scope)throws Exception{
+        System.out.println("visit subsciption.");
         type tmp = new type();
+        variable va = new variable();
+        va = subExp.father;
+        //System.out.println(subExp.father.name);
+        System.out.println(va.name);
+        //System.out.println(va.ty.typeName);
+        if (va.ty.arr.isEmpty()) throw new Exception("subscriptExpression error");
+        else {
+            //tmp.typeName = va.ty.typeName;
+            tmp = visitExpressionVariable(va,scope);
+            if (tmp.arr.isEmpty()) throw new Exception("subscriptExpression error");
+        }
+        System.out.println("----------------------------------");
         return tmp;
     }
 

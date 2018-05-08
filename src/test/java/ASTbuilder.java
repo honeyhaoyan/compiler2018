@@ -421,7 +421,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public subscriptExpression visitSubscriptExpression(MxParser.SubscriptExpressionContext context) {
         subscriptExpression tmp = new subscriptExpression();
-        tmp.father=(variable)visit(context.className());
+        //tmp.father=(variable)visit(context.className());
+        //System.out.println(context.className().Identifier().toString());
+        tmp.father.name = context.className().Identifier().toString();
+        //System.out.println("visit build subscript.");
+        //System.out.println(tmp.father.name);
         tmp.son=(expression) visit(context.valuebleSingleExpression());
         return tmp;
     }
@@ -545,9 +549,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 t.typeName = "Void";
             }
         }
+        /*
         if (context.Identifier()!=null){
             t.typeName = context.Identifier().toString();
         }
+        */
         if (context.CloseBlacket(0) != null) {
             if (context.IntegerConstant(0) != null) {
                 t.arr.add(context.IntegerConstant(0).toString());
