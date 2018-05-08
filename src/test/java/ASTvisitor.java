@@ -148,24 +148,32 @@ public class ASTvisitor {
                 //System.out.println(va.ty.typeName);
                 //System.out.println("*************************");
                 //System.out.println("visit definitionStatement");
-                type ty = visitExpression(((definitionStatement) item).exp,scope);
-                if (ty.typeName.equals("NullConstant")){
-                    if (va.ty.typeName.equals("Int")||va.ty.typeName.equals("Bool")||va.ty.typeName.equals("String")||va.ty.typeName.equals("LogicConstant")){
-                        throw new Exception("null to int or bool");
+                if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
+                    //System.out.println(((definitionStatement) item).exp.toString());
+                    type ty = visitExpression(((definitionStatement) item).exp,scope);
+                    System.out.println(ty.typeName);
+                    System.out.println(ty.arr);
+                    if (ty.typeName.equals("NullConstant")){
+                        if (va.ty.typeName.equals("Int")||va.ty.typeName.equals("Bool")||va.ty.typeName.equals("String")||va.ty.typeName.equals("LogicConstant")){
+                            throw new Exception("null to int or bool");
+                        }
                     }
                 }
                 //if (va.name.equals("n")) System.out.println(va.ty.typeName);
             }
 
             if (item instanceof ifStatement){
+                System.out.println("visit if statement.");
                 visitIf((ifStatement)item,scope);
             }
 
             if (item instanceof forStatement){
+                System.out.println("visit for statement.");
                 visitFor((forStatement)item,scope);
             }
 
             if (item instanceof whileStatement){
+                System.out.println("visit while statement.");
                 visitWhile((whileStatement)item,scope);
             }
 
