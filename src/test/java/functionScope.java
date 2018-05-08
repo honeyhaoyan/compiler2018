@@ -7,7 +7,7 @@ class functionScope extends Scope{
     type returnType;
     //List<variable>inputVariable;
     //Map<int,variabl>inputVariable;
-    List<String>inputVariable;
+    List<type>inputVariable;
     functionScope(){
         super();
         returnType = new type();

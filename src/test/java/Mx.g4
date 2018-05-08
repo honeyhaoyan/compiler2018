@@ -58,6 +58,7 @@ statement
     |continueStatement
     |selfOperationStatement
     |callFunctionStatement
+    |dotFunctionStatement
     ;
 
     emptyStatement
@@ -106,6 +107,9 @@ statement
     callFunctionStatement
         :callFunctionExpression Semi
         ;
+    dotFunctionStatement
+        :dotFunctionExpression Semi
+        ;
 
 //expression 从上到下依次匹配，所以把优先级大的放在上面，优先级小的放在下面
 
@@ -151,7 +155,8 @@ valuebleSingleExpression
         |dotFunctionExpression
         ;
         dotVariableExpression
-            :className Dot className
+            :className Dot valuebleSingleExpression
+            //:className Dot className
             ;
         dotFunctionExpression
             :className Dot callFunctionExpression

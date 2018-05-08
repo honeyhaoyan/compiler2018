@@ -267,6 +267,18 @@ public class MxBaseListener implements MxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDotFunctionStatement(MxParser.DotFunctionStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDotFunctionStatement(MxParser.DotFunctionStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}

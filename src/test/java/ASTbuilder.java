@@ -315,9 +315,16 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         return tmp;
     }
 
+    @Override public dotFunctionStatement visitDotFunctionStatement(MxParser.DotFunctionStatementContext context) {
+        dotFunctionStatement tmp = new dotFunctionStatement();
+        tmp.dotFunc = visitDotFunctionExpression(context.dotFunctionExpression());
+        return tmp;
+    }
+
+
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
         System.out.println("visit ValuebleSingleExpression");
-        //System.out.println(context.getText());
+        System.out.println(context.getText());
         expression tmp = new expression();
         if (context.constant()!=null) {
             System.out.println("visit constant");
@@ -376,8 +383,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         if (context.dotExpression()!=null){
             if (context.dotExpression().dotVariableExpression()!=null){
-               // System.out.println("*******************************************************");
-                //System.out.println("visit dot expression");
+                System.out.println("*******************************************************");
+                System.out.println("visit dot expression");
                 //System.out.println(context.dotExpression().dotVariableExpression().className(0).Identifier().toString());
                 dotVariableExpression dotVa = new dotVariableExpression();
                 dotVa = visitDotVariableExpression(context.dotExpression().dotVariableExpression());
@@ -412,6 +419,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.addSon(va);
         }
         if (context.callFunctionExpression()!=null){
+            System.out.println("--------------------------build callFunctionExpression----------------------------");
             callFunctionExpression callFunc = new callFunctionExpression();
             callFunc = visitCallFunctionExpression(context.callFunctionExpression());
             tmp.addSon(callFunc);
@@ -432,10 +440,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public dotVariableExpression visitDotVariableExpression(MxParser.DotVariableExpressionContext context) {
         dotVariableExpression tmp = new dotVariableExpression();
-        tmp.father.name = context.className(0).Identifier().toString();
+        tmp.father.name = context.className().Identifier().toString();
         //System.out.println(context.className(0).Identifier().toString());
-        tmp.son.name = context.className(1).Identifier().toString();
+        //tmp.son.name = context.className(1).Identifier().toString();
         //System.out.println(context.className(1).Identifier().toString());
+        tmp.son = visitValuebleSingleExpression(context.valuebleSingleExpression());
         return tmp;
     }
 
@@ -445,6 +454,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.className()!=null) tmp.father.name = context.className().toString();
         if (context.StringConstant()!=null) tmp.father.ty.typeName="String";
         tmp.son = visitCallFunctionExpression(context.callFunctionExpression());
+        //tmp.son = visitValuebleSingleExpression(context.valuebleSingleExpression());
         return tmp;
     }
 

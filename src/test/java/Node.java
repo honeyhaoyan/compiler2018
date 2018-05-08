@@ -195,6 +195,14 @@ class callFunctionStatement extends statement{
     }
 }
 
+class dotFunctionStatement extends statement{
+    dotFunctionExpression dotFunc;
+    dotFunctionStatement(){
+        super();
+        dotFunc = new dotFunctionExpression();
+    }
+}
+
 class expression extends Node {
     public expression(){
         super();
@@ -216,21 +224,25 @@ class This extends Node{
 
 class dotVariableExpression extends expression{
     variable father;
-    variable son;
+    //variable son;
+    expression son;
     dotVariableExpression(){
         super();
         father = new variable();
-        son = new variable();
+        //son = new variable();
+        son = new expression();
     }
 }
 
 class dotFunctionExpression extends expression{
     variable father;
     callFunctionExpression son;
+    //expression son;
     dotFunctionExpression(){
         super();
         father = new variable();
         son = new callFunctionExpression();
+        //son = new expression();
     }
 }
 
@@ -245,10 +257,12 @@ class subscriptExpression extends expression{
 }
 
 class callFunctionExpression extends expression{
+    public variable va;
     public String functionName;
     public List<expression>expressionSons;
     callFunctionExpression(){
         super();
         expressionSons = new ArrayList<>();
+        va = new variable();
     }
 }

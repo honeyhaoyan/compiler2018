@@ -1,3 +1,4 @@
+import java.util.List;
 
 public class ASTvisitor {
     public void visit(Program node) throws Exception{
@@ -17,16 +18,22 @@ public class ASTvisitor {
         }
         for (Node item : node.sequenceSons){
             //visit global variable
-            if (item instanceof variable) visitVariable((variable)item,top);
+           // System.out.println("??????????????????????????????????");
+            if (item instanceof variable) {visitVariable((variable)item,top);}
             //visit statements in global function
-            if (item instanceof functionDefinition) visitFunction2((functionDefinition)item,top);
+            if (item instanceof functionDefinition) {
+               // System.out.println("==============================visit function===================================");
+                visitFunction2((functionDefinition)item,top);
+                //System.out.println(((functionDefinition) item).functionName);
+            }
             //visit statements in class function
-            if (item instanceof classDefinition) visitClass3((classDefinition)item,top);
+            if (item instanceof classDefinition) {visitClass3((classDefinition)item,top);}
         }
     }
 
     public void visitClass1(classDefinition node, topScope scope) throws Exception{
         String className = node.selfName;
+        //System.out.println(className);
         if (scope.name.contains(className)) throw new Exception("In program, classname conflicts with names that have already existed.");
         else{
             classScope tmp = new classScope();
@@ -34,6 +41,7 @@ public class ASTvisitor {
             tmp.className = className;
             scope.classes.put(className,tmp);
             scope.name.add(className);
+            //scope.scopleType="class";
         }
     }
 
@@ -68,15 +76,15 @@ public class ASTvisitor {
                     else {
                         tmp.name.add(item.name);
                         //tmp.inputVariable.put(i,item.ty.typeName);
-                        tmp.inputVariable.add(item.ty.typeName);
+                        tmp.inputVariable.add(item.ty);
                         tmp.variable.put(item.name,item);
-                        System.out.println("--------------------------------------");
-                        System.out.println(item.ty.typeName);
+                        //System.out.println("--------------------------------------");
+                        //System.out.println(item.ty.typeName);
                         //System.out.println(tmp.functionName);
                         i++;
                     }
                 }
-            System.out.println(tmp.inputVariable.size());
+            //System.out.println(tmp.inputVariable.size());
             }
             scope.function.put(functionName,tmp);
             scope.name.add(functionName);
@@ -97,8 +105,10 @@ public class ASTvisitor {
     }
 
     public void visitFunction2(functionDefinition node,Scope scope) throws Exception{
+        //System.out.println("-----------------------------------------------------------");
         if (scope.function.containsKey(node.functionName)){
             visitBlock(node.blockSon,scope.function.get(node.functionName),"Function",false,node.returnType);
+        //System.out.println("WHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
     }
 
@@ -114,14 +124,16 @@ public class ASTvisitor {
         if (scope.classes.containsKey(node.selfName)){
             for (functionDefinition item : node.functionSons){
                 visitFunction2(item,scope.classes.get(node.selfName));
+                //System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
             }
+            //System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         }
     }
 
     //scope
     public void visitBlock(blockDefinition node, Scope scope,String blockType,boolean returnNum,type returnType) throws Exception{
         for (statement item : node.statementSons){
-            System.out.println(item.toString());
+            //System.out.println(item.toString());
             if (item instanceof assignmentStatement){
                 System.out.println("*************************");
                 System.out.println("visit assignmentStatement");
@@ -130,9 +142,9 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
-                if (!ty1.typeName.equals(ty2.typeName)||!ty1.arr.equals(ty2.arr)) throw new Exception("Illegal assignment.");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                if (!ty1.typeName.equals(ty2.typeName)||ty1.arr.size()!=ty2.arr.size()) throw new Exception("Illegal assignment.");
             }
 
             if (item instanceof definitionStatement){
@@ -140,10 +152,10 @@ public class ASTvisitor {
                 va = ((definitionStatement) item).variableSon;
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
-                System.out.println("*************************");
-                System.out.println("visit definitionStatement");
-                System.out.println(va.name);
-                System.out.println(va.ty.typeName);
+                //System.out.println("*************************");
+                //System.out.println("visit definitionStatement");
+                //System.out.println(va.name);
+                //System.out.println(va.ty.typeName);
                 if (va.ty.typeName.equals("Void")) throw new Exception("Definition error: void exception.");
                 //System.out.println(va.ty.typeName);
                 //System.out.println("*************************");
@@ -151,8 +163,8 @@ public class ASTvisitor {
                 if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
                     //System.out.println(((definitionStatement) item).exp.toString());
                     type ty = visitExpression(((definitionStatement) item).exp,scope);
-                    System.out.println(ty.typeName);
-                    System.out.println(ty.arr);
+                    //System.out.println(ty.typeName);
+                    //System.out.println(ty.arr);
                     if (ty.typeName.equals("NullConstant")){
                         if (va.ty.typeName.equals("Int")||va.ty.typeName.equals("Bool")||va.ty.typeName.equals("String")||va.ty.typeName.equals("LogicConstant")){
                             throw new Exception("null to int or bool");
@@ -190,6 +202,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof returnStatement){
+                System.out.println("visit return statement.");
                 if (returnNum == true){
                     throw new Exception("In function, more than one return.");
                 }
@@ -212,39 +225,13 @@ public class ASTvisitor {
             }
 
             if (item instanceof newStatement){
-                /*
-                type ty1 = ((newStatement) item).newType1;
-                type ty2 = new type();
-                if (((newStatement) item).newType2.typeName!=null) ty2 = ((newStatement) item).newType2;
-                else{
-                    variable va = new variable();
-                    va.name = ((newStatement) item).name;
-                    ty2 = visitExpressionVariable(va,scope);
-                }
-                System.out.println("------------------------------------new--------------------------------");
-                System.out.println(ty1.typeName);
-                System.out.println(ty2.typeName);
-                System.out.println(ty1.arr.size());
-                System.out.println(ty2.arr.size());
-                if ((!ty1.typeName.equals(ty2.typeName))||ty1.arr.size()!=ty2.arr.size()) throw new Exception("NewStatement type conflict.");
-                if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
-                    Scope scopeTmp = scope;
-                    while (scopeTmp.scopleType!="top") scopeTmp=scopeTmp.scopeFather;
-                    scopeTmp = (topScope)scopeTmp;
-                    if (!((topScope) scopeTmp).classes.containsKey(ty1.typeName)) throw new Exception("No such variable type.");
-                }
-                variable va = new variable();
-                va.ty=ty2;
-                va.name = ((newStatement) item).name;
-                scope.name.add(va.name);
-                scope.variable.put(va.name,va);*/
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
-                System.out.println("------------------------------------new--------------------------------");
-                System.out.println(ty1.typeName);
-                System.out.println(ty2.typeName);
-                System.out.println(ty1.arr);
-                System.out.println(ty2.arr);
+                //System.out.println("------------------------------------new--------------------------------");
+                //System.out.println(ty1.typeName);
+                //System.out.println(ty2.typeName);
+                //System.out.println(ty1.arr);
+                //System.out.println(ty2.arr);
                 if (ty1.typeName==null){
                     variable va = new variable();
                     va.name = ((newStatement) item).name;
@@ -262,6 +249,10 @@ public class ASTvisitor {
                         else throw new Exception("NewStatement type conflict.");
                     }
                 //else throw new Exception("NewStatement type conflict.");
+                if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
+                    //System.out.println("On the way to find class");
+                    findClass(ty1.typeName,scope);
+                }
                 variable va = new variable();
                 va.ty=ty2;
                 va.name = ((newStatement) item).name;
@@ -284,9 +275,25 @@ public class ASTvisitor {
             }
 
             if (item instanceof callFunctionStatement){
+                //System.out.println("-------------------------visit callFunctionStatement---------------------------");
                 visitExpression(((callFunctionStatement) item).callFunc,scope);
             }
+
+            if (item instanceof dotFunctionStatement){
+                visitExpression(((dotFunctionStatement) item).dotFunc,scope);
+            }
         }
+    }
+
+    public void findClass(String className, Scope scope) throws Exception{
+        Scope scopeTmp = new Scope();
+        scopeTmp = scope;
+        while (!scopeTmp.scopleType.equals("top")) {
+            //System.out.println(scopeTmp.scopleType);
+            scopeTmp = scopeTmp.scopeFather;
+        }
+        scopeTmp = (topScope)scopeTmp;
+        if (!((topScope) scopeTmp).classes.containsKey(className)) throw new Exception("class not find.");
     }
 
     public void  buildInlineFunctions(topScope scope){
@@ -294,14 +301,14 @@ public class ASTvisitor {
 
         functionScope print = new functionScope();
         va.ty.typeName="String";
-        print.inputVariable.add("String");
+        print.inputVariable.add(va.ty);
         print.functionName = "print";
         print.returnType.typeName = "void";
         scope.function.put(print.functionName,print);
 
         functionScope println = new functionScope();
         va.ty.typeName="String";
-        println.inputVariable.add("String");
+        println.inputVariable.add(va.ty);
         println.functionName = "println";
         println.returnType.typeName = "void";
         scope.function.put(println.functionName,println);
@@ -318,7 +325,7 @@ public class ASTvisitor {
 
         functionScope toString = new functionScope();
         va.ty.typeName="Int";
-        toString.inputVariable.add("Int");
+        toString.inputVariable.add(va.ty);
         toString.functionName = "toString";
         toString.returnType.typeName = "String";
         scope.function.put(toString.functionName,toString);
@@ -343,11 +350,13 @@ public class ASTvisitor {
                 //System.out.println(op.op);
             }
             if (item instanceof variable){
-                System.out.println("--------------------------variable-----------------------------");
+                //System.out.println("--------------------------variable-----------------------------");
                 //System.out.println(((variable) item).name);
                 //System.out.println(((variable) item).ty.typeName);
                 subType = visitExpressionVariable((variable)item,scope);
+                //System.out.println(subType.typeName);
                 globalType = checkException(globalType,subType);
+                //System.out.println("After check.");
             }
             if (item instanceof constant){
                 subType = visitConstant((constant)item,scope);
@@ -419,11 +428,14 @@ public class ASTvisitor {
                     //System.out.println(tmp.typeName);
                 }
                 scopeTmp = scopeTmp.scopeFather;
+                //System.out.println("in while");
             }
+            //System.out.println("out while");
             if (scopeTmp.variable.containsKey(va.name)){
                 tmp = scopeTmp.variable.get(va.name).ty;
             }
         }
+        //System.out.println("before return.");
         return tmp;
     }
 
@@ -449,7 +461,15 @@ public class ASTvisitor {
     public type visitDotVariableExpression(dotVariableExpression dotVa, Scope scope)throws Exception{
         type tmp = new type();
         String fatherName = dotVa.father.name;
-        String sonName = dotVa.son.name;
+        String sonName = "wrong";
+        if (dotVa.son.sons.get(0) instanceof expression) {
+            visitExpression((expression) dotVa.son.sons.get(0),scope);
+            sonName = dotVa.son.sons.get(0).sons.get(0).toString();
+        }
+        else {
+            if (dotVa.son.sons.get(0)instanceof variable) sonName = ((variable) dotVa.son.sons.get(0)).name;
+        }
+        //String sonName = dotVa.son.name;
         Scope scopeTmp = scope;
         String className=null;
         while (scopeTmp.scopleType!="top") {
@@ -478,6 +498,10 @@ public class ASTvisitor {
         //System.out.println(dotFun.father.ty.typeName);
         //System.out.println(dotFun.father.name);
         //System.out.println(ty.arr);
+/*
+        if (dotFun.son.sons.get(0) instanceof expression) visitExpression((expression)dotFun.son.sons.get(0),scope);
+        else {callFunctionExpression call = new callFunctionExpression();
+                call = (callFunctionExpression)dotFun.son.sons.get(0);}*/
         if (dotFun.father.ty.typeName!="String") {
             //System.out.println("in if");
             ty = visitExpressionVariable(dotFun.father,scope);
@@ -486,39 +510,10 @@ public class ASTvisitor {
             if (dotFun.son.functionName=="size") throw new Exception("variable that is not a string uses size().");
             else {
                 if (ty.typeName!="String"&&dotFun.father.ty.typeName!="String"){
-                Scope scopeTmp = scope;
-                while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
-                //scopeTmp = (topScope)scopeTmp;
-                if (((topScope) scopeTmp).classes.containsKey(ty.typeName)){
-                    functionScope func = new functionScope();
-                    func = ((topScope) scopeTmp).classes.get(ty.typeName).function.get(dotFun.son.functionName);
-                    tmp = func.returnType;
-                    int num1 = dotFun.son.expressionSons.size();
-                    int num2 = func.inputVariable.size();
-                    if (num1!=num2) throw new Exception("function input size error");
-                    if (num1!=0){
-                        //System.out.println(num1);
-                        type variableType = new type();
-                        //System.out.println(exp.functionName);
-                        int i=0;
-                        for (expression item : dotFun.son.expressionSons ){
-                            variableType = visitExpression((expression) item,scope);
-                            //System.out.println(variableType.typeName);
-                            /*
-                            if (!func.inputVariable.containsKey(variableType.typeName)){
-                                //System.out.println(variableType.typeName);
-                                throw new Exception("function input variable type error.");
-                            }
-                            */
-                            if (variableType.typeName!=func.inputVariable.get(i)) throw new Exception("function input variable type error.");
-                            i++;
-                        }
-
-                    }
+                    functionScope func = findFunction(dotFun.son.functionName,scope);
+                    checkInputVariable(dotFun.son.expressionSons,func);
                 }
-                else throw new Exception("program does not contain the class required by this variable.");
-            }
-            else {
+                else {
                     if (dotFun.son.functionName=="length"){
                         tmp.typeName = "Int";
                     }
@@ -551,12 +546,12 @@ public class ASTvisitor {
     }
 
     public type visitSubsciptionExpression(subscriptExpression subExp, Scope scope)throws Exception{
-        System.out.println("visit subsciption.");
+        //System.out.println("visit subsciption.");
         type tmp = new type();
         variable va = new variable();
         va = subExp.father;
         //System.out.println(subExp.father.name);
-        System.out.println(va.name);
+        //System.out.println(va.name);
         //System.out.println(va.ty.typeName);
         if (va.ty.arr.isEmpty()) throw new Exception("subscriptExpression error");
         else {
@@ -564,17 +559,20 @@ public class ASTvisitor {
             tmp = visitExpressionVariable(va,scope);
             if (tmp.arr.isEmpty()) throw new Exception("subscriptExpression error");
         }
-        System.out.println("----------------------------------");
+        //System.out.println("----------------------------------");
         return tmp;
     }
 
     public type visitCallFunctionExpression(callFunctionExpression exp, Scope scope)throws Exception{
+        /*
         type tmp = new type();
         type variableType = new type();
         Scope scopeTmp = scope;
         while (scopeTmp.scopleType!="top") scopeTmp = scopeTmp.scopeFather;
         System.out.println(exp.functionName);
         System.out.println(scopeTmp.function);
+        System.out.println(exp.functionName);
+
         if (scopeTmp.function.containsKey(exp.functionName)){
             tmp = scopeTmp.function.get(exp.functionName).returnType;
             int num1 = exp.expressionSons.size();
@@ -583,8 +581,6 @@ public class ASTvisitor {
             System.out.println(num2);
             if (num1!=num2) throw new Exception("function input size error");
             if (num1!=0){
-                //System.out.println(num1);
-                //System.out.println(exp.functionName);
                 int i=0;
                 for (expression item : exp.expressionSons ){
                     variableType = visitExpression((expression) item,scope);
@@ -602,8 +598,47 @@ public class ASTvisitor {
 
             }
         }
-        else throw new Exception("call function does not exist.");
+        else throw new Exception("call function does not exist.");*/
+        System.out.println("call Function");
+        type tmp = new type();
+        functionScope func = new functionScope();
+        func = findFunction(exp.functionName,scope);
+        System.out.println(exp.functionName);
+        tmp = func.returnType;
         return tmp;
+    }
+
+    public functionScope findFunction(String functionName, Scope scope)throws Exception{
+        functionScope func = new functionScope();
+        Scope tmp = new Scope();
+        tmp = scope;
+        boolean flag = false;
+        while (!tmp.scopleType.equals("top")){
+            if (tmp.scopleType.equals("class")) {
+                if (tmp.function.containsKey(functionName)) {func = tmp.function.get(functionName);flag=true;}
+            }
+            tmp = tmp.scopeFather;
+        }
+        if (flag == false){
+            if (tmp.function.containsKey(functionName)){func = tmp.function.get(functionName);flag=true;}
+        }
+        if (flag == false) throw new Exception("No such function.");
+        return func;
+    }
+
+    public void checkInputVariable(List<expression> list, functionScope scope) throws Exception{
+        type variableType = new type();
+        int num1 = list.size();
+        int num2 = scope.inputVariable.size();
+        if (num1!=num2) throw new Exception("input variable size error");
+        int i=0;
+        for (expression item : list){
+            variableType = visitExpression(item,scope);
+            if (!scope.inputVariable.get(i).typeName.equals(variableType.typeName)||scope.inputVariable.get(i).arr.size()!=variableType.arr.size()){
+                throw new Exception("input variable error.");
+            }
+            i++;
+        }
     }
 
     public type checkException (type ty1,type ty2) throws Exception{
@@ -644,8 +679,8 @@ public class ASTvisitor {
     }
 
     public void visitFor(forStatement node, Scope scope) throws Exception{
-        System.out.println("visit forStatement.");
-        System.out.println(visitExpression(node.variableCondition,scope).typeName);
+        //System.out.println("visit forStatement.");
+        //System.out.println(visitExpression(node.variableCondition,scope).typeName);
         if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
         Scope forScope = new Scope();
         forScope.scopleType = "For";

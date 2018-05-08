@@ -217,6 +217,16 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitCallFunctionStatement(MxParser.CallFunctionStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxParser#dotFunctionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDotFunctionStatement(MxParser.DotFunctionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#dotFunctionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDotFunctionStatement(MxParser.DotFunctionStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#valuebleSingleExpression}.
 	 * @param ctx the parse tree
 	 */
