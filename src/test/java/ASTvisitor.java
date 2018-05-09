@@ -163,18 +163,12 @@ public class ASTvisitor {
                 variable va = new variable();
                 va = ((definitionStatement) item).variableSon;
                 type Ty = new type();
-                System.out.println("before visit.");
                 Ty = visitExpressionVariable(va,scope);
-                System.out.println("after visit.");
-                System.out.println("*************************");
-                System.out.println(Ty.typeName);
-                System.out.println(va.ty.typeName);
-                //if (Ty.typeName!=null) throw new Exception("re definition.");
                 checkDefinition(va.name,scope);
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
-                //System.out.println("*************************");
-                //System.out.println("visit definitionStatement");
+                System.out.println("*************************");
+                System.out.println("visit definitionStatement");
                 //System.out.println(va.name);
                 //System.out.println(va.ty.typeName);
                 if (va.ty.typeName.equals("Void")) throw new Exception("Definition error: void exception.");
@@ -191,6 +185,7 @@ public class ASTvisitor {
                             throw new Exception("null to int or bool");
                         }
                     }
+                    if (!Ty.typeName.equals(ty.typeName)||Ty.arr.size()!=ty.arr.size()) throw new Exception("In definition, assignment error.");
                 }
                 //if (va.name.equals("n")) System.out.println(va.ty.typeName);
             }
@@ -507,6 +502,15 @@ public class ASTvisitor {
     public type visitType(type ty, Scope scope)throws Exception{
         type tmp = new type();
         tmp = ty;
+        /*
+        if (ty.typeName!="Int"&&ty.typeName!="String"&&ty.typeName!="Void"&&ty.typeName!="Bool"){
+            if (ty.arr.size()!=0){
+
+            }
+            else {
+                findClass(ty.typeName,scope);
+            }
+        }*/
         return tmp;
     }
 

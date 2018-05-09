@@ -108,10 +108,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             t = visitVariableNormalTypeExpression(context.definitionExpression().definitionNormalExpression().variableNormalTypeExpression());
             na = context.definitionExpression().definitionNormalExpression().Identifier().toString();
             if (context.definitionExpression().definitionNormalExpression().valuebleSingleExpression()!=null){
-                System.out.println("+++++++++++++++++++++++++++++++++  exp != null +++++++++++++++++++++++++++++++++");
-                System.out.println(na);
+                //System.out.println("+++++++++++++++++++++++++++++++++  exp != null +++++++++++++++++++++++++++++++++");
+                //System.out.println(na);
                 tmp.exp = visitValuebleSingleExpression(context.definitionExpression().definitionNormalExpression().valuebleSingleExpression());
-                System.out.println(tmp.exp.toString());
+                //System.out.println(tmp.exp.toString());
             }
         }
         else {
