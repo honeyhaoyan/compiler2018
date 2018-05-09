@@ -166,6 +166,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.statement(i).callFunctionStatement()!=null){
                 tmp.statementSons.add(visitCallFunctionStatement(context.statement(i).callFunctionStatement()));
             }
+
+            if (context.statement(i).emptyStatement()!=null){
+                tmp.statementSons.add(visitEmptyStatement(context.statement(i).emptyStatement()));
+            }
         }
         return tmp;
     }
@@ -191,6 +195,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.newType2.typeName = context.variableTypeExpression(1).variableNormalTypeExpression().Identifier().toString();
         }*/
         if (context.variableTypeExpression(1)!=null) {
+            System.out.println("--------------------------------- if --------------------------------");
             if (context.variableTypeExpression(1).variableNormalTypeExpression()!=null){
                 tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(1).variableNormalTypeExpression());
             }
@@ -203,8 +208,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.variableTypeExpression(0).variableArrayTypeExpression() != null) {
                 tmp.newType1 = visitVariableArrayTypeExpression(context.variableTypeExpression(0).variableArrayTypeExpression());
             }
+            System.out.println(tmp.newType1.typeName);
+            System.out.println(tmp.newType2.typeName);
         }
         else {
+            System.out.println("--------------------------------- else --------------------------------");
             if (context.variableTypeExpression(0).variableNormalTypeExpression() != null) {
                 tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(0).variableNormalTypeExpression());
             }
@@ -318,6 +326,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public dotFunctionStatement visitDotFunctionStatement(MxParser.DotFunctionStatementContext context) {
         dotFunctionStatement tmp = new dotFunctionStatement();
         tmp.dotFunc = visitDotFunctionExpression(context.dotFunctionExpression());
+        return tmp;
+    }
+
+    @Override public emptyStatement visitEmptyStatement(MxParser.EmptyStatementContext context){
+        emptyStatement tmp = new emptyStatement();
         return tmp;
     }
 
@@ -559,11 +572,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 t.typeName = "Void";
             }
         }
-        /*
+
         if (context.Identifier()!=null){
             t.typeName = context.Identifier().toString();
         }
-        */
+
         if (context.CloseBlacket(0) != null) {
             if (context.IntegerConstant(0) != null) {
                 t.arr.add(context.IntegerConstant(0).toString());

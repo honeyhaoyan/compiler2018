@@ -203,6 +203,11 @@ class dotFunctionStatement extends statement{
     }
 }
 
+class emptyStatement extends statement{
+    emptyStatement(){
+        super();
+    }
+}
 class expression extends Node {
     public expression(){
         super();

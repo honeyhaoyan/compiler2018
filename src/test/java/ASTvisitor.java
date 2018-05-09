@@ -248,11 +248,11 @@ public class ASTvisitor {
             if (item instanceof newStatement){
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
-                //System.out.println("------------------------------------new--------------------------------");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
-                //System.out.println(ty1.arr);
-                //System.out.println(ty2.arr);
+                System.out.println("------------------------------------new--------------------------------");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arr);
+                System.out.println(ty2.arr);
                 if (ty1.typeName==null){
                     variable va = new variable();
                     va.name = ((newStatement) item).name;
@@ -303,6 +303,10 @@ public class ASTvisitor {
             if (item instanceof dotFunctionStatement){
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
             }
+
+            if (item instanceof emptyStatement){
+                throw new Exception("empty statement.");
+            }
         }
     }
 
@@ -320,6 +324,8 @@ public class ASTvisitor {
     }
 
     public void checkIdentify(String str) throws Exception{
+        System.out.println("check?");
+        System.out.println(str);
         if (str.equals("if")||str.equals("else")||str.equals("for")||str.equals("while")||str.equals("continue")||str.equals("break")||str.equals("return")||str.equals("class")||str.equals("new")||str.equals("this")||str.equals("true")||str.equals("false")||str.equals("bool")||str.equals("int")||str.equals("string")||str.equals("void")||str.equals("null")){
             throw new Exception("name illegal");
         }
