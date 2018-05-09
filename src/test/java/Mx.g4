@@ -146,8 +146,8 @@ valuebleSingleExpression
             ;
         variableArrayTypeExpression
             //:(className | primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
-            //:(primaryType|Identifier) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
-            :(primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
+            :(primaryType|Identifier) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
+            //:(primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
             ;
 
     dotExpression
