@@ -316,15 +316,19 @@ public class ASTvisitor {
 
             if (item instanceof selfOperationStatement){
                 type ty = new type();
-                if (((selfOperationStatement) item).va!=null) {
+                if (((selfOperationStatement) item).va.name!=null) {
+                    //System.out.println("in");
                     variable va = ((selfOperationStatement) item).va;
                     ty = visitExpressionVariable(va,scope);
                 }
                 else{
+                    //System.out.println("in");
                     if (((selfOperationStatement) item).exp!=null){
-                        ty = visitExpression( ((selfOperationStatement) item).exp,scope);
+                        System.out.println("in");
+                        ty = visitDotVariableExpression( (dotVariableExpression)(((selfOperationStatement) item).exp),scope);
                     }
                 }
+                System.out.println(ty.typeName);
                 if (!ty.typeName.equals("Int")&&ty.arr==null) throw new Exception("Illegal selfOperation.");
             }
 
@@ -474,10 +478,12 @@ public class ASTvisitor {
                 globalType = checkException(globalType,subType);
             }
             if (item instanceof dotVariableExpression){
+
                 subType = visitDotVariableExpression((dotVariableExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
             if (item instanceof dotFunctionExpression){
+                //System.out.println("************************************");
                 subType = visitDotFunctionExpression((dotFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
@@ -650,7 +656,7 @@ public class ASTvisitor {
 
         String fatherName;
         String sonName;
-
+        //System.out.println("-------------------------");
         classScope scopeTmp = new classScope();
         if (dotVa.father.equals("this")) scopeTmp = (classScope) scope;
         else{fatherName = getDotFatherVa(dotVa,scope);
