@@ -440,6 +440,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.addSon(exp);
         }
         if (context.Identifier()!=null){
+            //System.out.println("identifier");
             variable va = new variable();
             va.name=context.Identifier().toString();
             tmp.addSon(va);
@@ -489,6 +490,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 tmp.father = "className";
                 tmp.classNameF = context.className(0).Identifier().toString();
             }
+            if (context.This()!=null){
+                tmp.father = "this";
+                tmp.classNameF = "this";
+            }
             if (context.subscriptExpression()!=null){
                 tmp.father = "subscriptExpression";
                 tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
@@ -510,7 +515,12 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 tmp.callFun=visitCallFunctionExpression(context.callFunctionExpression());
                 tmp.classNameS = context.className(0).Identifier().toString();
             }
-            if (context.callFunctionExpression()==null&&context.subscriptExpression()==null){
+            if (context.This()!=null){
+                tmp.father = "this";
+                tmp.classNameF = "this";
+                tmp.classNameS = context.className(0).Identifier().toString();
+            }
+            if (context.callFunctionExpression()==null&&context.subscriptExpression()==null&&context.This()==null){
                 tmp.father = "className";
                 tmp.classNameF = context.className(0).Identifier().toString();
                 tmp.classNameS = context.className(1).Identifier().toString();
@@ -549,7 +559,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.callFunF = visitCallFunctionExpression(context.callFunctionExpression(0));
             tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(1));
         }
-
+        if (context.This()!=null){
+            tmp.father = "this";
+            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
+        }
         return tmp;
     }
 

@@ -161,13 +161,13 @@ valuebleSingleExpression
         ;
         dotVariableExpression
             //:className Dot valuebleSingleExpression
-            :(className|subscriptExpression|callFunctionExpression) Dot (dotExpression|className)
+            :(className|subscriptExpression|callFunctionExpression|This) Dot (dotExpression|className)
            // |className Dot className
             //|subscriptExpression Dot valuebleSingleExpression
             //:className Dot className
             ;
         dotFunctionExpression
-            :(className|subscriptExpression|StringConstant|callFunctionExpression) Dot callFunctionExpression
+            :(className|subscriptExpression|StringConstant|callFunctionExpression|This) Dot callFunctionExpression
             //|StringConstant Dot callFunctionExpression
             //|subscriptExpression Dot callFunctionExpression
             ;
