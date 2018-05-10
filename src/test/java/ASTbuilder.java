@@ -302,6 +302,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit ReturnStatement");
         returnStatement tmp = new returnStatement();
         if (context.valuebleSingleExpression()!=null) tmp.returnExpression = visitValuebleSingleExpression(context.valuebleSingleExpression());
+        //if (context.Identifier()!=null) tmp.returnExpression =
         return tmp;
     }
 

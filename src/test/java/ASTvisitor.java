@@ -860,6 +860,7 @@ public class ASTvisitor {
         if (flag == false){
             if (tmp.function.containsKey(functionName)){func = tmp.function.get(functionName);flag=true;}
         }
+        System.out.println(functionName);
         if (flag == false) throw new Exception("No such function.");
         return func;
     }

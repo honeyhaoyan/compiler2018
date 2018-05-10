@@ -97,6 +97,7 @@ statement
         ;
     returnStatement
         :Return (valuebleSingleExpression|valuebleListExpression)? Semi
+        //|Return New Identifier OpenParen CloseParen Semi
         ;
     continueStatement
         :Continue Semi
@@ -138,6 +139,7 @@ valuebleSingleExpression
     |valuebleSingleExpression Lor valuebleSingleExpression
     |callFunctionExpression
     |OpenParen valuebleSingleExpression CloseParen
+    |New Identifier OpenParen CloseParen
     ;
 
     variableTypeExpression
