@@ -638,6 +638,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public type visitVariableArrayTypeExpression(MxParser.VariableArrayTypeExpressionContext context) {
         //System.out.println("visit VariableArrayTypeExpression");
+
         type t = new type();
         if (context.primaryType() != null) {
             if (context.primaryType().Bool() != null) {
@@ -645,6 +646,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             if (context.primaryType().Int() != null) {
                 t.typeName = "Int";
+                System.out.println(t.typeName);
             }
             if (context.primaryType().String() != null) {
                 t.typeName = "String";
@@ -656,7 +658,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
         if (context.Identifier()!=null){
            // t.typeName = context.Identifier().toString();
-            t.typeName = context.Identifier(0).toString();
+            //System.out.println(context.Identifier().toString());
+            if (context.Identifier(0)!=null) t.typeName = context.Identifier(0).toString();
             //System.out.println(t.typeName);
         }
 
