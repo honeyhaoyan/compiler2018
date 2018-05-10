@@ -156,8 +156,8 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                System.out.println(ty1.typeName);
-                System.out.println(ty2.typeName);
+                //System.out.println(ty1.typeName);
+                //System.out.println(ty2.typeName);
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arr.size()!=ty2.arr.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
                         if (ty1.arr.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
@@ -326,7 +326,7 @@ public class ASTvisitor {
 
             if (item instanceof callFunctionStatement){
                 //System.out.println("-------------------------visit callFunctionStatement---------------------------");
-                visitExpression(((callFunctionStatement) item).callFunc,scope);
+                visitCallFunctionExpression(((callFunctionStatement) item).callFunc,scope);
             }
 
             if (item instanceof dotFunctionStatement){
@@ -638,9 +638,9 @@ public class ASTvisitor {
         //type ty = new type();
         //ty = visitExpressionVariable(createVariable(fatherName),scope);
         scopeTmp = findClass(fatherName,scope);
-        System.out.println(scope.scopleType);
+        //System.out.println(scope.scopleType);
         if (son.equals("dotVariableExpression")){
-            System.out.println("-------------------------"+scopeTmp.className);
+            //System.out.println("-------------------------"+scopeTmp.className);
             sonName = getDotFatherVa((dotVariableExpression) dotVa.dotEx,scopeTmp);
             if (!scopeTmp.variable.containsKey(sonName)) throw new Exception("In class, variety name not found");
             tmp = visitDotVariableExpression((dotVariableExpression) dotVa.dotEx,scopeTmp);
@@ -839,9 +839,11 @@ public class ASTvisitor {
     }
 
     public type visitCallFunctionExpression(callFunctionExpression exp, Scope scope)throws Exception{
+        //System.out.println("visit CallFunctionExpression");
         type tmp = new type();
         functionScope func = new functionScope();
         func = findFunction(exp.functionName,scope);
+        checkInputVariable(exp.expressionSons,func);
         tmp = func.returnType;
         return tmp;
     }
@@ -860,8 +862,9 @@ public class ASTvisitor {
         if (flag == false){
             if (tmp.function.containsKey(functionName)){func = tmp.function.get(functionName);flag=true;}
         }
-        System.out.println(functionName);
+        //System.out.println(functionName);
         if (flag == false) throw new Exception("No such function.");
+        //System.out.println(func.functionName);
         return func;
     }
 
