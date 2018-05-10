@@ -134,7 +134,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit BlockStatement");
         blockDefinition tmp = new blockDefinition();
         int num = context.getChildCount();
-        for (int i=0;i<num-2;++i){
+        if (context.CloseCurly()!=null) num = num-2;
+        for (int i=0;i<num;++i){
             if (context.statement(i).assignStatement()!=null){
                 tmp.statementSons.add(visitAssignStatement(context.statement(i).assignStatement()));
             }
@@ -262,6 +263,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         ifStatement tmp = new ifStatement();
         tmp.ifcondition=visitValuebleSingleExpression(context.valuebleSingleExpression());
         tmp.ifblock = visitBlockStatement(context.blockStatement(0));
+        //System.out.println(context.blockStatement(0).getChildCount());
         if (context.blockStatement(1)!=null) tmp.elseblock = visitBlockStatement(context.blockStatement(1));
         return tmp;
     }

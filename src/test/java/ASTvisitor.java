@@ -910,7 +910,8 @@ public class ASTvisitor {
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";
         ifScope.scopeFather = scope;
-        if (node.ifblock.statementSons.size()==0) throw new Exception("No if block;");
+        System.out.println(node.ifblock.statementSons.size());
+        if (node.ifblock.statementSons.isEmpty()) throw new Exception("No if block;");
         visitBlock(node.ifblock,ifScope,"If",returnNum,null);
         Scope elseScope = new Scope();
         elseScope.scopleType = "If";
