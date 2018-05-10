@@ -588,7 +588,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             con.value=context.IntegerConstant().toString();
         }
         if(context.LogicConstant()!=null){
-            con.type="LogicConstant";
+            //con.type="LogicConstant";
+            con.type="Bool";
             con.value=context.LogicConstant().toString();
         }
         if(context.StringConstant()!=null){

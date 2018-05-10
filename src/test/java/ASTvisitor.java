@@ -156,8 +156,8 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arr.size()!=ty2.arr.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
                         if (ty1.arr.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
@@ -288,7 +288,7 @@ public class ASTvisitor {
                         //System.out.println(ty1.arr.size());
                         //System.out.println(ty2.arr.size());
                         if (ty1.arr.isEmpty()&&!ty2.arr.isEmpty()){
-                            if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
+                            if (ty1.typeName!="Int"&&ty1.typeName!="Bool"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
                                 Scope scopeTmp = scope;
                                 while (scopeTmp.scopleType!="top") scopeTmp=scopeTmp.scopeFather;
                                 scopeTmp = (topScope)scopeTmp;
@@ -298,7 +298,7 @@ public class ASTvisitor {
                         else throw new Exception("NewStatement type conflict.");
                     }
                 //else throw new Exception("NewStatement type conflict.");
-                if (ty1.typeName!="Int"&&ty1.typeName!="LogicConstant"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
+                if (ty1.typeName!="Int"&&ty1.typeName!="Bool"&&ty1.typeName!="String"&&ty1.typeName!="NullConstant"){
                     //System.out.println("On the way to find class");
                     findClass(ty1.typeName,scope);
                 }
@@ -903,7 +903,7 @@ public class ASTvisitor {
             */
             //System.out.println(node.ifcondition.sons.get(0));
             //if (node.ifcondition.sons.get(0).toString()!="true"&&node.ifcondition.sons.get(0).toString()!="false"){
-            if (visitExpression(node.ifcondition,scope).typeName!="LogicConstant"){
+            if (visitExpression(node.ifcondition,scope).typeName!="Bool"){
                 throw new Exception("If condition is not bool.");
             }
         }
