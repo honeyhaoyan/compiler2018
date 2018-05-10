@@ -658,7 +658,12 @@ public class ASTvisitor {
         String sonName;
         //System.out.println("-------------------------");
         classScope scopeTmp = new classScope();
-        if (dotVa.father.equals("this")) scopeTmp = (classScope) scope;
+        if (dotVa.father.equals("this")) {
+            Scope scopeJump = new Scope();
+            scopeJump = scope;
+            while (!scopeJump.scopleType.equals("class")) scopeJump = scopeJump.scopeFather;
+            scopeTmp = (classScope) scopeJump;
+        }
         else{fatherName = getDotFatherVa(dotVa,scope);
             scopeTmp = findClass(fatherName,scope);}
 
