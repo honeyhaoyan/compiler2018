@@ -785,7 +785,7 @@ public class ASTvisitor {
             classes = findClass(ty.typeName,scope);
         }
 
-        if (!classes.className.isEmpty()){
+        if (classes.className!=null){
             if (!classes.function.containsKey(dotFun.callFunS.functionName)) throw new Exception("In class, no such function.");
             else checkInputVariable(dotFun.callFunS.expressionSons,classes.function.get(dotFun.callFunS.functionName));
             tmp = classes.function.get(dotFun.callFunS.functionName).returnType;
@@ -910,6 +910,7 @@ public class ASTvisitor {
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";
         ifScope.scopeFather = scope;
+        if (node.ifblock.statementSons.size()==0) throw new Exception("No if block;");
         visitBlock(node.ifblock,ifScope,"If",returnNum,null);
         Scope elseScope = new Scope();
         elseScope.scopleType = "If";
