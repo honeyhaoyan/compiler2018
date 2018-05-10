@@ -167,12 +167,17 @@ class continueStatement extends statement{
 class newStatement extends statement{
     //variable newVariable;
     String name;
+    String method;
     type newType1;
     type newType2;
+    subscriptExpression subscri;
+    dotVariableExpression dotVa;
     public newStatement(){
         super();
         newType1 = new type();
         newType2 = new type();
+        subscri = new subscriptExpression();
+        dotVa = new dotVariableExpression();
     }
 }
 
@@ -227,28 +232,74 @@ class This extends Node{
     }
 }
 
-class dotVariableExpression extends expression{
+class dotExpression extends expression{
+    dotExpression(){
+        super();
+    }
+}
+class dotVariableExpression extends dotExpression{
+    /*
     variable father;
     //variable son;
     expression son;
+    subscriptExpression subFather;
     dotVariableExpression(){
         super();
         father = new variable();
         //son = new variable();
         son = new expression();
+        subFather = new subscriptExpression();
+    }*/
+    String father;
+    String son;
+
+    String classNameF;
+    subscriptExpression subscript;
+    callFunctionExpression callFun;
+
+    String classNameS;
+    // dotVariableExpression dotVa;
+    //dotFunctionExpression dotFun;
+    dotExpression dotEx;
+    dotVariableExpression (){
+        super();
+        subscript = new subscriptExpression();
+        callFun = new callFunctionExpression();
+        //dotVa = new dotVariableExpression();
+        //dotFun = new dotFunctionExpression();
+        dotEx = new dotExpression();
     }
 }
 
-class dotFunctionExpression extends expression{
+class dotFunctionExpression extends dotExpression{
+    /*
     variable father;
     callFunctionExpression son;
+    subscriptExpression subFather;
     //expression son;
     dotFunctionExpression(){
         super();
         father = new variable();
         son = new callFunctionExpression();
+        subFather = new subscriptExpression();
         //son = new expression();
+    }*/
+    String father;
+
+    String classNameF;
+    subscriptExpression subscript;
+    callFunctionExpression callFunF;
+    String constantStr;
+
+    callFunctionExpression callFunS;
+
+    dotFunctionExpression(){
+        super();
+        subscript = new subscriptExpression();
+        callFunF = new callFunctionExpression();
+        callFunS = new callFunctionExpression();
     }
+
 }
 
 class subscriptExpression extends expression{

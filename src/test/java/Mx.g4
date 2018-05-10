@@ -71,6 +71,8 @@ statement
 
     newStatement
         :(variableTypeExpression)? Identifier Assign New variableTypeExpression Semi
+        |subscriptExpression Assign New variableTypeExpression Semi
+        |dotVariableExpression Assign New variableTypeExpression Semi
         ;
 
     assignStatement
@@ -94,7 +96,7 @@ statement
         :Break Semi
         ;
     returnStatement
-        :Return (valuebleSingleExpression|valuebleListExpression) Semi
+        :Return (valuebleSingleExpression|valuebleListExpression)? Semi
         ;
     continueStatement
         :Continue Semi
@@ -123,8 +125,9 @@ valuebleSingleExpression
     |(Inc | Dec) valuebleSingleExpression
     |valuebleSingleExpression (Inc|Dec)
     |(Not | Lnot) valuebleSingleExpression
-    |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
     |valuebleSingleExpression (Mul|Div) valuebleSingleExpression
+    |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
+    //|valuebleSingleExpression (Mul|Div) valuebleSingleExpression
     |valuebleSingleExpression (Lshift | Rshift) valuebleSingleExpression
     |valuebleSingleExpression (Le | Ge | Lt | Gt) valuebleSingleExpression
     |valuebleSingleExpression (Equal | Notequal) valuebleSingleExpression
@@ -146,7 +149,7 @@ valuebleSingleExpression
             ;
         variableArrayTypeExpression
             //:(className | primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
-            :(primaryType|Identifier) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
+            :(primaryType|Identifier) ((OpenBlacket (IntegerConstant|Identifier)? CloseBlacket )*)?
             //:(primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
             ;
 
@@ -155,12 +158,16 @@ valuebleSingleExpression
         |dotFunctionExpression
         ;
         dotVariableExpression
-            :className Dot valuebleSingleExpression
+            //:className Dot valuebleSingleExpression
+            :(className|subscriptExpression|callFunctionExpression) Dot (dotExpression|className)
+           // |className Dot className
+            //|subscriptExpression Dot valuebleSingleExpression
             //:className Dot className
             ;
         dotFunctionExpression
-            :className Dot callFunctionExpression
-            |StringConstant Dot callFunctionExpression
+            :(className|subscriptExpression|StringConstant|callFunctionExpression) Dot callFunctionExpression
+            //|StringConstant Dot callFunctionExpression
+            //|subscriptExpression Dot callFunctionExpression
             ;
             functionName
                 :Identifier

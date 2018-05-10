@@ -22,7 +22,7 @@ public class Main {
         //System.out.println("build ASTtree success");
         Program root = ASTtree.visitProgram((MxParser.ProgramContext) tree);
         //System.out.println("build root success");
-        //System.out.println("===========================================================");
+        System.out.println("===================================================================================================");
         ASTvisitor visitor = new ASTvisitor();
         try { visitor.visit(root); }
         catch(Exception exp) {
