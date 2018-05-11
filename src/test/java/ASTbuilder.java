@@ -472,8 +472,16 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         subscriptExpression tmp = new subscriptExpression();
         tmp.father.name = context.className().Identifier().toString();
         //tmp.son=(expression) visit(context.valuebleSingleExpression());
-        if (context.valuebleSingleExpression(0)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
-        if (context.valuebleSingleExpression(1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
+        expression expression1 = new expression();
+        expression expression2 = new expression();
+        if (context.OpenBlacket(0)!=null){
+            if (context.valuebleSingleExpression(0)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
+            else tmp.Son.add(expression1);
+        }
+        if (context.OpenBlacket(1)!=null){
+            if (context.valuebleSingleExpression(1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
+            else tmp.Son.add(expression2);
+        }
         return tmp;
     }
 
@@ -690,7 +698,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             t.typeName = context.Identifier().toString();
             //System.out.println(t.typeName);
         }
-
+        expression expression1 = new expression();
+        expression expression2 = new expression();
         if (context.CloseBlacket(0) != null) {
             /*
             if (context.IntegerConstant(0) != null) {
@@ -701,6 +710,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.valuebleSingleExpression(0)!=null){
                 t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
             }
+            else t.arrExp.add(expression1);
         }
         if (context.CloseBlacket(1) != null) {
             /*
@@ -712,6 +722,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.valuebleSingleExpression(1)!=null){
                 t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
             }
+            else t.arrExp.add(expression2);
         }
         return t;
     }
