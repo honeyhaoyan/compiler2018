@@ -59,6 +59,7 @@ statement
     |selfOperationStatement
     |callFunctionStatement
     |dotFunctionStatement
+    |valuebleSingleExpression Semi
     ;
 
     emptyStatement
@@ -88,6 +89,7 @@ statement
          (valuebleSingleExpression)? Semi
          (assignExpression | valuebleSingleExpression)
          CloseParen blockStatement
+         |For OpenParen Semi Semi CloseParen Semi
         ;
     whileStatement
         :While OpenParen valuebleSingleExpression CloseParen blockStatement
@@ -105,7 +107,7 @@ statement
     selfOperationStatement
         :(Inc | Dec) (Identifier|dotVariableExpression) Semi
         |(Identifier|dotVariableExpression) (Inc|Dec) Semi
-        |(Not | Lnot) (Identifier|dotVariableExpression) Semi
+        //|(Not | Lnot) (Identifier|dotVariableExpression) Semi
         ;
     callFunctionStatement
         :callFunctionExpression Semi
@@ -139,7 +141,8 @@ valuebleSingleExpression
     |valuebleSingleExpression Lor valuebleSingleExpression
     |callFunctionExpression
     |OpenParen valuebleSingleExpression CloseParen
-    |New Identifier OpenParen CloseParen
+    |New Identifier (OpenParen CloseParen)?
+    //|newExpression
     ;
 
     variableTypeExpression
@@ -188,6 +191,7 @@ valuebleListExpression
 definitionExpression  // int a(b) / int a=b
     :definitionNormalExpression
     |definitionArrayExpression
+    |New
     ;
     definitionNormalExpression
         :variableNormalTypeExpression Identifier (Assign valuebleSingleExpression)?

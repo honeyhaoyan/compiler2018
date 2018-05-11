@@ -176,8 +176,8 @@ public class ASTvisitor {
                 checkDefinition(va.name,scope);
                 scope.variable.put(va.name,va);
                 scope.name.add(va.name);
-                System.out.println(scope.scopleType);
-                System.out.println(scope.name);
+                //System.out.println(scope.scopleType);
+                //System.out.println(scope.name);
                 //System.out.println("*************************");
                 //System.out.println("visit definitionStatement");
                 //System.out.println(va.name);
@@ -226,9 +226,10 @@ public class ASTvisitor {
             if (item instanceof breakStatement){
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
+                    System.out.println(scopeTmp.scopleType);
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal break");
                     else {
-                        if (scopeTmp.scopleType .equals( "while")||blockType.equals("for")) break;
+                        if (scopeTmp.scopleType .equals( "While")||blockType.equals("For")) break;
                     }
                     scopeTmp=scopeTmp.scopeFather;
                 }
@@ -251,7 +252,7 @@ public class ASTvisitor {
                 while (!scopeTmp.scopleType.equals("top")){
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal continue");
                     else {
-                        if (scopeTmp.scopleType .equals( "while")||blockType.equals("for")) break;
+                        if (scopeTmp.scopleType .equals( "While")||blockType.equals("For")) break;
                     }
                     scopeTmp=scopeTmp.scopeFather;
                 }
@@ -322,11 +323,13 @@ public class ASTvisitor {
                 }
                 else{
                     if (((selfOperationStatement) item).exp!=null){
-                        System.out.println("in");
+                        //System.out.println("in");
                         ty = visitDotVariableExpression( (dotVariableExpression)(((selfOperationStatement) item).exp),scope);
                     }
                 }
-                System.out.println(ty.typeName);
+                //System.out.println(((selfOperationStatement) item).va.name);
+                //System.out.println(ty.typeName);
+                //System.out.println(ty.arrExp.size());
                 if (!(ty.typeName.equals("Int")&&ty.arrExp.size()==0)) throw new Exception("Illegal selfOperation.");
             }
 
@@ -338,11 +341,12 @@ public class ASTvisitor {
             if (item instanceof dotFunctionStatement){
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
             }
-
+            /*
             if (item instanceof emptyStatement){
+                System.out.println(scope.scopleType);
                 throw new Exception("empty statement.");
-            }
-            System.out.println(scope.name);
+            }*/
+            //System.out.println(scope.name);
 
         }
     }
@@ -454,9 +458,9 @@ public class ASTvisitor {
                 //System.out.println(op.op);
             }
             if (item instanceof variable){
-                System.out.println("--------------------------variable-----------------------------");
-                System.out.println(((variable) item).name);
-                System.out.println(((variable) item).ty.typeName);
+                //System.out.println("--------------------------variable-----------------------------");
+                //System.out.println(((variable) item).name);
+                //System.out.println(((variable) item).ty.typeName);
                 subType = visitExpressionVariable((variable)item,scope);
                 //System.out.println(subType.typeName);
                 globalType = checkException(globalType,subType);
@@ -527,12 +531,12 @@ public class ASTvisitor {
             tmp = va.ty;
         }
         else{
-            System.out.println("be in else");
+            //System.out.println("be in else");
             Scope scopeTmp = scope;
             while (!scopeTmp.scopleType.equals("top")) {
                 //System.out.println("-----------------??-----------------------");
-                System.out.println(scopeTmp.name);
-                System.out.println(scopeTmp.scopleType);
+                //System.out.println(scopeTmp.name);
+                //System.out.println(scopeTmp.scopleType);
                 //System.out.println(scopeTmp.variable.isEmpty());
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
@@ -772,7 +776,8 @@ public class ASTvisitor {
                 tmp.typeName = "Int";
             }
             else {
-                classes = findClass(dotFun.classNameF,scope);
+                if (ty.typeName.equals("String")) dotFun.father = "String";
+                else classes = findClass(dotFun.classNameF,scope);
             }
         }
         if (dotFun.father.equals("subscriptExpression")){
@@ -780,13 +785,13 @@ public class ASTvisitor {
             classes = findClass(ty.typeName,scope);
         }
         if (dotFun.father.equals("StringConstant")||dotFun.father.equals("String")){
-            System.out.println("In?");
-            System.out.println(dotFun.callFunS.functionName);
+            //System.out.println("In?");
+            //System.out.println(dotFun.callFunS.functionName);
             if (dotFun.callFunS.functionName.equals("length")){
                 tmp.typeName = "Int";
             }
             if (dotFun.callFunS.functionName.equals("substring")){
-                System.out.println("In?");
+                //System.out.println("In?");
                 if (dotFun.callFunS.expressionSons.size()==2){
                     if (!visitExpression(dotFun.callFunS.expressionSons.get(0),scope).typeName.equals("Int")||!visitExpression(dotFun.callFunS.expressionSons.get(1),scope).typeName.equals("Int")){
                         throw new Exception("For String function subString, input variable error.");
@@ -862,7 +867,7 @@ public class ASTvisitor {
         type tmp = new type();
         functionScope func = new functionScope();
         //System.out.println(exp.functionName);
-        System.out.println(scope.name);
+        //System.out.println(scope.name);
         func = findFunction(exp.functionName,scope);
         checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
@@ -900,15 +905,23 @@ public class ASTvisitor {
         int i=0;
         for (expression item : list){
             variableType = visitExpression(item,scopeVa);
-            System.out.println("-------------------------------------------");
-            System.out.println(scope.functionName);
+            //System.out.println("-------------------------------------------");
+            //System.out.println(scope.functionName);
             //System.out.println(scope.scopeFather.scopleType);
-            System.out.println(variableType.typeName);
+            //System.out.println(variableType.typeName);
             //System.out.println(i);
-            System.out.println(scope.inputVariable.get(i).typeName);
-            System.out.println("-------------------------------------------");
+            //System.out.println(scope.inputVariable.get(i).typeName);
+            //System.out.println("-------------------------------------------");
             if (!scope.inputVariable.get(i).typeName.equals(variableType.typeName)||scope.inputVariable.get(i).arrExp.size()!=variableType.arrExp.size()){
-                throw new Exception("input variable error.");
+                if (variableType.typeName==null||variableType.typeName.equals("NullConstant")){
+                    //System.out.println(scope.inputVariable.get(i).typeName);
+                    type typeTest = visitExpressionVariable(createVariable(scope.inputVariable.get(i).typeName),scope);
+                    if (typeTest.arrExp.size()==0){
+                        //System.out.println("+++++++++++++"+typeTest.typeName);
+                        findClass(scope.inputVariable.get(i).typeName,scope);
+                    }
+                }
+                else throw new Exception("input variable error.");
             }
             i++;
         }
@@ -929,6 +942,7 @@ public class ASTvisitor {
     }
 
     public void visitIf(ifStatement node, Scope scope,boolean returnNum) throws Exception{
+        //System.out.println("If");
         if (!visitExpression(node.ifcondition,scope).typeName.equals("Bool")) {
             //System.out.println(node.ifcondition.toString());
             /*
@@ -944,7 +958,7 @@ public class ASTvisitor {
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";
         ifScope.scopeFather = scope;
-        System.out.println(node.ifblock.statementSons.size());
+        //System.out.println(node.ifblock.statementSons.size());
         if (node.ifblock.statementSons.isEmpty()) throw new Exception("No if block;");
         visitBlock(node.ifblock,ifScope,"If",returnNum,null);
         Scope elseScope = new Scope();
@@ -956,11 +970,11 @@ public class ASTvisitor {
     public void visitFor(forStatement node, Scope scope, boolean returnNum) throws Exception{
         //System.out.println("visit forStatement.");
         //System.out.println(visitExpression(node.variableCondition,scope).typeName);
-        if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
+        if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
         Scope forScope = new Scope();
         forScope.scopleType = "For";
         forScope.scopeFather = scope;
-        visitBlock(node.forBlock,forScope,"For",returnNum,null);
+        if (node.ifEmptyBlock==false) visitBlock(node.forBlock,forScope,"For",returnNum,null);
     }
 
     public void visitWhile(whileStatement node,Scope scope,boolean returnNum) throws Exception{

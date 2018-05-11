@@ -100,7 +100,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
         //System.out.println("visit DefinitionStatement");
-        //System.out.println(context.getText());
+        System.out.println(context.getText());
         definitionStatement tmp = new definitionStatement();
         type t;
         String na;
@@ -275,14 +275,18 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             tmp.circleVariable = visitAssignStatement(context.assignStatement());
         }
         else {
-            tmp.circleVariable = visitDefinitionStatement(context.definitionStatement());
+            if (context.definitionStatement()!=null) tmp.circleVariable = visitDefinitionStatement(context.definitionStatement());
         }
-        tmp.variableCondition=visitValuebleSingleExpression(context.valuebleSingleExpression(0));
+        if (context.valuebleSingleExpression(0)!=null) tmp.variableCondition=visitValuebleSingleExpression(context.valuebleSingleExpression(0));
+        else tmp.ifEmptyCon = true;
         if (context.valuebleSingleExpression(1)!=null){
             tmp.operateVariable=visitValuebleSingleExpression(context.valuebleSingleExpression(1));
         }
-        else tmp.operateVariable=visitAssignExpression(context.assignExpression());
-        tmp.forBlock=visitBlockStatement(context.blockStatement());
+        else {
+            if (context.assignExpression()!=null) tmp.operateVariable=visitAssignExpression(context.assignExpression());
+        }
+        if (context.blockStatement()!=null) tmp.forBlock=visitBlockStatement(context.blockStatement());
+        else tmp.ifEmptyBlock = true;
         return tmp;
     }
 
@@ -319,8 +323,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         Op op = new Op();
         if (context.Inc()!=null) op.op=context.Inc().toString();
         if (context.Dec()!=null) op.op=context.Dec().toString();
-        if (context.Not()!=null) op.op=context.Not().toString();
-        if (context.Lnot()!=null) op.op=context.Lnot().toString();
+        //if (context.Not()!=null) op.op=context.Not().toString();
+        //if (context.Lnot()!=null) op.op=context.Lnot().toString();
         tmp.op=op;
         //tmp.va.name=context.Identifier().toString();
         if (context.dotVariableExpression()!=null) tmp.exp = visitDotVariableExpression(context.dotVariableExpression());

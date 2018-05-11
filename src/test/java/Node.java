@@ -128,12 +128,16 @@ class forStatement extends statement{
     public expression variableCondition;
     public Node operateVariable;
     public blockDefinition forBlock;
+    public boolean ifEmptyCon;
+    public boolean ifEmptyBlock;
     public forStatement(){
         super();
         circleVariable = new statement();
         variableCondition = new expression();
         operateVariable = new Node();
         forBlock = new blockDefinition();
+        ifEmptyCon = false;
+        ifEmptyBlock = false;
     }
 }
 
