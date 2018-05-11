@@ -243,7 +243,9 @@ public class ASTvisitor {
                 }
                 else {
                     returnNum = true;
-                    if (returnType!=visitExpression(((returnStatement) item).returnExpression,scope));
+                    if (!returnType.typeName.equals(visitExpression(((returnStatement) item).returnExpression,scope))||returnType.arrExp.size()!=visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size()){
+                        throw new Exception("return type error");
+                    }
                 }
             }
 
@@ -262,13 +264,13 @@ public class ASTvisitor {
             if (item instanceof newStatement){
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
-                /*
-                System.out.println("------------------------------------new--------------------------------");
-                System.out.println(ty1.typeName);
-                System.out.println(ty2.typeName);
-                System.out.println(ty1.arr);
-                System.out.println(ty2.arr);
-                */
+
+                //System.out.println("------------------------------------new--------------------------------");
+                //System.out.println(ty1.typeName);
+                //System.out.println(ty2.typeName);
+                //System.out.println(ty1.arr);
+                //System.out.println(ty2.arr);
+
                 if (ty1.typeName==null){
                     if (((newStatement) item).method!=null){
                         if (((newStatement) item).method.equals("subscript")){
@@ -349,6 +351,10 @@ public class ASTvisitor {
             //System.out.println(scope.name);
 
         }
+        if (scope.scopleType.equals("Function")) {
+            scope = (functionScope)scope;
+            if (returnNum==false&&!returnType.typeName.equals("Void")&&!((functionScope) scope).functionName.equals("main")) throw new Exception("No return");
+        }
     }
 
     public void checkDefinition(String name, Scope scope) throws Exception{
@@ -365,9 +371,9 @@ public class ASTvisitor {
     }
 
     public void checkIdentify(String str) throws Exception{
-        //System.out.println("check?");
-        //System.out.println(str);
-        if (str.equals("if")||str.equals("else")||str.equals("for")||str.equals("while")||str.equals("continue")||str.equals("break")||str.equals("return")||str.equals("class")||str.equals("new")||str.equals("this")||str.equals("true")||str.equals("false")||str.equals("bool")||str.equals("int")||str.equals("string")||str.equals("void")||str.equals("null")){
+        System.out.println("check?");
+        System.out.println(str);
+        if (str.equals("if")||str.equals("else")||str.equals("for")||str.equals("while")||str.equals("continue")||str.equals("break")||str.equals("return")||str.equals("class")||str.equals("new")||str.equals("this")||str.equals("true")||str.equals("false")||str.equals("bool")||str.equals("int")||str.equals("string")||str.equals("void")||str.equals("null")||str.equals("")){
             throw new Exception("name illegal");
         }
     }
@@ -968,7 +974,8 @@ public class ASTvisitor {
     }
 
     public void visitFor(forStatement node, Scope scope, boolean returnNum) throws Exception{
-        //System.out.println("visit forStatement.");
+        System.out.println("visit forStatement.");
+        System.out.println(node.ifEmptyCon);
         //System.out.println(visitExpression(node.variableCondition,scope).typeName);
         if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
         Scope forScope = new Scope();

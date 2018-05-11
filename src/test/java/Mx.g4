@@ -47,8 +47,9 @@ blockStatement
 
 statement
     :emptyStatement
-    |definitionStatement
     |newStatement
+    |definitionStatement
+    //|newStatement
     |assignStatement
     |ifStatement
     |forStatement
@@ -85,11 +86,11 @@ statement
         ;
 
     forStatement
-        :For OpenParen (definitionStatement|assignStatement)
+        :For OpenParen (definitionStatement|assignStatement)?
          (valuebleSingleExpression)? Semi
-         (assignExpression | valuebleSingleExpression)
+         (assignExpression | valuebleSingleExpression)?
          CloseParen blockStatement
-         |For OpenParen Semi Semi CloseParen Semi
+         |For OpenParen Semi(valuebleSingleExpression)? Semi (assignExpression | valuebleSingleExpression)? CloseParen (Semi|blockStatement)
         ;
     whileStatement
         :While OpenParen valuebleSingleExpression CloseParen blockStatement
@@ -284,6 +285,7 @@ constant
 
     IntegerConstant
         : DecimalConstant
+        |'-'DecimalConstant
         ;
 
         fragment
