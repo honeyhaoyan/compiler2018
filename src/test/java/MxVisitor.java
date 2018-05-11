@@ -40,6 +40,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassBody(MxParser.ClassBodyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#constructionDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstructionDefinition(MxParser.ConstructionDefinitionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

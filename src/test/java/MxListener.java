@@ -57,6 +57,16 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitClassBody(MxParser.ClassBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxParser#constructionDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstructionDefinition(MxParser.ConstructionDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#constructionDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstructionDefinition(MxParser.ConstructionDefinitionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 */

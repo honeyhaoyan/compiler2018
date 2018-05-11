@@ -45,6 +45,8 @@ class functionDefinition extends Node{
     public functionDefinition(){
         super();
         inputVariableSons = new ArrayList<variable>();
+        returnType = new type();
+        blockSon = new blockDefinition();
     }
 }
 

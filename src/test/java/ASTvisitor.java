@@ -58,7 +58,7 @@ public class ASTvisitor {
     public void visitFunction1(functionDefinition node, Scope scope) throws Exception{
         String functionName = node.functionName;
         checkIdentify(functionName);
-        //System.out.println(functionName);
+        System.out.println(functionName);
         if (scope.name.contains(functionName)) throw new Exception("FunctionName conflicts with names that have already existed.");
         else {
             functionScope tmp = new functionScope();
@@ -72,6 +72,7 @@ public class ASTvisitor {
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
                 scopeTmp = (topScope)scopeTmp;
+                System.out.println(returnName);
                 if (!((topScope) scopeTmp).classes.containsKey(returnName)) throw new Exception("return type error.");
             }
             //System.out.println(functionName);
@@ -110,7 +111,7 @@ public class ASTvisitor {
                 visitVariable(item.variableSon,scope.classes.get(node.selfName));
             }
             for (functionDefinition item : node.functionSons){
-                if (scope.classes.get(node.selfName).name.contains(item.functionName)) throw new Exception("In class, functionName conflicts with names that have already existed.");
+                //if (scope.classes.get(node.selfName).name.contains(item.functionName)) throw new Exception("In class, functionName conflicts with names that have already existed.");
                 visitFunction1(item,scope.classes.get(node.selfName));
             }
         }
@@ -253,8 +254,19 @@ public class ASTvisitor {
                     System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size());
                     System.out.println(returnType2.typeName);
                     System.out.println(returnType2.arrExp.size());
+                    String nameRequire = returnType2.typeName;
+                    String nameProvide = visitExpression(((returnStatement) item).returnExpression,scope).typeName;
+                    int numRequire = returnType2.arrExp.size();
+                    int numProvide = visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size();
+                    /*
                     if (!returnType2.typeName.equals(visitExpression(((returnStatement) item).returnExpression,scope).typeName)||returnType2.arrExp.size()!=visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size()){
-                        if (!((functionScope) scopeTmp).functionName.equals("main")) throw new Exception("return type error");
+                        if (!((functionScope) scopeTmp).functionName.equals("main")||) throw new Exception("return type error");
+                    }*/
+                    if (!nameRequire.equals(nameProvide)||numRequire!=numProvide){
+                        if (nameProvide==null){
+                            if (nameRequire.equals("Int")||nameRequire.equals("Bool")) throw new Exception("return type error");
+                        }
+                        else throw new Exception("return type error");
                     }
                 }
             }
@@ -372,16 +384,18 @@ public class ASTvisitor {
     }
 
     public void checkDefinition(String name, Scope scope) throws Exception{
+        /*
         Scope scopeTmp = scope;
         while (!scopeTmp.scopleType.equals("top")) {
-            if (scopeTmp.name.contains(name)){
+            if (scopeTmp.variable.containsKey(name)){
                 throw new Exception("definition error.");
             }
             scopeTmp = scopeTmp.scopeFather;
         }
-        if (scopeTmp.name.contains(name)){
+        if (scopeTmp.variable.containsKey(name)||scope.function.containsKey(name)){
             throw new Exception("definition error.");
-        }
+        }*/
+        if (scope.variable.containsKey(name)) throw new Exception("definition error.");
     }
 
     public void checkIdentify(String str) throws Exception{

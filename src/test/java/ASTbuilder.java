@@ -6,6 +6,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         Program tmp = new Program();
         System.out.println("new program");
         int i=0;
+        System.out.println(context.programItem().size());
         for (ParseTree item : context.programItem()){
             if (context.programItem(i).classDefinition()!=null){
                 System.out.println("program class");
@@ -50,6 +51,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         for (ParseTree item : context.classBody().functionDefinition()){
             functionDefinition functionNode = (functionDefinition) visit(item);
+            tmp.functionSons.add(functionNode);
+        }
+        for (ParseTree item : context.classBody().constructionDefinition()){
+            functionDefinition functionNode = (functionDefinition)visit(item);
             tmp.functionSons.add(functionNode);
         }
         return tmp;
@@ -100,7 +105,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public definitionStatement visitDefinitionStatement(MxParser.DefinitionStatementContext context){
         //System.out.println("visit DefinitionStatement");
-        System.out.println(context.getText());
+        //System.out.println(context.getText());
         definitionStatement tmp = new definitionStatement();
         type t;
         String na;
@@ -669,7 +674,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             if (context.primaryType().Int() != null) {
                 t.typeName = "Int";
-                System.out.println(t.typeName);
+                //System.out.println(t.typeName);
             }
             if (context.primaryType().String() != null) {
                 t.typeName = "String";
@@ -714,6 +719,26 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public type visitNewExpression(MxParser.NewExpressionContext context){
         type tmp = new type();
         if (context.Identifier()!=null) tmp.typeName = context.Identifier().toString();
+        return tmp;
+    }
+
+    @Override public functionDefinition visitConstructionDefinition(MxParser.ConstructionDefinitionContext context){
+        functionDefinition tmp = new functionDefinition();
+        String functionName;
+        functionName = context.className().Identifier().toString();
+        tmp.functionName=functionName;
+        tmp.returnType.typeName = context.className().Identifier().toString();
+        if (context.definitionExpression()!=null){
+            int i=0;
+            while(context.definitionExpression(i)!=null){
+                //variable inputNode = (variable)visit(item);
+                variable inputNode = new variable();
+                inputNode = visitDefinitionExpression(context.definitionExpression(i));
+                tmp.inputVariableSons.add(inputNode);
+                i++;
+            }
+        }
+        tmp.blockSon=(blockDefinition)visit(context.blockStatement());
         return tmp;
     }
 
