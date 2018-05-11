@@ -131,7 +131,7 @@ valuebleSingleExpression
     |valuebleSingleExpression (Inc|Dec)
     |(Not | Lnot) valuebleSingleExpression
     |valuebleSingleExpression (Mul|Div) valuebleSingleExpression
-    |Div valuebleSingleExpression
+    |Sub valuebleSingleExpression
     |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
     //|valuebleSingleExpression (Mul|Div) valuebleSingleExpression
     |valuebleSingleExpression (Lshift | Rshift) valuebleSingleExpression
