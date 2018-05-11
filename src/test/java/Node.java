@@ -300,11 +300,13 @@ class dotFunctionExpression extends dotExpression{
     String constantStr;
 
     callFunctionExpression callFunS;
+    List<callFunctionExpression>callFun;
 
     dotFunctionExpression(){
         super();
         subscript = new subscriptExpression();
         callFunF = new callFunctionExpression();
+        callFun = new ArrayList<callFunctionExpression>();
         callFunS = new callFunctionExpression();
     }
 

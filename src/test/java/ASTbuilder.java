@@ -562,26 +562,43 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.className()!=null){
             tmp.father = "className";
             tmp.classNameF = context.className().Identifier().toString();
-            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
+            for (ParseTree item : context.callFunctionExpression()){
+                tmp.callFun.add((callFunctionExpression) visit(item));
+            }
+            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
         }
         if (context.subscriptExpression()!=null){
             tmp.father = "subscriptExpression";
             tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
-            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
+            for (ParseTree item : context.callFunctionExpression()){
+                tmp.callFun.add((callFunctionExpression) visit(item));
+            }
+            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
         }
         if (context.StringConstant()!=null){
             tmp.father  = "StringConstant";
             tmp.constantStr = context.StringConstant().toString();
-            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
+            for (ParseTree item : context.callFunctionExpression()){
+                tmp.callFun.add((callFunctionExpression) visit(item));
+            }
+            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
         }
         if (context.callFunctionExpression(1)!=null){
             tmp.father = "callFunctionExpression";
             tmp.callFunF = visitCallFunctionExpression(context.callFunctionExpression(0));
-            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(1));
+            int i=0;
+            for (ParseTree item : context.callFunctionExpression()){
+                if (i>0) tmp.callFun.add((callFunctionExpression) visit(item));
+                i++;
+            }
+            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(1));
         }
         if (context.This()!=null){
             tmp.father = "this";
-            tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
+            for (ParseTree item : context.callFunctionExpression()){
+                tmp.callFun.add((callFunctionExpression) visit(item));
+            }
+            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
         }
         return tmp;
     }
