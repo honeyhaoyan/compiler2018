@@ -46,8 +46,8 @@ blockStatement
     ;
 
 statement
-    :emptyStatement
-    |newStatement
+    //:emptyStatement
+    :newStatement
     |definitionStatement
     //|newStatement
     |assignStatement
@@ -61,6 +61,7 @@ statement
     |callFunctionStatement
     |dotFunctionStatement
     |valuebleSingleExpression Semi
+    |emptyStatement
     ;
 
     emptyStatement
@@ -130,6 +131,7 @@ valuebleSingleExpression
     |valuebleSingleExpression (Inc|Dec)
     |(Not | Lnot) valuebleSingleExpression
     |valuebleSingleExpression (Mul|Div) valuebleSingleExpression
+    |Div valuebleSingleExpression
     |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
     //|valuebleSingleExpression (Mul|Div) valuebleSingleExpression
     |valuebleSingleExpression (Lshift | Rshift) valuebleSingleExpression
@@ -285,7 +287,7 @@ constant
 
     IntegerConstant
         : DecimalConstant
-        |'-'DecimalConstant
+        //DecimalConstant
         ;
 
         fragment

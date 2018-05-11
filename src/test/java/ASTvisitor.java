@@ -117,7 +117,7 @@ public class ASTvisitor {
     }
 
     public void visitFunction2(functionDefinition node,Scope scope) throws Exception{
-        //System.out.println("-----------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
         if (scope.function.containsKey(node.functionName)){
             visitBlock(node.blockSon,scope.function.get(node.functionName),"Function",false,node.returnType);
         //System.out.println("WHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -237,14 +237,24 @@ public class ASTvisitor {
             }
 
             if (item instanceof returnStatement){
-                //System.out.println("visit return statement.");
+                System.out.println("visit return statement.");
+                //System.out.println(((functionScope) scope).functionName);
                 if (returnNum == true){
                     throw new Exception("In function, more than one return.");
                 }
                 else {
                     returnNum = true;
-                    if (!returnType.typeName.equals(visitExpression(((returnStatement) item).returnExpression,scope))||returnType.arrExp.size()!=visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size()){
-                        throw new Exception("return type error");
+                    Scope scopeTmp = scope;
+                    while (!scopeTmp.scopleType.equals("Function")) scopeTmp = scopeTmp.scopeFather;
+                    scopeTmp = (functionScope)scopeTmp;
+                    type returnType2 = ((functionScope) scopeTmp).returnType;
+                    System.out.println(((functionScope) scopeTmp).functionName);
+                    System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).typeName);
+                    System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size());
+                    System.out.println(returnType2.typeName);
+                    System.out.println(returnType2.arrExp.size());
+                    if (!returnType2.typeName.equals(visitExpression(((returnStatement) item).returnExpression,scope).typeName)||returnType2.arrExp.size()!=visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size()){
+                        if (!((functionScope) scopeTmp).functionName.equals("main")) throw new Exception("return type error");
                     }
                 }
             }
