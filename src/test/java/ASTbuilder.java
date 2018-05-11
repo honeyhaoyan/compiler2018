@@ -455,6 +455,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             callFunc = visitCallFunctionExpression(context.callFunctionExpression());
             tmp.addSon(callFunc);
         }
+        if (context.newExpression()!=null){
+            type ty = new type();
+            ty = visitNewExpression(context.newExpression());
+            tmp.addSon(ty);
+        }
         return tmp;
     }
 
@@ -705,6 +710,13 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         return t;
     }
+
+    @Override public type visitNewExpression(MxParser.NewExpressionContext context){
+        type tmp = new type();
+        if (context.Identifier()!=null) tmp.typeName = context.Identifier().toString();
+        return tmp;
+    }
+
 
 }
 

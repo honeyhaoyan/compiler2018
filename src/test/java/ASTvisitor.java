@@ -622,6 +622,7 @@ public class ASTvisitor {
                 tmp = visitSubsciptionExpression(sub,scope);
             }
         }
+        System.out.println(tmp.typeName);
         return tmp;
     }
 

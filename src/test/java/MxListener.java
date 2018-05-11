@@ -237,6 +237,16 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxParser#newExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewExpression(MxParser.NewExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#newExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewExpression(MxParser.NewExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#variableTypeExpression}.
 	 * @param ctx the parse tree
 	 */

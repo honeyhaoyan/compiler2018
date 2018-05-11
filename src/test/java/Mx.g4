@@ -144,10 +144,14 @@ valuebleSingleExpression
     |valuebleSingleExpression Lor valuebleSingleExpression
     |callFunctionExpression
     |OpenParen valuebleSingleExpression CloseParen
-    |New Identifier (OpenParen CloseParen)?
+    |newExpression
+
     //|newExpression
     ;
 
+    newExpression
+        :New Identifier (OpenParen CloseParen)?
+        ;
     variableTypeExpression
         :variableNormalTypeExpression
         |variableArrayTypeExpression

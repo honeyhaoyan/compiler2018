@@ -148,6 +148,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#newExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNewExpression(MxParser.NewExpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#variableTypeExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
