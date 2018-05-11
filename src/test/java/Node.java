@@ -65,10 +65,12 @@ class statement extends Node{
 
 class type extends Node{
     public String typeName;
-    List<String>arr;
+    //List<String>arr;
+    List<expression>arrExp;
     type(){
         super();
-        arr=new ArrayList<>();
+        //arr=new ArrayList<>();
+        arrExp = new ArrayList<expression>();
     }
 }
 
@@ -304,11 +306,13 @@ class dotFunctionExpression extends dotExpression{
 
 class subscriptExpression extends expression{
     variable father;
-    expression son;
+    //expression son;
+    List<expression>Son;
     subscriptExpression(){
         super();
         father = new variable();
-        son = new expression();
+        //son = new expression();
+        Son = new ArrayList<expression>();
     }
 }
 

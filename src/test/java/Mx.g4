@@ -150,9 +150,7 @@ valuebleSingleExpression
             :(primaryType|Identifier)
             ;
         variableArrayTypeExpression
-            //:(className | primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
-            :(primaryType|Identifier) ((OpenBlacket (IntegerConstant|Identifier)? CloseBlacket )*)?
-            //:(primaryType) ((OpenBlacket (IntegerConstant)? CloseBlacket )*)?
+            :(primaryType|Identifier) ((OpenBlacket (valuebleSingleExpression)? CloseBlacket )*)?
             ;
 
     dotExpression
@@ -176,7 +174,7 @@ valuebleSingleExpression
                 ;
 
     subscriptExpression
-        :className OpenBlacket (valuebleSingleExpression) CloseBlacket
+        :className (OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         ;
 
     callFunctionExpression

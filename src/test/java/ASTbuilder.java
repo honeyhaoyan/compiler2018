@@ -89,8 +89,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             na = context.definitionArrayExpression().Identifier().toString();
         }
         tmp.ty.typeName=t.typeName;
-        for(String p : t.arr){
-            tmp.ty.arr.add(p);
+        for(expression p : t.arrExp){
+            tmp.ty.arrExp.add(p);
         }
         tmp.name=na;
         //System.out.println(na);
@@ -122,8 +122,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         tmp.variableSon.ty.typeName=t.typeName;
         //System.out.println(tmp.variableSon.ty.typeName);
-        for(String p : t.arr){
-            tmp.variableSon.ty.arr.add(p);
+        for(expression p : t.arrExp){
+            tmp.variableSon.ty.arrExp.add(p);
         }
         tmp.variableSon.name=na;
         //System.out.println(na);
@@ -456,12 +456,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public subscriptExpression visitSubscriptExpression(MxParser.SubscriptExpressionContext context) {
         subscriptExpression tmp = new subscriptExpression();
-        //tmp.father=(variable)visit(context.className());
-        //System.out.println(context.className().Identifier().toString());
         tmp.father.name = context.className().Identifier().toString();
-        //System.out.println("visit build subscript.");
-        //System.out.println(tmp.father.name);
-        tmp.son=(expression) visit(context.valuebleSingleExpression());
+        //tmp.son=(expression) visit(context.valuebleSingleExpression());
+        if (context.valuebleSingleExpression(0)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
+        if (context.valuebleSingleExpression(1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
         return tmp;
     }
 
@@ -675,21 +673,31 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.Identifier()!=null){
            // t.typeName = context.Identifier().toString();
             //System.out.println(context.Identifier().toString());
-            if (context.Identifier(0)!=null) t.typeName = context.Identifier(0).toString();
+            t.typeName = context.Identifier().toString();
             //System.out.println(t.typeName);
         }
 
         if (context.CloseBlacket(0) != null) {
+            /*
             if (context.IntegerConstant(0) != null) {
                 t.arr.add(context.IntegerConstant(0).toString());
             }
             else t.arr.add("0");
+            */
+            if (context.valuebleSingleExpression(0)!=null){
+                t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
+            }
         }
         if (context.CloseBlacket(1) != null) {
+            /*
             if (context.IntegerConstant(1) != null) {
                 t.arr.add(context.IntegerConstant(1).toString());
             }
             else t.arr.add("0");
+            */
+            if (context.valuebleSingleExpression(1)!=null){
+                t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
+            }
         }
         return t;
     }
