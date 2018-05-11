@@ -574,6 +574,7 @@ public class ASTvisitor {
                 //System.out.println(scopeTmp.variable.isEmpty());
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
+                    return tmp;
                     //System.out.println("----------------------------------------");
                     //System.out.println(tmp.typeName);
                 }
