@@ -351,7 +351,10 @@ public class ASTvisitor {
             }
 
             if (item instanceof dotFunctionStatement){
+                System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::");
+                System.out.println(((functionScope) scope).functionName);
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
+                System.out.println(((functionScope) scope).functionName);
             }
             /*
             if (item instanceof emptyStatement){
@@ -360,11 +363,12 @@ public class ASTvisitor {
             }*/
             //System.out.println(scope.name);
 
-        }
+        }/*
         if (scope.scopleType.equals("Function")) {
             scope = (functionScope)scope;
+            System.out.println(((functionScope) scope).functionName);
             if (returnNum==false&&!returnType.typeName.equals("Void")&&!((functionScope) scope).functionName.equals("main")) throw new Exception("No return");
-        }
+        }*/
     }
 
     public void checkDefinition(String name, Scope scope) throws Exception{
@@ -381,8 +385,8 @@ public class ASTvisitor {
     }
 
     public void checkIdentify(String str) throws Exception{
-        System.out.println("check?");
-        System.out.println(str);
+        //System.out.println("check?");
+        //System.out.println(str);
         if (str.equals("if")||str.equals("else")||str.equals("for")||str.equals("while")||str.equals("continue")||str.equals("break")||str.equals("return")||str.equals("class")||str.equals("new")||str.equals("this")||str.equals("true")||str.equals("false")||str.equals("bool")||str.equals("int")||str.equals("string")||str.equals("void")||str.equals("null")||str.equals("")){
             throw new Exception("name illegal");
         }
