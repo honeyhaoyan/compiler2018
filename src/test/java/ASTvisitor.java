@@ -736,8 +736,12 @@ public class ASTvisitor {
         }
         else{fatherName = getDotFatherVa(dotVa,scope);
             System.out.println(fatherName);
-            if (!visitExpressionVariable(createVariable(fatherName),scope).typeName.equals("String")) scopeTmp = findClass(fatherName,scope);
-            else scopeTmp = (classScope) scope;
+            if (visitExpressionVariable(createVariable(fatherName),scope).typeName!=null){
+                if (visitExpressionVariable(createVariable(fatherName),scope).typeName.equals("String")) scopeTmp = (classScope) scope;
+                else scopeTmp = findClass(fatherName,scope);
+            }
+            else scopeTmp = findClass(fatherName,scope);
+
         }
 
         if (son.equals("dotVariableExpression")){
@@ -1006,7 +1010,7 @@ public class ASTvisitor {
         tmp = scope;
         boolean flag = false;
         //System.out.println(tmp.scopleType);
-        scope = (classScope) scope;
+        //scope = (classScope) scope;
         //System.out.println(((classScope) scope).className);
         while (!tmp.scopleType.equals("top")){
             System.out.println(tmp.scopleType);
