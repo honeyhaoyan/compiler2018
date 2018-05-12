@@ -175,6 +175,9 @@ public class ASTvisitor {
 
             if (item instanceof definitionStatement){
                 variable va = new variable();
+                if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
+                    type ty = visitExpression(((definitionStatement) item).exp,scope);
+                }
                 va = ((definitionStatement) item).variableSon;
                 type Ty = new type();
                 Ty = visitExpressionVariable(va,scope);
@@ -762,7 +765,7 @@ public class ASTvisitor {
     }
 
     public type visitDotFunctionExpression(dotFunctionExpression dotFun, Scope scope)throws Exception {
-        System.out.println("visitDotFunctionExpression");
+        //System.out.println("visitDotFunctionExpression");
             type tmp = new type();
             type ty = new type();
             classScope classes = new classScope();
@@ -960,9 +963,9 @@ public class ASTvisitor {
             variableType = visitExpression(item,scopeVa);
             System.out.println("-------------------------------------------");
             System.out.println(scope.functionName);
-            //System.out.println(scope.scopeFather.scopleType);
+            System.out.println(scope.scopeFather.scopleType);
             System.out.println(variableType.typeName);
-            //System.out.println(i);
+            System.out.println(i);
             System.out.println(scope.inputVariable.get(i).typeName);
             System.out.println("-------------------------------------------");
             if (!scope.inputVariable.get(i).typeName.equals(variableType.typeName)||scope.inputVariable.get(i).arrExp.size()!=variableType.arrExp.size()){
