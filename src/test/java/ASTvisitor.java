@@ -155,7 +155,7 @@ public class ASTvisitor {
             //System.out.println(item.toString());
             if (item instanceof blockDefinition){
                 //statementFlag = true;
-                System.out.println("in block");
+                //System.out.println("in block");
                 Scope scopeBlock = new Scope();
                 scopeBlock.scopeFather = scope;
                 scopeBlock.scopleType = "Block";
@@ -253,7 +253,7 @@ public class ASTvisitor {
                     //System.out.println(scopeTmp.scopleType);
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal break");
                     else {
-                        if (scopeTmp.scopleType .equals( "While")||blockType.equals("For")) break;
+                        if (scopeTmp.scopleType .equals( "While")||scopeTmp.scopleType.equals("For")) break;
                     }
                     scopeTmp=scopeTmp.scopeFather;
                 }
@@ -297,7 +297,7 @@ public class ASTvisitor {
 
             if (item instanceof continueStatement){
                 //statementFlag = true;
-                System.out.println("continue");
+                //System.out.println("continue");
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal continue");
@@ -319,7 +319,7 @@ public class ASTvisitor {
                 //System.out.println(ty2.typeName);
                 //System.out.println(ty1.arr);
                 //System.out.println(ty2.arr);
-                System.out.println(ty2.typeName);
+                //System.out.println(ty2.typeName);
                 if (ty2.typeName.equals("Void")) throw new Exception("new void");
                 if (ty1.typeName==null){
                     if (((newStatement) item).method!=null){
@@ -405,7 +405,7 @@ public class ASTvisitor {
                 if (((emptyStatement) item).islegal==false) throw new Exception("new void");
             }
 
-            if (item instanceof illegal) throw new Exception("illegal statement");
+            //if (item instanceof illegal) throw new Exception("illegal statement");
             //if (statementFlag == false) throw new Exception("illegal statement");
             //System.out.println(scope.name);
 
@@ -441,7 +441,7 @@ public class ASTvisitor {
     }
 
     public classScope findClass(String className, Scope scope) throws Exception{
-        System.out.println(className);
+        //System.out.println(className);
         Scope scopeTmp = new Scope();
         scopeTmp = scope;
         while (!scopeTmp.scopleType.equals("top")) {
@@ -567,9 +567,9 @@ public class ASTvisitor {
                 //System.out.println(op.op);
             }
             if (item instanceof variable){
-                System.out.println("--------------------------variable-----------------------------");
-                System.out.println(((variable) item).name);
-                System.out.println(((variable) item).ty.typeName);
+                //System.out.println("--------------------------variable-----------------------------");
+                //System.out.println(((variable) item).name);
+                //System.out.println(((variable) item).ty.typeName);
                 subType = visitExpressionVariable((variable)item,scope);
                 //System.out.println(subType.typeName);
                 globalType = checkException(globalType,subType);
@@ -890,7 +890,7 @@ public class ASTvisitor {
                     tmp = classes.function.get(dotFun.callFunS.functionName).returnType;
             }
             else if (scopeTmp.scopleType != null&&dotFun.son.equals("callFunctionExpression")) {
-                System.out.println(dotFun.callFunS.functionName);
+               // System.out.println(dotFun.callFunS.functionName);
                 if (!scopeTmp.function.containsKey(dotFun.callFunS.functionName))
                     throw new Exception("In top, no such function.");
                 else
@@ -991,13 +991,13 @@ public class ASTvisitor {
         int i=0;
         for (expression item : list){
             variableType = visitExpression(item,scopeVa);
-            System.out.println("-------------------------------------------");
+           /* System.out.println("-------------------------------------------");
             System.out.println(scope.functionName);
             System.out.println(scope.scopeFather.scopleType);
             System.out.println(variableType.typeName);
             System.out.println(i);
             System.out.println(scope.inputVariable.get(i).typeName);
-            System.out.println("-------------------------------------------");
+            System.out.println("-------------------------------------------");*/
             if (!scope.inputVariable.get(i).typeName.equals(variableType.typeName)||scope.inputVariable.get(i).arrExp.size()!=variableType.arrExp.size()){
                 if (variableType.typeName==null||variableType.typeName.equals("NullConstant")){
                     //System.out.println(scope.inputVariable.get(i).typeName);
@@ -1044,6 +1044,7 @@ public class ASTvisitor {
         Scope ifScope = new Scope();
         ifScope.scopleType = "If";
         ifScope.scopeFather = scope;
+        System.out.println(scope.scopleType);
         //System.out.println(node.ifblock.statementSons.size());
         if (node.ifblock.statementSons.isEmpty()) throw new Exception("No if block;");
         visitBlock(node.ifblock,ifScope,"If",returnNum,null);
