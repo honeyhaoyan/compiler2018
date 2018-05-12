@@ -69,7 +69,7 @@ public class ASTvisitor {
             tmp.functionName = functionName;
             tmp.name.add(tmp.functionName);
             tmp.returnType = node.returnType;
-            if (!tmp.returnType.typeName.equals("Int")&&!tmp.returnType.typeName.equals("String")&&!tmp.returnType.typeName.equals("Void")){
+            if (!tmp.returnType.typeName.equals("Int")&&!tmp.returnType.typeName.equals("String")&&!tmp.returnType.typeName.equals("Void")&&!tmp.returnType.typeName.equals("Bool")){
                 String returnName = tmp.returnType.typeName;
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
@@ -160,8 +160,10 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arrExp.size());
+                System.out.println(ty2.arrExp.size());
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
                         if (ty1.arrExp.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
@@ -869,9 +871,10 @@ public class ASTvisitor {
             if (!visitExpression(item,scope).typeName.equals("Int")) throw new Exception("subscriptExpression index error.");
         }
         tmp.typeName = t.typeName;
+        int num=subExp.Son.size();
         int i=0;
         for (expression item : t.arrExp){
-            if (i!=0) tmp.arrExp.add(t.arrExp.get(i));
+            if (i>num-1) tmp.arrExp.add(t.arrExp.get(i));
             i++;
         }
         return tmp;
