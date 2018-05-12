@@ -51,8 +51,8 @@ public class ASTvisitor {
             tmp.className = className;
             scope.classes.put(className,tmp);
             scope.name.add(className);
-            System.out.println(tmp.className);
-            System.out.println(tmp.scopeFather.scopleType);
+            //System.out.println(tmp.className);
+            //System.out.println(tmp.scopeFather.scopleType);
             //scope.scopleType="class";
         }
     }
@@ -60,7 +60,7 @@ public class ASTvisitor {
     public void visitFunction1(functionDefinition node, Scope scope) throws Exception{
         String functionName = node.functionName;
         checkIdentify(functionName);
-        System.out.println(functionName);
+        //System.out.println(functionName);
         if (scope.name.contains(functionName)) throw new Exception("FunctionName conflicts with names that have already existed.");
         else {
             functionScope tmp = new functionScope();
@@ -74,7 +74,7 @@ public class ASTvisitor {
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
                 scopeTmp = (topScope)scopeTmp;
-                System.out.println(returnName);
+                //System.out.println(returnName);
                 if (!((topScope) scopeTmp).classes.containsKey(returnName)) throw new Exception("return type error.");
             }
             //System.out.println(functionName);
@@ -120,7 +120,7 @@ public class ASTvisitor {
     }
 
     public void visitFunction2(functionDefinition node,Scope scope) throws Exception{
-        System.out.println("-----------------------------------------------------------");
+        //System.out.println("-----------------------------------------------------------");
         if (scope.function.containsKey(node.functionName)){
             visitBlock(node.blockSon,scope.function.get(node.functionName),"Function",false,node.returnType);
         //System.out.println("WHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -160,7 +160,7 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                System.out.println(ty1.typeName);
+                //System.out.println(ty1.typeName);
                 //System.out.println(ty2.typeName);
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
@@ -229,7 +229,7 @@ public class ASTvisitor {
             if (item instanceof breakStatement){
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
-                    System.out.println(scopeTmp.scopleType);
+                    //System.out.println(scopeTmp.scopleType);
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal break");
                     else {
                         if (scopeTmp.scopleType .equals( "While")||blockType.equals("For")) break;
@@ -240,7 +240,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof returnStatement){
-                System.out.println("visit return statement.");
+                //System.out.println("visit return statement.");
                 //System.out.println(((functionScope) scope).functionName);
                 if (returnNum == true){
                     throw new Exception("In function, more than one return.");
@@ -251,11 +251,11 @@ public class ASTvisitor {
                     while (!scopeTmp.scopleType.equals("Function")) scopeTmp = scopeTmp.scopeFather;
                     scopeTmp = (functionScope)scopeTmp;
                     type returnType2 = ((functionScope) scopeTmp).returnType;
-                    System.out.println(((functionScope) scopeTmp).functionName);
-                    System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).typeName);
-                    System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size());
-                    System.out.println(returnType2.typeName);
-                    System.out.println(returnType2.arrExp.size());
+                    //System.out.println(((functionScope) scopeTmp).functionName);
+                    //System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).typeName);
+                    //System.out.println(visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size());
+                    //System.out.println(returnType2.typeName);
+                    //System.out.println(returnType2.arrExp.size());
                     String nameRequire = returnType2.typeName;
                     String nameProvide = visitExpression(((returnStatement) item).returnExpression,scope).typeName;
                     int numRequire = returnType2.arrExp.size();
@@ -365,10 +365,10 @@ public class ASTvisitor {
             }
 
             if (item instanceof dotFunctionStatement){
-                System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::");
-                System.out.println(((functionScope) scope).functionName);
+                //System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::");
+                //System.out.println(((functionScope) scope).functionName);
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
-                System.out.println(((functionScope) scope).functionName);
+                //System.out.println(((functionScope) scope).functionName);
             }
             /*
             if (item instanceof emptyStatement){
@@ -472,9 +472,9 @@ public class ASTvisitor {
         scope.function.put(toString.functionName,toString);
 
         functionScope length = new functionScope();
-        toString.functionName = "length";
-        toString.returnType.typeName = "Int";
-        toString.scopeFather = scope;
+        length.functionName = "length";
+        length.returnType.typeName = "Int";
+        length.scopeFather = scope;
         scope.function.put(length.functionName,length);
 
         functionScope substring = new functionScope();
@@ -488,7 +488,7 @@ public class ASTvisitor {
         substring.returnType.typeName = "String";
         substring.scopeFather = scope;
         scope.function.put(substring.functionName,substring);
-        System.out.println("::::::::::::::::::::::::::::::::"+scope.scopleType);
+        //System.out.println("::::::::::::::::::::::::::::::::"+scope.scopleType);
 
         functionScope parserInt = new functionScope();
         parserInt.functionName = "parserInt";
@@ -600,7 +600,7 @@ public class ASTvisitor {
         else{
             Scope scopeTmp = scope;
             while (!scopeTmp.scopleType.equals("top")) {
-                System.out.println(scopeTmp.name);
+                //System.out.println(scopeTmp.name);
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
                     return tmp;
@@ -608,9 +608,9 @@ public class ASTvisitor {
                 }
                 scopeTmp = scopeTmp.scopeFather;
             }
-            System.out.println(scopeTmp.name);
+            //System.out.println(scopeTmp.name);
             if (scopeTmp.variable.containsKey(va.name)){
-                System.out.println(tmp.arrExp.size());
+                //System.out.println(tmp.arrExp.size());
                 tmp = scopeTmp.variable.get(va.name).ty;
 
             }
@@ -662,7 +662,7 @@ public class ASTvisitor {
                 tmp = visitSubsciptionExpression(sub,scope);
             }
         }
-        System.out.println(tmp.typeName);
+        //System.out.println(tmp.typeName);
         return tmp;
     }
 
@@ -682,7 +682,7 @@ public class ASTvisitor {
             scopeTmp = (classScope) scopeJump;
         }
         else{fatherName = getDotFatherVa(dotVa,scope);
-            System.out.println(fatherName);
+            //System.out.println(fatherName);
             if (visitExpressionVariable(createVariable(fatherName),scope).typeName!=null){
                 if (visitExpressionVariable(createVariable(fatherName),scope).typeName.equals("String")) scopeTmp = (classScope) scope;
                 else scopeTmp = findClass(fatherName,scope);
@@ -858,10 +858,10 @@ public class ASTvisitor {
         variable va = new variable();
         va = subExp.father;
         type t = new type();
-        System.out.println(va.name);
+        //System.out.println(va.name);
         if (va.ty.arrExp.isEmpty()) {
             t = visitExpressionVariable(va,scope);
-            System.out.println(t.typeName);
+            //System.out.println(t.typeName);
             if (t.arrExp.isEmpty()) throw new Exception("subscriptExpression error");
         }
         //if (!visitExpression(subExp.son,scope).typeName.equals("Int")) throw new Exception("subscriptExpression index error.");
@@ -884,6 +884,10 @@ public class ASTvisitor {
         //System.out.println(exp.functionName);
         //System.out.println(scope.name);
         func = findFunction(exp.functionName,scope);
+        System.out.println("==================================");
+        System.out.println(func.returnType.typeName);
+        System.out.println(func.functionName);
+        System.out.println(":::::::::::::::::::::::::::::::::::");
         checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
         return tmp;
@@ -907,12 +911,12 @@ public class ASTvisitor {
             tmp = tmp.scopeFather;
             //System.out.println(tmp.scopleType);
         }
-        System.out.println(tmp.scopleType);
+        //System.out.println(tmp.scopleType);
         if (flag == false){
             if (tmp.function.containsKey(functionName)){func = tmp.function.get(functionName);flag=true;}
         }
-        System.out.println(tmp.function.keySet());
-        System.out.println(functionName);
+        //System.out.println(tmp.function.keySet());
+        //System.out.println(functionName);
         if (flag == false) throw new Exception("No such function.");
         //System.out.println(func.functionName);
         return func;
@@ -926,13 +930,13 @@ public class ASTvisitor {
         int i=0;
         for (expression item : list){
             variableType = visitExpression(item,scopeVa);
-            //System.out.println("-------------------------------------------");
-            //System.out.println(scope.functionName);
+            System.out.println("-------------------------------------------");
+            System.out.println(scope.functionName);
             //System.out.println(scope.scopeFather.scopleType);
-            //System.out.println(variableType.typeName);
+            System.out.println(variableType.typeName);
             //System.out.println(i);
-            //System.out.println(scope.inputVariable.get(i).typeName);
-            //System.out.println("-------------------------------------------");
+            System.out.println(scope.inputVariable.get(i).typeName);
+            System.out.println("-------------------------------------------");
             if (!scope.inputVariable.get(i).typeName.equals(variableType.typeName)||scope.inputVariable.get(i).arrExp.size()!=variableType.arrExp.size()){
                 if (variableType.typeName==null||variableType.typeName.equals("NullConstant")){
                     //System.out.println(scope.inputVariable.get(i).typeName);
@@ -989,8 +993,8 @@ public class ASTvisitor {
     }
 
     public void visitFor(forStatement node, Scope scope, boolean returnNum) throws Exception{
-        System.out.println("visit forStatement.");
-        System.out.println(node.ifEmptyCon);
+        //System.out.println("visit forStatement.");
+        //System.out.println(node.ifEmptyCon);
         //System.out.println(visitExpression(node.variableCondition,scope).typeName);
         if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
         Scope forScope = new Scope();
