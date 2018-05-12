@@ -626,7 +626,7 @@ public class ASTvisitor {
                 flag = true;
             }
         }
-        if (flag==false) throw new Exception("variable no definition");
+        //if (flag==false) throw new Exception("variable no definition");
         return tmp;
     }
 
