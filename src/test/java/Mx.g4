@@ -178,7 +178,7 @@ valuebleSingleExpression
             //:className Dot className
             ;
         dotFunctionExpression
-            :(className|subscriptExpression|StringConstant|callFunctionExpression|This) Dot (callFunctionExpression)*
+            :(className|subscriptExpression|StringConstant|callFunctionExpression|This) Dot (dotFunctionExpression|callFunctionExpression)
             //|StringConstant Dot callFunctionExpression
             //|subscriptExpression Dot callFunctionExpression
             ;

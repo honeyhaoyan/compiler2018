@@ -266,8 +266,9 @@ class dotVariableExpression extends dotExpression{
     callFunctionExpression callFun;
 
     String classNameS;
-    // dotVariableExpression dotVa;
+     //dotVariableExpression dotVa;
     //dotFunctionExpression dotFun;
+    //dotVariableExpression dotVariable;
     dotExpression dotEx;
     dotVariableExpression (){
         super();
@@ -276,6 +277,7 @@ class dotVariableExpression extends dotExpression{
         //dotVa = new dotVariableExpression();
         //dotFun = new dotFunctionExpression();
         dotEx = new dotExpression();
+
     }
 }
 
@@ -293,6 +295,7 @@ class dotFunctionExpression extends dotExpression{
         //son = new expression();
     }*/
     String father;
+    String son;
 
     String classNameF;
     subscriptExpression subscript;
@@ -300,14 +303,16 @@ class dotFunctionExpression extends dotExpression{
     String constantStr;
 
     callFunctionExpression callFunS;
-    List<callFunctionExpression>callFun;
+    dotExpression dotEx;
+    //List<callFunctionExpression>callFun;
 
     dotFunctionExpression(){
         super();
         subscript = new subscriptExpression();
         callFunF = new callFunctionExpression();
-        callFun = new ArrayList<callFunctionExpression>();
+        //callFun = new ArrayList<callFunctionExpression>();
         callFunS = new callFunctionExpression();
+        dotEx = new dotExpression();
     }
 
 }
