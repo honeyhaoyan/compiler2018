@@ -63,10 +63,14 @@ statement
     |selfOperationStatement
     |callFunctionStatement
     |dotFunctionStatement
-    |valuebleSingleExpression Semi
+    //|valuebleSingleStatement Semi
+    |valuebleSingleStatement
     |emptyStatement
     ;
 
+    valuebleSingleStatement
+        :valuebleSingleExpression Semi
+        ;
     emptyStatement
         :Semi
         ;
@@ -153,7 +157,7 @@ valuebleSingleExpression
     ;
 
     newExpression
-        :New Identifier (OpenParen CloseParen)?
+        :New (Identifier|variableTypeExpression) (OpenParen CloseParen)?
         ;
     variableTypeExpression
         :variableNormalTypeExpression

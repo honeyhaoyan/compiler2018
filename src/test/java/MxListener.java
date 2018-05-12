@@ -107,6 +107,16 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitStatement(MxParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxParser#valuebleSingleStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterValuebleSingleStatement(MxParser.ValuebleSingleStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#valuebleSingleStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitValuebleSingleStatement(MxParser.ValuebleSingleStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#emptyStatement}.
 	 * @param ctx the parse tree
 	 */

@@ -135,6 +135,18 @@ public class MxBaseListener implements MxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterValuebleSingleStatement(MxParser.ValuebleSingleStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitValuebleSingleStatement(MxParser.ValuebleSingleStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterEmptyStatement(MxParser.EmptyStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -139,6 +139,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit BlockStatement");
         blockDefinition tmp = new blockDefinition();
         int num = context.getChildCount();
+        //System.out.println(num);
         if (context.CloseCurly()!=null) num = num-2;
         for (int i=0;i<num;++i){
             if (context.statement(i).assignStatement()!=null){
@@ -177,6 +178,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
             if (context.statement(i).emptyStatement()!=null){
                 tmp.statementSons.add(visitEmptyStatement(context.statement(i).emptyStatement()));
+            }
+
+            if (context.statement(i).valuebleSingleStatement()!=null){
+                tmp.statementSons.add(visitValuebleSingleStatement(context.statement(i).valuebleSingleStatement()));
             }
         }
         return tmp;
@@ -356,6 +361,23 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         return tmp;
     }
 
+    @Override public emptyStatement visitValuebleSingleStatement(MxParser.ValuebleSingleStatementContext context){
+        emptyStatement tmp = new emptyStatement();
+        //System.out.println("123");
+        if (context.valuebleSingleExpression().newExpression()!=null){
+            if (context.valuebleSingleExpression().newExpression().variableTypeExpression()!=null){
+                if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression()!=null){
+                    if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
+                        if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression().primaryType().Void()!=null){
+                            tmp.islegal = false;
+                        }
+                    }
+                }
+            }
+        }
+        return tmp;
+    }
+
 
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
         //System.out.println("visit ValuebleSingleExpression");
@@ -462,6 +484,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         if (context.newExpression()!=null){
             type ty = new type();
+            System.out.println("newExpression()");
             ty = visitNewExpression(context.newExpression());
             tmp.addSon(ty);
         }
@@ -756,6 +779,14 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public type visitNewExpression(MxParser.NewExpressionContext context){
         type tmp = new type();
         if (context.Identifier()!=null) tmp.typeName = context.Identifier().toString();
+        /*if (context.variableTypeExpression()!=null){
+            if (context.variableTypeExpression().variableNormalTypeExpression()!=null){
+                if (context.variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
+                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Void()!=null) tmp.typeName="newVoid";
+                }
+            }
+        }
+        System.out.println(tmp.typeName);*/
         return tmp;
     }
 

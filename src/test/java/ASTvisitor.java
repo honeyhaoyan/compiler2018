@@ -149,6 +149,7 @@ public class ASTvisitor {
     //scope
     public void visitBlock(blockDefinition node, Scope scope,String blockType,boolean returnNum,type returnType) throws Exception{
         //System.out.println("new block   "+returnNum);
+        //System.out.println(node.statementSons.size());
         for (statement item : node.statementSons){
             //System.out.println(item.toString());
             if (item instanceof assignmentStatement){
@@ -299,7 +300,8 @@ public class ASTvisitor {
                 //System.out.println(ty2.typeName);
                 //System.out.println(ty1.arr);
                 //System.out.println(ty2.arr);
-
+                System.out.println(ty2.typeName);
+                if (ty2.typeName.equals("Void")) throw new Exception("new void");
                 if (ty1.typeName==null){
                     if (((newStatement) item).method!=null){
                         if (((newStatement) item).method.equals("subscript")){
@@ -375,11 +377,10 @@ public class ASTvisitor {
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
                 //System.out.println(((functionScope) scope).functionName);
             }
-            /*
+
             if (item instanceof emptyStatement){
-                System.out.println(scope.scopleType);
-                throw new Exception("empty statement.");
-            }*/
+                if (((emptyStatement) item).islegal==false) throw new Exception("new void");
+            }
             //System.out.println(scope.name);
 
         }/*
@@ -497,7 +498,7 @@ public class ASTvisitor {
         //System.out.println("::::::::::::::::::::::::::::::::"+scope.scopleType);
 
         functionScope parseInt = new functionScope();
-        parseInt.functionName = "parserInt";
+        parseInt.functionName = "parseInt";
         parseInt.returnType.typeName = "Int";
         parseInt.scopeFather = scope;
         scope.function.put(parseInt.functionName,parseInt);
@@ -580,6 +581,7 @@ public class ASTvisitor {
                 subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
+
         }
         if (op.op!=null){
             if (op.op.equals("+")){
@@ -648,6 +650,7 @@ public class ASTvisitor {
 
     public type visitType(type ty, Scope scope)throws Exception{
         type tmp = new type();
+        //if (ty.typeName.equals("newVoid")) throw new Exception("new void");
         tmp = ty;
         Scope scopeTmp = new Scope();
         scopeTmp = scope;

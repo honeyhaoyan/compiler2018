@@ -70,6 +70,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(MxParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#valuebleSingleStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitValuebleSingleStatement(MxParser.ValuebleSingleStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#emptyStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

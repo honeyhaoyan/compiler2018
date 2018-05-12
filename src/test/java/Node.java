@@ -217,10 +217,14 @@ class dotFunctionStatement extends statement{
 }
 
 class emptyStatement extends statement{
+    boolean islegal;
     emptyStatement(){
         super();
+        islegal = true;
     }
 }
+
+
 class expression extends Node {
     public expression(){
         super();
