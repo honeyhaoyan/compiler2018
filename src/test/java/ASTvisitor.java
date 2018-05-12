@@ -16,7 +16,7 @@ public class ASTvisitor {
             if (item instanceof functionDefinition) {
                 visitFunction1((functionDefinition)item,top);
                 if (((functionDefinition) item).functionName.equals("main")) flag = true;
-                //System.out.println(((functionDefinition) item).functionName);
+                System.out.println(((functionDefinition) item).functionName);
             }
             //get class variable definition (to be used in class functions) and class function definition
             if (item instanceof classDefinition) visitClass2((classDefinition)item,top);

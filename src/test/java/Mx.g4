@@ -26,7 +26,7 @@ classDefinition
         :Identifier
         ;
     classBody
-        :(definitionStatement)* (functionDefinition)* (constructionDefinition)*
+        :(definitionStatement|functionDefinition|constructionDefinition)*
         ;
         constructionDefinition
             :className OpenParen (definitionExpression (Comma definitionExpression)*)* CloseParen blockStatement
