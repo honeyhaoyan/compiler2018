@@ -203,9 +203,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.blockOrStatement(i).statement()!=null){
                 int initialNum = tmp.statementSons.size();
                 if (context.blockOrStatement(i).statement().assignStatement()!=null){
+                    System.out.println("assignStatement");
                     tmp.statementSons.add(visitAssignStatement(context.blockOrStatement(i).statement().assignStatement()));
                 }
                 if (context.blockOrStatement(i).statement().breakStatement()!=null){
+                    System.out.println("------------");
                     tmp.statementSons.add(visitBreakStatement(context.blockOrStatement(i).statement().breakStatement()));
                 }
                 if (context.blockOrStatement(i).statement().continueStatement()!=null){
@@ -213,38 +215,49 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     tmp.statementSons.add(visitContinueStatement(context.blockOrStatement(i).statement().continueStatement()));
                 }
                 if (context.blockOrStatement(i).statement().definitionStatement()!=null){
+                    System.out.println("definitionStatement");
                     tmp.statementSons.add(visitDefinitionStatement(context.blockOrStatement(i).statement().definitionStatement()));
                 }
                 if (context.blockOrStatement(i).statement().forStatement()!=null){
+                    System.out.println("forStatement");
                     tmp.statementSons.add(visitForStatement(context.blockOrStatement(i).statement().forStatement()));
                 }
                 if (context.blockOrStatement(i).statement().ifStatement()!=null){
+                    System.out.println("ifStatement");
                     tmp.statementSons.add(visitIfStatement(context.blockOrStatement(i).statement().ifStatement()));
                 }
                 if (context.blockOrStatement(i).statement().newStatement()!=null){
+                    System.out.println("newStatement");
                     tmp.statementSons.add(visitNewStatement(context.blockOrStatement(i).statement().newStatement()));
                 }
                 if (context.blockOrStatement(i).statement().returnStatement()!=null){
+                    System.out.println("returnStatement");
                     tmp.statementSons.add(visitReturnStatement(context.blockOrStatement(i).statement().returnStatement()));
                 }
                 if (context.blockOrStatement(i).statement().whileStatement()!=null){
+                    System.out.println("whileStatement");
                     tmp.statementSons.add(visitWhileStatement(context.blockOrStatement(i).statement().whileStatement()));
                 }
                 if (context.blockOrStatement(i).statement().selfOperationStatement()!=null){
+                    System.out.println("selfOperationStatement");
                     tmp.statementSons.add(visitSelfOperationStatement(context.blockOrStatement(i).statement().selfOperationStatement()));
                 }
                 if (context.blockOrStatement(i).statement().callFunctionStatement()!=null){
+                    System.out.println("callFunctionStatement");
                     tmp.statementSons.add(visitCallFunctionStatement(context.blockOrStatement(i).statement().callFunctionStatement()));
                 }
 
                 if (context.blockOrStatement(i).statement().emptyStatement()!=null){
+                    System.out.println("emptyStatement");
                     tmp.statementSons.add(visitEmptyStatement(context.blockOrStatement(i).statement().emptyStatement()));
                 }
 
                 if (context.blockOrStatement(i).statement().valuebleSingleStatement()!=null){
+                    System.out.println("valuebleSingleStatement");
                     tmp.statementSons.add(visitValuebleSingleStatement(context.blockOrStatement(i).statement().valuebleSingleStatement()));
                 }
                 if (initialNum == tmp.statementSons.size()){
+                    //System.out.println("blockOrStatement");
                     tmp.statementSons.add(new illegal());
                 }
             }

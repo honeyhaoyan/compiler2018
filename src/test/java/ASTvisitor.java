@@ -405,7 +405,7 @@ public class ASTvisitor {
                 if (((emptyStatement) item).islegal==false) throw new Exception("new void");
             }
 
-            //if (item instanceof illegal) throw new Exception("illegal statement");
+            if (item instanceof illegal&&scope.scopleType.equals("Function")) throw new Exception("illegal statement");
             //if (statementFlag == false) throw new Exception("illegal statement");
             //System.out.println(scope.name);
 
