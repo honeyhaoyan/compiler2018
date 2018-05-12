@@ -496,11 +496,11 @@ public class ASTvisitor {
         scope.function.put(substring.functionName,substring);
         //System.out.println("::::::::::::::::::::::::::::::::"+scope.scopleType);
 
-        functionScope parserInt = new functionScope();
-        parserInt.functionName = "parserInt";
-        parserInt.returnType.typeName = "Int";
-        parserInt.scopeFather = scope;
-        scope.function.put(parserInt.functionName,parserInt);
+        functionScope parseInt = new functionScope();
+        parseInt.functionName = "parserInt";
+        parseInt.returnType.typeName = "Int";
+        parseInt.scopeFather = scope;
+        scope.function.put(parseInt.functionName,parseInt);
 
         functionScope ord = new functionScope();
         variable va6 = new variable();
@@ -861,6 +861,7 @@ public class ASTvisitor {
                     tmp = classes.function.get(dotFun.callFunS.functionName).returnType;
             }
             else if (scopeTmp.scopleType != null&&dotFun.son.equals("callFunctionExpression")) {
+                System.out.println(dotFun.callFunS.functionName);
                 if (!scopeTmp.function.containsKey(dotFun.callFunS.functionName))
                     throw new Exception("In top, no such function.");
                 else
