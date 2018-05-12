@@ -537,9 +537,9 @@ public class ASTvisitor {
                 //System.out.println(op.op);
             }
             if (item instanceof variable){
-                //System.out.println("--------------------------variable-----------------------------");
-                //System.out.println(((variable) item).name);
-                //System.out.println(((variable) item).ty.typeName);
+                System.out.println("--------------------------variable-----------------------------");
+                System.out.println(((variable) item).name);
+                System.out.println(((variable) item).ty.typeName);
                 subType = visitExpressionVariable((variable)item,scope);
                 //System.out.println(subType.typeName);
                 globalType = checkException(globalType,subType);
@@ -603,6 +603,7 @@ public class ASTvisitor {
 
     public type visitExpressionVariable(variable va, Scope scope)throws Exception{
         type tmp = new type();
+        boolean flag = false;
         if (va.ty.typeName!=null) {
             tmp = va.ty;
         }
@@ -612,6 +613,7 @@ public class ASTvisitor {
                 //System.out.println(scopeTmp.name);
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
+                    flag = true;
                     return tmp;
 
                 }
@@ -621,9 +623,10 @@ public class ASTvisitor {
             if (scopeTmp.variable.containsKey(va.name)){
                 //System.out.println(tmp.arrExp.size());
                 tmp = scopeTmp.variable.get(va.name).ty;
-
+                flag = true;
             }
         }
+        if (flag==false) throw new Exception("variable no definition");
         return tmp;
     }
 
