@@ -201,6 +201,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         for (int i=0;i<num;++i){
             //System.out.println(context.getChild(k+1).toStringTree());
             if (context.blockOrStatement(i).statement()!=null){
+                int initialNum = tmp.statementSons.size();
                 if (context.blockOrStatement(i).statement().assignStatement()!=null){
                     tmp.statementSons.add(visitAssignStatement(context.blockOrStatement(i).statement().assignStatement()));
                 }
@@ -242,6 +243,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
                 if (context.blockOrStatement(i).statement().valuebleSingleStatement()!=null){
                     tmp.statementSons.add(visitValuebleSingleStatement(context.blockOrStatement(i).statement().valuebleSingleStatement()));
+                }
+                if (initialNum == tmp.statementSons.size()){
+                    tmp.statementSons.add(new illegal());
                 }
             }
             if (context.blockOrStatement(i).blockStatement()!=null){

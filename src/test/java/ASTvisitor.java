@@ -151,8 +151,10 @@ public class ASTvisitor {
         //System.out.println("new block   "+returnNum);
         //System.out.println(node.statementSons.size());
         for (Node item : node.statementSons){
+            //boolean statementFlag = false;
             //System.out.println(item.toString());
             if (item instanceof blockDefinition){
+                //statementFlag = true;
                 System.out.println("in block");
                 Scope scopeBlock = new Scope();
                 scopeBlock.scopeFather = scope;
@@ -160,6 +162,7 @@ public class ASTvisitor {
                 visitBlock((blockDefinition) item,scopeBlock,"Block",returnNum,returnType);
             }
             if (item instanceof assignmentStatement){
+                //statementFlag = true;
                 //System.out.println("*************************");
                 //System.out.println("visit assignmentStatement");
                 if (((assignmentStatement) item).expLe.sons.get(0) instanceof constant) throw new Exception("constant left.");
@@ -182,6 +185,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof definitionStatement){
+                //statementFlag = true;
                 variable va = new variable();
                 if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
                     type ty = visitExpression(((definitionStatement) item).exp,scope);
@@ -225,21 +229,25 @@ public class ASTvisitor {
             }
 
             if (item instanceof ifStatement){
+                //statementFlag = true;
                 //System.out.println("visit if statement.");
                 visitIf((ifStatement)item,scope,returnNum);
             }
 
             if (item instanceof forStatement){
+                //statementFlag = true;
                 //System.out.println("visit for statement.");
                 visitFor((forStatement)item,scope,returnNum);
             }
 
             if (item instanceof whileStatement){
+                //statementFlag = true;
                 //System.out.println("visit while statement.");
                 visitWhile((whileStatement)item,scope,returnNum);
             }
 
             if (item instanceof breakStatement){
+                //statementFlag = true;
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
                     //System.out.println(scopeTmp.scopleType);
@@ -253,6 +261,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof returnStatement){
+                //statementFlag = true;
                 //System.out.println("visit return statement.");
                 //System.out.println(((functionScope) scope).functionName);
                 if (returnNum == true){
@@ -287,6 +296,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof continueStatement){
+                //statementFlag = true;
                 System.out.println("continue");
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
@@ -300,6 +310,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof newStatement){
+                //statementFlag = true;
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
 
@@ -357,6 +368,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof selfOperationStatement){
+                //statementFlag = true;
                 type ty = new type();
                 if (((selfOperationStatement) item).va.name!=null) {
                     variable va = ((selfOperationStatement) item).va;
@@ -375,11 +387,13 @@ public class ASTvisitor {
             }
 
             if (item instanceof callFunctionStatement){
+                //statementFlag = true;
                 //System.out.println("-------------------------visit callFunctionStatement---------------------------");
                 visitCallFunctionExpression(((callFunctionStatement) item).callFunc,scope);
             }
 
             if (item instanceof dotFunctionStatement){
+                //statementFlag = true;
                 //System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::");
                 //System.out.println(((functionScope) scope).functionName);
                 visitExpression(((dotFunctionStatement) item).dotFunc,scope);
@@ -387,8 +401,12 @@ public class ASTvisitor {
             }
 
             if (item instanceof emptyStatement){
+                //statementFlag = true;
                 if (((emptyStatement) item).islegal==false) throw new Exception("new void");
             }
+
+            if (item instanceof illegal) throw new Exception("illegal statement");
+            //if (statementFlag == false) throw new Exception("illegal statement");
             //System.out.println(scope.name);
 
         }/*

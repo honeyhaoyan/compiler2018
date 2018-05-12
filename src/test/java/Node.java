@@ -92,7 +92,11 @@ class constant extends Node{
     public String value;
 }
 
-
+class illegal extends Node{
+    illegal(){
+        super();
+    }
+}
 
 class definitionStatement extends statement{
     public variable variableSon;
