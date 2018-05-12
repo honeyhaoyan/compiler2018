@@ -160,10 +160,10 @@ public class ASTvisitor {
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //System.out.println("*************************");
-                System.out.println(ty1.typeName);
-                System.out.println(ty2.typeName);
-                System.out.println(ty1.arrExp.size());
-                System.out.println(ty2.arrExp.size());
+                //System.out.println(ty1.typeName);
+                //System.out.println(ty2.typeName);
+                //System.out.println(ty1.arrExp.size());
+                //System.out.println(ty2.arrExp.size());
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
                         if (ty1.arrExp.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
@@ -411,6 +411,7 @@ public class ASTvisitor {
     }
 
     public classScope findClass(String className, Scope scope) throws Exception{
+        System.out.println(className);
         Scope scopeTmp = new Scope();
         scopeTmp = scope;
         while (!scopeTmp.scopleType.equals("top")) {
@@ -506,6 +507,12 @@ public class ASTvisitor {
         ord.returnType.typeName = "Int";
         ord.scopeFather = scope;
         scope.function.put(ord.functionName,ord);
+
+        functionScope size = new functionScope();
+        size.functionName = "size";
+        size.returnType.typeName = "Int";
+        size.scopeFather = scope;
+        scope.function.put(size.functionName,size);
 
         //functionScope
     }
@@ -752,6 +759,7 @@ public class ASTvisitor {
     }
 
     public type visitDotFunctionExpression(dotFunctionExpression dotFun, Scope scope)throws Exception {
+        System.out.println("visitDotFunctionExpression");
             type tmp = new type();
             type ty = new type();
             classScope classes = new classScope();
@@ -769,7 +777,11 @@ public class ASTvisitor {
             }
             if (dotFun.father.equals("subscriptExpression")) {
                 ty = visitSubsciptionExpression(dotFun.subscript, scope);
-                classes = findClass(ty.typeName, scope);
+                if (!ty.typeName.equals("String")&&!ty.typeName.equals("Int")) classes = findClass(ty.typeName, scope);
+                else {
+                    scopeTmp = scope;
+                    while (!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
+                    }
             }
             if (dotFun.father.equals("StringConstant") || dotFun.father.equals("String")) {
                 //System.out.println("In?");
@@ -821,7 +833,11 @@ public class ASTvisitor {
                         } else throw new Exception("For String inline function ord, input variable error.");
                         tmp.typeName = "Int";
                     }
-                } else classes = findClass(ty.typeName, scope);
+                }/*
+                if (ty.typeName.equals("Int")) {
+                    if (dotFun.callFunS.functionName.equals("ord")) tmp.typeName="Int";
+                }*/
+                if (!ty.typeName.equals("String")) classes = findClass(ty.typeName, scope);
             }
             if (dotFun.father.equals("this")) {
                 classes = (classScope) scope;
@@ -830,7 +846,7 @@ public class ASTvisitor {
                 if (classes.className != null) tmp = visitDotFunctionExpression((dotFunctionExpression) dotFun.dotEx,classes);
                 else if (scopeTmp.scopleType!=null) tmp = visitDotFunctionExpression((dotFunctionExpression) dotFun.dotEx,scopeTmp);
             }
-
+            //System.out.println(classes.className);
             if (classes.className != null&&dotFun.son.equals("callFunctionExpression")) {
                 if (!classes.function.containsKey(dotFun.callFunS.functionName))
                     throw new Exception("In class, no such function.");
@@ -838,7 +854,13 @@ public class ASTvisitor {
                     checkInputVariable(dotFun.callFunS.expressionSons, classes.function.get(dotFun.callFunS.functionName), scope);
                     tmp = classes.function.get(dotFun.callFunS.functionName).returnType;
             }
-
+            else if (scopeTmp.scopleType != null&&dotFun.son.equals("callFunctionExpression")) {
+                if (!scopeTmp.function.containsKey(dotFun.callFunS.functionName))
+                    throw new Exception("In top, no such function.");
+                else
+                    checkInputVariable(dotFun.callFunS.expressionSons, scopeTmp.function.get(dotFun.callFunS.functionName), scope);
+                tmp = scopeTmp.function.get(dotFun.callFunS.functionName).returnType;
+            }
             return tmp;
     }
     public boolean isPrimaryType(type ty) throws Exception{
@@ -887,10 +909,10 @@ public class ASTvisitor {
         //System.out.println(exp.functionName);
         //System.out.println(scope.name);
         func = findFunction(exp.functionName,scope);
-        System.out.println("==================================");
-        System.out.println(func.returnType.typeName);
-        System.out.println(func.functionName);
-        System.out.println(":::::::::::::::::::::::::::::::::::");
+        //System.out.println("==================================");
+        //System.out.println(func.returnType.typeName);
+        //System.out.println(func.functionName);
+        //System.out.println(":::::::::::::::::::::::::::::::::::");
         checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
         return tmp;
@@ -905,7 +927,7 @@ public class ASTvisitor {
         //scope = (classScope) scope;
         //System.out.println(((classScope) scope).className);
         while (!tmp.scopleType.equals("top")){
-            System.out.println(tmp.scopleType);
+            //System.out.println(tmp.scopleType);
             //System.out.println(tmp.scopleType);
             //System.out.println(tmp);
             if (tmp.scopleType.equals("class")) {
