@@ -43,9 +43,12 @@ globalVariable
 //-----------------the third floor----------------------------
 
 //statement
+blockOrStatement
+    :blockStatement|statement
+    ;
+
 blockStatement
-    :OpenCurly (statement|blockStatement)* CloseCurly
-    |statement
+    :OpenCurly (blockOrStatement)* CloseCurly
     ;
 
 statement
@@ -90,18 +93,18 @@ statement
         ;
 
     ifStatement
-        :If OpenParen valuebleSingleExpression CloseParen blockStatement (Else blockStatement)?
+        :If OpenParen valuebleSingleExpression CloseParen blockOrStatement (Else blockOrStatement)?
         ;
 
     forStatement
         :For OpenParen (definitionStatement|assignStatement)?
          (valuebleSingleExpression)? Semi
          (assignExpression | valuebleSingleExpression)?
-         CloseParen blockStatement
-         |For OpenParen Semi(valuebleSingleExpression)? Semi (assignExpression | valuebleSingleExpression)? CloseParen (Semi|blockStatement)
+         CloseParen blockOrStatement
+         |For OpenParen Semi(valuebleSingleExpression)? Semi (assignExpression | valuebleSingleExpression)? CloseParen (Semi|blockOrStatement)
         ;
     whileStatement
-        :While OpenParen valuebleSingleExpression CloseParen blockStatement
+        :While OpenParen valuebleSingleExpression CloseParen blockOrStatement
         ;
     breakStatement
         :Break Semi

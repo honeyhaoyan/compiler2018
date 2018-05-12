@@ -92,6 +92,8 @@ class constant extends Node{
     public String value;
 }
 
+
+
 class definitionStatement extends statement{
     public variable variableSon;
     public expression exp;

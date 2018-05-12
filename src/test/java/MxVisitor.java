@@ -58,6 +58,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGlobalVariable(MxParser.GlobalVariableContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#blockOrStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockOrStatement(MxParser.BlockOrStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#blockStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

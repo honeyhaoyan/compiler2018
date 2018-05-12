@@ -153,6 +153,7 @@ public class ASTvisitor {
         for (Node item : node.statementSons){
             //System.out.println(item.toString());
             if (item instanceof blockDefinition){
+                System.out.println("in block");
                 Scope scopeBlock = new Scope();
                 scopeBlock.scopeFather = scope;
                 scopeBlock.scopleType = "Block";
@@ -286,6 +287,7 @@ public class ASTvisitor {
             }
 
             if (item instanceof continueStatement){
+                System.out.println("continue");
                 Scope scopeTmp = scope;
                 while (!scopeTmp.scopleType.equals("top")){
                     if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal continue");
