@@ -150,8 +150,14 @@ public class ASTvisitor {
     public void visitBlock(blockDefinition node, Scope scope,String blockType,boolean returnNum,type returnType) throws Exception{
         //System.out.println("new block   "+returnNum);
         //System.out.println(node.statementSons.size());
-        for (statement item : node.statementSons){
+        for (Node item : node.statementSons){
             //System.out.println(item.toString());
+            if (item instanceof blockDefinition){
+                Scope scopeBlock = new Scope();
+                scopeBlock.scopeFather = scope;
+                scopeBlock.scopleType = "Block";
+                visitBlock((blockDefinition) item,scopeBlock,"Block",returnNum,returnType);
+            }
             if (item instanceof assignmentStatement){
                 //System.out.println("*************************");
                 //System.out.println("visit assignmentStatement");

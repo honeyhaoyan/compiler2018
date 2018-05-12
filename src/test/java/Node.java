@@ -51,10 +51,10 @@ class functionDefinition extends Node{
 }
 
 class blockDefinition extends Node{
-    public List<statement>statementSons;
+    public List<Node>statementSons;
     public blockDefinition(){
         super();
-        statementSons = new ArrayList<statement>();
+        statementSons = new ArrayList<Node>();
     }
 }
 

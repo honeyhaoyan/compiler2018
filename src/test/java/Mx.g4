@@ -44,7 +44,7 @@ globalVariable
 
 //statement
 blockStatement
-    :OpenCurly (statement)* CloseCurly
+    :OpenCurly (statement|blockStatement)* CloseCurly
     |statement
     ;
 

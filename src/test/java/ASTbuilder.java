@@ -138,50 +138,58 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public blockDefinition visitBlockStatement(MxParser.BlockStatementContext context) {
         //System.out.println("visit BlockStatement");
         blockDefinition tmp = new blockDefinition();
-        int num = context.getChildCount();
+        int num1 = context.statement().size();
+        int num2 = context.blockStatement().size();
         //System.out.println(num);
-        if (context.CloseCurly()!=null) num = num-2;
-        for (int i=0;i<num;++i){
-            if (context.statement(i).assignStatement()!=null){
-                tmp.statementSons.add(visitAssignStatement(context.statement(i).assignStatement()));
-            }
-            if (context.statement(i).breakStatement()!=null){
-                tmp.statementSons.add(visitBreakStatement(context.statement(i).breakStatement()));
-            }
-            if (context.statement(i).continueStatement()!=null){
-                tmp.statementSons.add(visitContinueStatement(context.statement(i).continueStatement()));
-            }
-            if (context.statement(i).definitionStatement()!=null){
-                tmp.statementSons.add(visitDefinitionStatement(context.statement(i).definitionStatement()));
-            }
-            if (context.statement(i).forStatement()!=null){
-                tmp.statementSons.add(visitForStatement(context.statement(i).forStatement()));
-            }
-            if (context.statement(i).ifStatement()!=null){
-                tmp.statementSons.add(visitIfStatement(context.statement(i).ifStatement()));
-            }
-            if (context.statement(i).newStatement()!=null){
-                tmp.statementSons.add(visitNewStatement(context.statement(i).newStatement()));
-            }
-            if (context.statement(i).returnStatement()!=null){
-                tmp.statementSons.add(visitReturnStatement(context.statement(i).returnStatement()));
-            }
-            if (context.statement(i).whileStatement()!=null){
-                tmp.statementSons.add(visitWhileStatement(context.statement(i).whileStatement()));
-            }
-            if (context.statement(i).selfOperationStatement()!=null){
-                tmp.statementSons.add(visitSelfOperationStatement(context.statement(i).selfOperationStatement()));
-            }
-            if (context.statement(i).callFunctionStatement()!=null){
-                tmp.statementSons.add(visitCallFunctionStatement(context.statement(i).callFunctionStatement()));
-            }
+        //if (context.CloseCurly()!=null) num = num-2;
+        int i=0;int j=0;
+        for (int k=0;k<num1+num2;++k){
+            if (context.getChild(k+1) instanceof statement){
+                if (context.statement(i).assignStatement()!=null){
+                    tmp.statementSons.add(visitAssignStatement(context.statement(i).assignStatement()));i++;
+                }
+                if (context.statement(i).breakStatement()!=null){
+                    tmp.statementSons.add(visitBreakStatement(context.statement(i).breakStatement()));i++;
+                }
+                if (context.statement(i).continueStatement()!=null){
+                    tmp.statementSons.add(visitContinueStatement(context.statement(i).continueStatement()));i++;
+                }
+                if (context.statement(i).definitionStatement()!=null){
+                    tmp.statementSons.add(visitDefinitionStatement(context.statement(i).definitionStatement()));i++;
+                }
+                if (context.statement(i).forStatement()!=null){
+                    tmp.statementSons.add(visitForStatement(context.statement(i).forStatement()));i++;
+                }
+                if (context.statement(i).ifStatement()!=null){
+                    tmp.statementSons.add(visitIfStatement(context.statement(i).ifStatement()));i++;
+                }
+                if (context.statement(i).newStatement()!=null){
+                    tmp.statementSons.add(visitNewStatement(context.statement(i).newStatement()));i++;
+                }
+                if (context.statement(i).returnStatement()!=null){
+                    tmp.statementSons.add(visitReturnStatement(context.statement(i).returnStatement()));i++;
+                }
+                if (context.statement(i).whileStatement()!=null){
+                    tmp.statementSons.add(visitWhileStatement(context.statement(i).whileStatement()));i++;
+                }
+                if (context.statement(i).selfOperationStatement()!=null){
+                    tmp.statementSons.add(visitSelfOperationStatement(context.statement(i).selfOperationStatement()));i++;
+                }
+                if (context.statement(i).callFunctionStatement()!=null){
+                    tmp.statementSons.add(visitCallFunctionStatement(context.statement(i).callFunctionStatement()));i++;
+                }
 
-            if (context.statement(i).emptyStatement()!=null){
-                tmp.statementSons.add(visitEmptyStatement(context.statement(i).emptyStatement()));
-            }
+                if (context.statement(i).emptyStatement()!=null){
+                    tmp.statementSons.add(visitEmptyStatement(context.statement(i).emptyStatement()));i++;
+                }
 
-            if (context.statement(i).valuebleSingleStatement()!=null){
-                tmp.statementSons.add(visitValuebleSingleStatement(context.statement(i).valuebleSingleStatement()));
+                if (context.statement(i).valuebleSingleStatement()!=null){
+                    tmp.statementSons.add(visitValuebleSingleStatement(context.statement(i).valuebleSingleStatement()));i++;
+                }
+            }
+            if (context.getChild(k+1) instanceof breakStatement){
+                tmp.statementSons.add(visitBlockStatement(context.blockStatement(j)));
+                j++;
             }
         }
         return tmp;
