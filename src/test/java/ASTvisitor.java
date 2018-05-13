@@ -288,7 +288,7 @@ public class ASTvisitor {
                     }*/
                     if (!nameRequire.equals(nameProvide)||numRequire!=numProvide){
                         if (nameProvide==null){
-                            if (nameRequire.equals("Int")||nameRequire.equals("Bool")) throw new Exception("return type error");
+                            if ((nameRequire.equals("Int")&&!((functionScope) scopeTmp).functionName.equals("main"))||nameRequire.equals("Bool")) throw new Exception("return type error");
                         }
                         else throw new Exception("return type error");
                     }
