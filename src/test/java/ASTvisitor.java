@@ -170,6 +170,7 @@ public class ASTvisitor {
                 type ty2 = new type();
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
+                if (((assignmentStatement) item).expLe instanceof callFunctionExpression) throw new Exception("function name can not be left value");
                 //System.out.println("*************************");
                 //System.out.println(ty1.typeName);
                 //System.out.println(ty2.typeName);
