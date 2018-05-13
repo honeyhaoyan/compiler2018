@@ -197,11 +197,12 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println(num1);
         //System.out.println(num2);
         int num = context.blockOrStatement().size();
-        System.out.println(num);
+        //System.out.println(num);
         for (int i=0;i<num;++i){
+            int initialNum = tmp.statementSons.size();
             //System.out.println(context.getChild(k+1).toStringTree());
             if (context.blockOrStatement(i).statement()!=null){
-                int initialNum = tmp.statementSons.size();
+                //int initialNum = tmp.statementSons.size();
                 if (context.blockOrStatement(i).statement().assignStatement()!=null){
                     System.out.println("assignStatement");
                     tmp.statementSons.add(visitAssignStatement(context.blockOrStatement(i).statement().assignStatement()));
@@ -256,6 +257,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     System.out.println("valuebleSingleStatement");
                     tmp.statementSons.add(visitValuebleSingleStatement(context.blockOrStatement(i).statement().valuebleSingleStatement()));
                 }
+                if (context.blockOrStatement(i).statement().dotFunctionStatement()!=null){
+                    System.out.println("dotFunctionStatement");
+                    tmp.statementSons.add(visitDotFunctionStatement(context.blockOrStatement(i).statement().dotFunctionStatement()));
+                }
                 if (initialNum == tmp.statementSons.size()){
                     //System.out.println("blockOrStatement");
                     tmp.statementSons.add(new illegal());
@@ -263,6 +268,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             if (context.blockOrStatement(i).blockStatement()!=null){
                 tmp.statementSons.add(visitBlockStatement(context.blockOrStatement(i).blockStatement()));
+            }
+            if (initialNum == tmp.statementSons.size()){
+                System.out.println(initialNum);
+                tmp.statementSons.add(new illegal());
             }
         }
         return tmp;
