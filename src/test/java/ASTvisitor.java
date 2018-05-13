@@ -745,7 +745,8 @@ public class ASTvisitor {
         if (son.equals("dotVariableExpression")){
             //System.out.println("-------------------------"+scopeTmp.className);
             sonName = getDotFatherVa((dotVariableExpression) dotVa.dotEx,scopeTmp);
-            if (!scopeTmp.variable.containsKey(sonName)) throw new Exception("In class, variety name not found");
+            System.out.println(sonName);
+            if (!scopeTmp.name.contains(sonName)) throw new Exception("In class, variety name not found");
             tmp = visitDotVariableExpression((dotVariableExpression) dotVa.dotEx,scopeTmp);
         }
         if (son.equals("dotFunctionExpression")){
@@ -952,9 +953,9 @@ public class ASTvisitor {
         //System.out.println(exp.functionName);
         //System.out.println(scope.name);
         func = findFunction(exp.functionName,scope);
-        //System.out.println("==================================");
+        System.out.println("==================================");
         //System.out.println(func.returnType.typeName);
-        //System.out.println(func.functionName);
+        System.out.println(func.functionName);
         //System.out.println(":::::::::::::::::::::::::::::::::::");
         checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
@@ -995,8 +996,11 @@ public class ASTvisitor {
         int num1 = list.size();
         int num2 = scope.inputVariable.size();
         if (num1!=num2) throw new Exception("input variable size error");
+        System.out.println(num1);
+        System.out.println(num2);
         int i=0;
-        for (expression item : list){
+        if (num1!=0){ for (expression item : list){
+            //System.out.println("still in????");
             variableType = visitExpression(item,scopeVa);
            /* System.out.println("-------------------------------------------");
             System.out.println(scope.functionName);
@@ -1017,7 +1021,7 @@ public class ASTvisitor {
                 else throw new Exception("input variable error.");
             }
             i++;
-        }
+        }}
     }
 
     public type checkException (type ty1,type ty2) throws Exception{
