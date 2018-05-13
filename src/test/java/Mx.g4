@@ -198,6 +198,7 @@ valuebleSingleExpression
         //:(className|OpenParen valuebleSingleExpression CloseParen )(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         :(className)(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         //|(valuebleSingleExpression)(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
+        |(OpenParen)*(OpenParen newExpression CloseParen)((OpenBlacket valuebleSingleExpression CloseBlacket)* CloseParen)* (OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         ;
 
     callFunctionExpression

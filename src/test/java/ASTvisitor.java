@@ -949,7 +949,10 @@ public class ASTvisitor {
             }
         }
         else{
-            t = visitExpression(subExp.fatherExp,scope);
+            //t = visitExpression(subExp.fatherExp,scope);
+            t = subExp.typeFather;
+            //System.out.println(t.typeName);
+            //System.out.println(t.arrExp.size());
             if (t.arrExp.isEmpty()) throw new Exception("subscriptExpression error");
         }
         //if (!visitExpression(subExp.son,scope).typeName.equals("Int")) throw new Exception("subscriptExpression index error.");

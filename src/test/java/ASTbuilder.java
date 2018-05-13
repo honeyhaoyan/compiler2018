@@ -583,12 +583,36 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public subscriptExpression visitSubscriptExpression(MxParser.SubscriptExpressionContext context) {
-        int i=0;
+        //int i=0;
+        //subscriptExpression tmp = new subscriptExpression();
         subscriptExpression tmp = new subscriptExpression();
-        if (context.className()!=null) tmp.father.name = context.className().Identifier().toString();
-        else {tmp.fatherExp = visitValuebleSingleExpression(context.valuebleSingleExpression(0));i++;}
-        //tmp.son=(expression) visit(context.valuebleSingleExpression());
         expression expression1 = new expression();
+        if (context.className()!=null) {
+            tmp.father.name = context.className().Identifier().toString();
+            int i = 0;
+            for (ParseTree item : context.OpenBlacket()) {
+                if (context.valuebleSingleExpression(i) != null) {
+                    tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
+                } else tmp.Son.add(expression1);
+                i++;
+            }
+        }
+        else {
+           // tmp.fatherExp = visitValuebleSingleExpression(context.valuebleSingleExpression(0));
+            tmp.typeFather = visitNewExpression(context.newExpression());
+            //System.out.println(typeFather.typeName);
+            //System.out.println(typeFather.arrExp.size());
+            int i = 0;
+            for (ParseTree item : context.OpenBlacket()) {
+                if (context.valuebleSingleExpression(i) != null) {
+                    tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
+                } else tmp.Son.add(expression1);
+                i++;
+            }
+
+        }
+        //tmp.son=(expression) visit(context.valuebleSingleExpression());
+       /* expression expression1 = new expression();
         expression expression2 = new expression();
         if (context.OpenBlacket(0)!=null){
             if (context.valuebleSingleExpression(i)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
@@ -597,7 +621,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.OpenBlacket(1)!=null){
             if (context.valuebleSingleExpression(i+1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i+1)));
             else tmp.Son.add(expression2);
-        }
+        }*/
+
         return tmp;
     }
 

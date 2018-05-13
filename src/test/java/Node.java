@@ -329,14 +329,16 @@ class dotFunctionExpression extends dotExpression{
 
 class subscriptExpression extends expression{
     variable father;
-    expression fatherExp;
     //expression son;
+    type typeFather;
     List<expression>Son;
+
     subscriptExpression(){
         super();
         father = new variable();
-        fatherExp = new expression();
+        //fatherExp = new expression();
         //son = new expression();
+        typeFather = new type();
         Son = new ArrayList<expression>();
     }
 }
