@@ -565,7 +565,10 @@ public class ASTvisitor {
             }
             if (item instanceof Op){
                 subType = visitOp((Op)item,scope);
-                if (subType.typeName!=null) if (subType.typeName.equals("Bool")) return subType;
+                if (subType.typeName!=null) if (subType.typeName.equals("Bool")) {
+                   // if (!((Op) item).op.equals("||")||!((Op) item).op.equals("&&")){ }
+                     return subType;
+                }
                 globalType = checkException(globalType,subType);
                 op = (Op)item;
                 //System.out.println(op.op);
@@ -625,7 +628,7 @@ public class ASTvisitor {
 
     public type visitOp(Op op, Scope scope)throws Exception{
         type tmp = new type();
-        if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")||op.op.equals("&&")||op.op.equals("||")||op.op.equals("!")||op.op.equals("<=")||op.op.equals(">=")){
+        if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")||op.op.equals("!")||op.op.equals("<=")||op.op.equals(">=")){
             tmp.typeName="Bool";
             return tmp;
         }
