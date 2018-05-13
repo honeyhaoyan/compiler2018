@@ -168,9 +168,10 @@ public class ASTvisitor {
                 if (((assignmentStatement) item).expLe.sons.get(0) instanceof constant) throw new Exception("constant left.");
                 type ty1 = new type();
                 type ty2 = new type();
+                if (((assignmentStatement) item).expLe.sons.get(0) instanceof callFunctionExpression) throw new Exception("function name can not be left value");
                 ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
-                if (((assignmentStatement) item).expLe instanceof callFunctionExpression) throw new Exception("function name can not be left value");
+                //if (((assignmentStatement) item).expLe instanceof callFunctionExpression) throw new Exception("function name can not be left value");
                 //System.out.println("*************************");
                 //System.out.println(ty1.typeName);
                 //System.out.println(ty2.typeName);
