@@ -216,7 +216,7 @@ definitionExpression  // int a(b) / int a=b
         ;
     definitionArrayExpression
         //:variableArrayTypeExpression Identifier (Assign OpenCurly valuebleListExpression CloseCurly)?
-        :variableArrayTypeExpression Identifier
+        :variableArrayTypeExpression Identifier (Assign subscriptExpression)?
         ;
 
 assignExpression

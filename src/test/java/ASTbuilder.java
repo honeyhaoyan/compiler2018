@@ -6,7 +6,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         Program tmp = new Program();
         System.out.println("new program");
         int i=0;
-        System.out.println(context.programItem().size());
+        //System.out.println(context.programItem().size());
         for (ParseTree item : context.programItem()){
             if (context.programItem(i).classDefinition()!=null){
                 System.out.println("program class");
@@ -146,7 +146,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 tmp.statementSons.add(visitBreakStatement(context.statement().breakStatement()));
             }
             if (context.statement().continueStatement()!=null){
-                System.out.println("continueStatement(");
+                //System.out.println("continueStatement(");
                 tmp.statementSons.add(visitContinueStatement(context.statement().continueStatement()));
             }
             if (context.statement().definitionStatement()!=null){
@@ -270,7 +270,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 tmp.statementSons.add(visitBlockStatement(context.blockOrStatement(i).blockStatement()));
             }
             if (initialNum == tmp.statementSons.size()){
-                System.out.println(initialNum);
+               // System.out.println(initialNum);
                 tmp.statementSons.add(new illegal());
             }
         }
@@ -359,10 +359,11 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public ifStatement visitIfStatement(MxParser.IfStatementContext context) {
-        //System.out.println("visit ifStatement");
+        System.out.println("---------------------------visit ifStatement-------------------------------");
         ifStatement tmp = new ifStatement();
         tmp.ifcondition=visitValuebleSingleExpression(context.valuebleSingleExpression());
         tmp.ifblock = visitBlockOrStatement(context.blockOrStatement(0));
+        System.out.println(tmp.ifblock.statementSons.size());
         //System.out.println(context.blockStatement(0).getChildCount());
         if (context.blockOrStatement(1)!=null) tmp.elseblock = visitBlockOrStatement(context.blockOrStatement(1));
         return tmp;

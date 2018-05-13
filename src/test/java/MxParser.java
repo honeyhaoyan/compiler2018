@@ -3429,6 +3429,10 @@ public class MxParser extends Parser {
 			return getRuleContext(VariableArrayTypeExpressionContext.class,0);
 		}
 		public TerminalNode Identifier() { return getToken(MxParser.Identifier, 0); }
+		public TerminalNode Assign() { return getToken(MxParser.Assign, 0); }
+		public SubscriptExpressionContext subscriptExpression() {
+			return getRuleContext(SubscriptExpressionContext.class,0);
+		}
 		public DefinitionArrayExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3451,6 +3455,7 @@ public class MxParser extends Parser {
 	public final DefinitionArrayExpressionContext definitionArrayExpression() throws RecognitionException {
 		DefinitionArrayExpressionContext _localctx = new DefinitionArrayExpressionContext(_ctx, getState());
 		enterRule(_localctx, 78, RULE_definitionArrayExpression);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -3458,6 +3463,18 @@ public class MxParser extends Parser {
 			variableArrayTypeExpression();
 			setState(467);
 			match(Identifier);
+			setState(470);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==Assign) {
+				{
+				setState(468);
+				match(Assign);
+				setState(469);
+				subscriptExpression();
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -3504,11 +3521,11 @@ public class MxParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(469);
+			setState(472);
 			valuebleSingleExpression(0);
-			setState(470);
+			setState(473);
 			match(Assign);
-			setState(471);
+			setState(474);
 			valuebleSingleExpression(0);
 			}
 		}
@@ -3554,7 +3571,7 @@ public class MxParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(473);
+			setState(476);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Bool) | (1L << Int) | (1L << String) | (1L << Void))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -3608,7 +3625,7 @@ public class MxParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(475);
+			setState(478);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LogicConstant) | (1L << IntegerConstant) | (1L << StringConstant) | (1L << NullConstant))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -3667,7 +3684,7 @@ public class MxParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\39\u01e0\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\39\u01e3\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -3701,32 +3718,32 @@ public class MxParser extends Parser {
 		"\"\3\"\3\"\3\"\5\"\u019e\n\"\3\"\3\"\3\"\5\"\u01a3\n\"\3#\3#\3$\3$\3$"+
 		"\3$\3$\7$\u01ac\n$\f$\16$\u01af\13$\3%\3%\3%\3%\5%\u01b5\n%\3%\3%\3&\3"+
 		"&\3&\6&\u01bc\n&\r&\16&\u01bd\3\'\3\'\3\'\5\'\u01c3\n\'\3(\3(\3(\3(\5"+
-		"(\u01c9\n(\3(\3(\3(\3(\3(\3(\5(\u01d1\n(\5(\u01d3\n(\3)\3)\3)\3*\3*\3"+
-		"*\3*\3+\3+\3,\3,\3,\2\3\64-\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \""+
-		"$&(*,.\60\62\64\668:<>@BDFHJLNPRTV\2\13\3\2\r\16\4\2\26\26\31\31\3\2\21"+
-		"\22\4\2\17\20\23\23\3\2\27\30\4\2\35\36 !\4\2\37\37\"\"\3\2-\60\3\2\61"+
-		"\64\2\u0213\2[\3\2\2\2\4a\3\2\2\2\6c\3\2\2\2\bi\3\2\2\2\np\3\2\2\2\fs"+
-		"\3\2\2\2\16\u0085\3\2\2\2\20\u009b\3\2\2\2\22\u009f\3\2\2\2\24\u00a1\3"+
-		"\2\2\2\26\u00b8\3\2\2\2\30\u00ba\3\2\2\2\32\u00bd\3\2\2\2\34\u00bf\3\2"+
-		"\2\2\36\u00d7\3\2\2\2 \u00d9\3\2\2\2\"\u00dc\3\2\2\2$\u0105\3\2\2\2&\u0107"+
-		"\3\2\2\2(\u010d\3\2\2\2*\u0110\3\2\2\2,\u0117\3\2\2\2.\u0126\3\2\2\2\60"+
-		"\u0128\3\2\2\2\62\u012b\3\2\2\2\64\u0141\3\2\2\2\66\u0168\3\2\2\28\u0173"+
-		"\3\2\2\2:\u0177\3\2\2\2<\u017b\3\2\2\2>\u018b\3\2\2\2@\u0191\3\2\2\2B"+
-		"\u019d\3\2\2\2D\u01a4\3\2\2\2F\u01a6\3\2\2\2H\u01b0\3\2\2\2J\u01b8\3\2"+
-		"\2\2L\u01c2\3\2\2\2N\u01d2\3\2\2\2P\u01d4\3\2\2\2R\u01d7\3\2\2\2T\u01db"+
-		"\3\2\2\2V\u01dd\3\2\2\2XZ\5\4\3\2YX\3\2\2\2Z]\3\2\2\2[Y\3\2\2\2[\\\3\2"+
-		"\2\2\\\3\3\2\2\2][\3\2\2\2^b\5\6\4\2_b\5\16\b\2`b\5\20\t\2a^\3\2\2\2a"+
-		"_\3\2\2\2a`\3\2\2\2b\5\3\2\2\2cd\7*\2\2de\5\b\5\2ef\7\5\2\2fg\5\n\6\2"+
-		"gh\7\6\2\2h\7\3\2\2\2ij\7\65\2\2j\t\3\2\2\2ko\5\34\17\2lo\5\16\b\2mo\5"+
-		"\f\7\2nk\3\2\2\2nl\3\2\2\2nm\3\2\2\2or\3\2\2\2pn\3\2\2\2pq\3\2\2\2q\13"+
-		"\3\2\2\2rp\3\2\2\2st\5\b\5\2t\177\7\3\2\2uz\5L\'\2vw\7\n\2\2wy\5L\'\2"+
-		"xv\3\2\2\2y|\3\2\2\2zx\3\2\2\2z{\3\2\2\2{~\3\2\2\2|z\3\2\2\2}u\3\2\2\2"+
-		"~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\u0082\3\2\2\2\u0081"+
-		"\177\3\2\2\2\u0082\u0083\7\4\2\2\u0083\u0084\5\24\13\2\u0084\r\3\2\2\2"+
-		"\u0085\u0086\58\35\2\u0086\u0087\5D#\2\u0087\u0092\7\3\2\2\u0088\u008d"+
-		"\5L\'\2\u0089\u008a\7\n\2\2\u008a\u008c\5L\'\2\u008b\u0089\3\2\2\2\u008c"+
-		"\u008f\3\2\2\2\u008d\u008b\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u0091\3\2"+
-		"\2\2\u008f\u008d\3\2\2\2\u0090\u0088\3\2\2\2\u0091\u0094\3\2\2\2\u0092"+
+		"(\u01c9\n(\3(\3(\3(\3(\3(\3(\5(\u01d1\n(\5(\u01d3\n(\3)\3)\3)\3)\5)\u01d9"+
+		"\n)\3*\3*\3*\3*\3+\3+\3,\3,\3,\2\3\64-\2\4\6\b\n\f\16\20\22\24\26\30\32"+
+		"\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTV\2\13\3\2\r\16\4\2\26\26\31"+
+		"\31\3\2\21\22\4\2\17\20\23\23\3\2\27\30\4\2\35\36 !\4\2\37\37\"\"\3\2"+
+		"-\60\3\2\61\64\2\u0217\2[\3\2\2\2\4a\3\2\2\2\6c\3\2\2\2\bi\3\2\2\2\np"+
+		"\3\2\2\2\fs\3\2\2\2\16\u0085\3\2\2\2\20\u009b\3\2\2\2\22\u009f\3\2\2\2"+
+		"\24\u00a1\3\2\2\2\26\u00b8\3\2\2\2\30\u00ba\3\2\2\2\32\u00bd\3\2\2\2\34"+
+		"\u00bf\3\2\2\2\36\u00d7\3\2\2\2 \u00d9\3\2\2\2\"\u00dc\3\2\2\2$\u0105"+
+		"\3\2\2\2&\u0107\3\2\2\2(\u010d\3\2\2\2*\u0110\3\2\2\2,\u0117\3\2\2\2."+
+		"\u0126\3\2\2\2\60\u0128\3\2\2\2\62\u012b\3\2\2\2\64\u0141\3\2\2\2\66\u0168"+
+		"\3\2\2\28\u0173\3\2\2\2:\u0177\3\2\2\2<\u017b\3\2\2\2>\u018b\3\2\2\2@"+
+		"\u0191\3\2\2\2B\u019d\3\2\2\2D\u01a4\3\2\2\2F\u01a6\3\2\2\2H\u01b0\3\2"+
+		"\2\2J\u01b8\3\2\2\2L\u01c2\3\2\2\2N\u01d2\3\2\2\2P\u01d4\3\2\2\2R\u01da"+
+		"\3\2\2\2T\u01de\3\2\2\2V\u01e0\3\2\2\2XZ\5\4\3\2YX\3\2\2\2Z]\3\2\2\2["+
+		"Y\3\2\2\2[\\\3\2\2\2\\\3\3\2\2\2][\3\2\2\2^b\5\6\4\2_b\5\16\b\2`b\5\20"+
+		"\t\2a^\3\2\2\2a_\3\2\2\2a`\3\2\2\2b\5\3\2\2\2cd\7*\2\2de\5\b\5\2ef\7\5"+
+		"\2\2fg\5\n\6\2gh\7\6\2\2h\7\3\2\2\2ij\7\65\2\2j\t\3\2\2\2ko\5\34\17\2"+
+		"lo\5\16\b\2mo\5\f\7\2nk\3\2\2\2nl\3\2\2\2nm\3\2\2\2or\3\2\2\2pn\3\2\2"+
+		"\2pq\3\2\2\2q\13\3\2\2\2rp\3\2\2\2st\5\b\5\2t\177\7\3\2\2uz\5L\'\2vw\7"+
+		"\n\2\2wy\5L\'\2xv\3\2\2\2y|\3\2\2\2zx\3\2\2\2z{\3\2\2\2{~\3\2\2\2|z\3"+
+		"\2\2\2}u\3\2\2\2~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\u0082"+
+		"\3\2\2\2\u0081\177\3\2\2\2\u0082\u0083\7\4\2\2\u0083\u0084\5\24\13\2\u0084"+
+		"\r\3\2\2\2\u0085\u0086\58\35\2\u0086\u0087\5D#\2\u0087\u0092\7\3\2\2\u0088"+
+		"\u008d\5L\'\2\u0089\u008a\7\n\2\2\u008a\u008c\5L\'\2\u008b\u0089\3\2\2"+
+		"\2\u008c\u008f\3\2\2\2\u008d\u008b\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u0091"+
+		"\3\2\2\2\u008f\u008d\3\2\2\2\u0090\u0088\3\2\2\2\u0091\u0094\3\2\2\2\u0092"+
 		"\u0090\3\2\2\2\u0092\u0093\3\2\2\2\u0093\u0095\3\2\2\2\u0094\u0092\3\2"+
 		"\2\2\u0095\u0096\7\4\2\2\u0096\u0097\5\24\13\2\u0097\17\3\2\2\2\u0098"+
 		"\u009c\5\34\17\2\u0099\u009c\5 \21\2\u009a\u009c\5\36\20\2\u009b\u0098"+
@@ -3840,14 +3857,15 @@ public class MxParser extends Parser {
 		"\3\2\2\2\u01ca\u01cb\5:\36\2\u01cb\u01d0\7\65\2\2\u01cc\u01cd\7\3\2\2"+
 		"\u01cd\u01ce\5\64\33\2\u01ce\u01cf\7\4\2\2\u01cf\u01d1\3\2\2\2\u01d0\u01cc"+
 		"\3\2\2\2\u01d0\u01d1\3\2\2\2\u01d1\u01d3\3\2\2\2\u01d2\u01c4\3\2\2\2\u01d2"+
-		"\u01ca\3\2\2\2\u01d3O\3\2\2\2\u01d4\u01d5\5<\37\2\u01d5\u01d6\7\65\2\2"+
-		"\u01d6Q\3\2\2\2\u01d7\u01d8\5\64\33\2\u01d8\u01d9\7\f\2\2\u01d9\u01da"+
-		"\5\64\33\2\u01daS\3\2\2\2\u01db\u01dc\t\t\2\2\u01dcU\3\2\2\2\u01dd\u01de"+
-		"\t\n\2\2\u01deW\3\2\2\2\63[anpz\177\u008d\u0092\u009b\u009f\u00a5\u00b8"+
-		"\u00c3\u00d7\u00e3\u00e9\u00ec\u00f1\u00f9\u00fe\u0103\u0105\u0113\u011d"+
-		"\u0122\u0126\u0141\u0163\u0165\u016b\u016f\u0173\u0177\u017b\u017f\u0184"+
-		"\u0187\u018b\u0191\u0196\u019d\u01a2\u01ad\u01b4\u01bd\u01c2\u01c8\u01d0"+
-		"\u01d2";
+		"\u01ca\3\2\2\2\u01d3O\3\2\2\2\u01d4\u01d5\5<\37\2\u01d5\u01d8\7\65\2\2"+
+		"\u01d6\u01d7\7\f\2\2\u01d7\u01d9\5F$\2\u01d8\u01d6\3\2\2\2\u01d8\u01d9"+
+		"\3\2\2\2\u01d9Q\3\2\2\2\u01da\u01db\5\64\33\2\u01db\u01dc\7\f\2\2\u01dc"+
+		"\u01dd\5\64\33\2\u01ddS\3\2\2\2\u01de\u01df\t\t\2\2\u01dfU\3\2\2\2\u01e0"+
+		"\u01e1\t\n\2\2\u01e1W\3\2\2\2\64[anpz\177\u008d\u0092\u009b\u009f\u00a5"+
+		"\u00b8\u00c3\u00d7\u00e3\u00e9\u00ec\u00f1\u00f9\u00fe\u0103\u0105\u0113"+
+		"\u011d\u0122\u0126\u0141\u0163\u0165\u016b\u016f\u0173\u0177\u017b\u017f"+
+		"\u0184\u0187\u018b\u0191\u0196\u019d\u01a2\u01ad\u01b4\u01bd\u01c2\u01c8"+
+		"\u01d0\u01d2\u01d8";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

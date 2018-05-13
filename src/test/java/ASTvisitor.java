@@ -314,14 +314,16 @@ public class ASTvisitor {
                 type ty1 = ((newStatement) item).newType1;
                 type ty2 = ((newStatement) item).newType2;
 
-                //System.out.println("------------------------------------new--------------------------------");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
-                //System.out.println(ty1.arr);
-                //System.out.println(ty2.arr);
+                System.out.println("------------------------------------new--------------------------------");
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arrExp.size());
+                System.out.println(ty2.arrExp.size());
+                System.out.println("-----------------------------------------------------------------------");
                 //System.out.println(ty2.typeName);
                 if (ty2.typeName.equals("Void")) throw new Exception("new void");
                 if (ty1.typeName==null){
+                    //System.out.println("find for ty1");
                     if (((newStatement) item).method!=null){
                         if (((newStatement) item).method.equals("subscript")){
                             //System.out.println(((newStatement) item).method);
@@ -337,13 +339,15 @@ public class ASTvisitor {
                         variable va = new variable();
                         va.name = ((newStatement) item).name;
                         ty1 = visitExpressionVariable(va,scope);
+                        //System.out.println(ty1.typeName);
+                        //System.out.println(ty1.arrExp.size());
                     }
                 }
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()){
-                        //System.out.println(ty1.typeName);
-                        //System.out.println(ty2.typeName);
-                        //System.out.println(ty1.arr.size());
-                        //System.out.println(ty2.arr.size());
+                        System.out.println(ty1.typeName);
+                        System.out.println(ty2.typeName);
+                        System.out.println(ty1.arrExp.size());
+                        System.out.println(ty2.arrExp.size());
                         if (ty1.arrExp.isEmpty()&&!ty2.arrExp.isEmpty()){
                             if (!ty1.typeName.equals("Int")&&!ty1.typeName.equals("Bool")&&!ty1.typeName.equals("String")&&!ty1.typeName.equals("NullConstant")){
                                 Scope scopeTmp = scope;
@@ -1046,7 +1050,7 @@ public class ASTvisitor {
         ifScope.scopeFather = scope;
         System.out.println(scope.scopleType);
         //System.out.println(node.ifblock.statementSons.size());
-        if (node.ifblock.statementSons.isEmpty()) throw new Exception("No if block;");
+        //if (node.ifblock.statementSons.) throw new Exception("No if block;");
         visitBlock(node.ifblock,ifScope,"If",returnNum,null);
         Scope elseScope = new Scope();
         elseScope.scopleType = "If";
