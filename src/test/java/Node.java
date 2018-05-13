@@ -345,7 +345,7 @@ class callFunctionExpression extends expression{
     public List<expression>expressionSons;
     callFunctionExpression(){
         super();
-        expressionSons = new ArrayList<>();
+        expressionSons = new ArrayList<expression>();
         va = new variable();
     }
 }

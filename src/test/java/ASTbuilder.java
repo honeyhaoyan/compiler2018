@@ -664,7 +664,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public dotFunctionExpression visitDotFunctionExpression(MxParser.DotFunctionExpressionContext context) {
-        //System.out.println("visit DotFunctionExpression");
+       // System.out.println("visit DotFunctionExpression");
         dotFunctionExpression tmp = new dotFunctionExpression();
         /*
         if (context.className()!=null) tmp.father.name = context.className().toString();
@@ -673,15 +673,19 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         tmp.son = visitCallFunctionExpression(context.callFunctionExpression());
         //tmp.son = visitValuebleSingleExpression(context.valuebleSingleExpression());*/
         if (context.className()!=null){
+            System.out.println("className");
+            System.out.println(context.className().Identifier().toString());
             tmp.father = "className";
             tmp.classNameF = context.className().Identifier().toString();
             /*for (ParseTree item : context.callFunctionExpression()){
                 tmp.callFun.add((callFunctionExpression) visit(item));
             }*/
-            if (context.callFunctionExpression()!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
             if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
+            if (context.callFunctionExpression(0)!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
+            //if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
         }
         if (context.subscriptExpression()!=null){
+            //System.out.println("subscriptExpression");
             tmp.father = "subscriptExpression";
             tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
             /*for (ParseTree item : context.callFunctionExpression()){
@@ -692,6 +696,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
         }
         if (context.StringConstant()!=null){
+            //System.out.println("StringConstant");
             tmp.father  = "StringConstant";
             tmp.constantStr = context.StringConstant().toString();
             /*for (ParseTree item : context.callFunctionExpression()){
@@ -701,7 +706,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.callFunctionExpression()!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
             if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
         }
-        if (context.callFunctionExpression(1)!=null){
+        if (context.callFunctionExpression(1)!=null&&context.callFunctionExpression(0)!=null){
+            System.out.println("two callFunctionExpression");
             tmp.father = "callFunctionExpression";
             tmp.callFunF = visitCallFunctionExpression(context.callFunctionExpression(0));
             /*int i=0;
@@ -713,6 +719,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
         }
         if (context.This()!=null){
+            System.out.println("This");
             tmp.father = "this";
             /*for (ParseTree item : context.callFunctionExpression()){
                 tmp.callFun.add((callFunctionExpression) visit(item));
@@ -726,7 +733,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public callFunctionExpression visitCallFunctionExpression(MxParser.CallFunctionExpressionContext context) {
+        //System.out.println("visitCallFunctionExpression");
         callFunctionExpression tmp = new callFunctionExpression();
+        //System.out.println(context.toStringTree());
         tmp.functionName = context.Identifier().toString();
         int i=0;
         if (context.valuebleListExpression()!=null){
