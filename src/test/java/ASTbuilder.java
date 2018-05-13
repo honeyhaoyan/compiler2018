@@ -583,17 +583,19 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public subscriptExpression visitSubscriptExpression(MxParser.SubscriptExpressionContext context) {
+        int i=0;
         subscriptExpression tmp = new subscriptExpression();
-        tmp.father.name = context.className().Identifier().toString();
+        if (context.className()!=null) tmp.father.name = context.className().Identifier().toString();
+        else {tmp.fatherExp = visitValuebleSingleExpression(context.valuebleSingleExpression(0));i++;}
         //tmp.son=(expression) visit(context.valuebleSingleExpression());
         expression expression1 = new expression();
         expression expression2 = new expression();
         if (context.OpenBlacket(0)!=null){
-            if (context.valuebleSingleExpression(0)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
+            if (context.valuebleSingleExpression(i)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
             else tmp.Son.add(expression1);
         }
         if (context.OpenBlacket(1)!=null){
-            if (context.valuebleSingleExpression(1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
+            if (context.valuebleSingleExpression(i+1)!=null) tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i+1)));
             else tmp.Son.add(expression2);
         }
         return tmp;
@@ -848,37 +850,34 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             //System.out.println(t.typeName);
         }
         expression expression1 = new expression();
-        expression expression2 = new expression();
-        if (context.CloseBlacket(0) != null) {
-            /*
-            if (context.IntegerConstant(0) != null) {
-                t.arr.add(context.IntegerConstant(0).toString());
+        //expression expression2 = new expression();
+        int i = 0;
+        for (ParseTree item : context.OpenBlacket()){
+            if (context.valuebleSingleExpression(i)!=null){
+                t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
             }
-            else t.arr.add("0");
-            */
+            else t.arrExp.add(expression1);
+            i++;
+        }/*
+        if (context.CloseBlacket(0) != null) {
             if (context.valuebleSingleExpression(0)!=null){
                 t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
             }
             else t.arrExp.add(expression1);
         }
         if (context.CloseBlacket(1) != null) {
-            /*
-            if (context.IntegerConstant(1) != null) {
-                t.arr.add(context.IntegerConstant(1).toString());
-            }
-            else t.arr.add("0");
-            */
             if (context.valuebleSingleExpression(1)!=null){
                 t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
             }
             else t.arrExp.add(expression2);
-        }
+        }*/
         return t;
     }
 
     @Override public type visitNewExpression(MxParser.NewExpressionContext context){
         type tmp = new type();
         if (context.Identifier()!=null) tmp.typeName = context.Identifier().toString();
+
         /*if (context.variableTypeExpression()!=null){
             if (context.variableTypeExpression().variableNormalTypeExpression()!=null){
                 if (context.variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
@@ -887,6 +886,25 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
         }
         System.out.println(tmp.typeName);*/
+        if (context.variableTypeExpression()!=null){
+            if (context.variableTypeExpression().variableArrayTypeExpression().Identifier()!=null) tmp.typeName = context.variableTypeExpression().variableArrayTypeExpression().Identifier().toString();
+            if (context.variableTypeExpression().variableArrayTypeExpression().primaryType()!=null){
+                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Bool()!=null){
+                    tmp.typeName = "Bool";
+                }
+                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Int()!=null){
+                    tmp.typeName = "Int";
+                }
+                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().String()!=null){
+                    tmp.typeName = "String";
+                }
+            }
+            if (context.variableTypeExpression().variableArrayTypeExpression()!=null){
+                for (ParseTree item : context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression()){
+                    tmp.arrExp.add((expression) visit(item));
+                }
+            }
+        }
         return tmp;
     }
 

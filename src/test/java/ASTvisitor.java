@@ -559,7 +559,7 @@ public class ASTvisitor {
         Op op = new Op();
         for (Node item : node.sons) {
             if (item instanceof expression){
-                //System.out.println("expression");
+                System.out.println("expression");
                 subType = visitExpression((expression) item,scope);
                 globalType = checkException(globalType,subType);
             }
@@ -574,7 +574,7 @@ public class ASTvisitor {
                 //System.out.println(op.op);
             }
             if (item instanceof variable){
-                //System.out.println("--------------------------variable-----------------------------");
+                System.out.println("variable");
                 //System.out.println(((variable) item).name);
                 //System.out.println(((variable) item).ty.typeName);
                 subType = visitExpressionVariable((variable)item,scope);
@@ -591,7 +591,7 @@ public class ASTvisitor {
                 globalType = checkException(globalType,subType);
             }
             if (item instanceof type){
-                //System.out.println("type");
+                System.out.println("type");
                 subType = visitType((type)item,scope);
                 globalType = checkException(globalType,subType);
             }
@@ -602,11 +602,12 @@ public class ASTvisitor {
             }
             if (item instanceof dotFunctionExpression){
                 //System.out.println("************************************");
+
                 subType = visitDotFunctionExpression((dotFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
             if (item instanceof subscriptExpression){
-                //System.out.println("sub");
+                System.out.println("sub");
                 subType = visitSubsciptionExpression((subscriptExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
@@ -614,6 +615,7 @@ public class ASTvisitor {
                 subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
+
 
         }
         if (op.op!=null){
@@ -693,7 +695,7 @@ public class ASTvisitor {
         scopeTmp = scope;
         while (!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
         scopeTmp = (topScope)scopeTmp;
-        if (!ty.typeName.equals("Int")&&!ty.typeName.equals("Bool")&&!ty.typeName.equals("String")){
+        if (ty.typeName!=null) if (!ty.typeName.equals("Int")&&!ty.typeName.equals("Bool")&&!ty.typeName.equals("String")){
             if (!((topScope) scopeTmp).classes.containsKey(ty.typeName)){
                 subscriptExpression sub = new subscriptExpression();
                 sub.father.name = ty.typeName;
@@ -931,14 +933,21 @@ public class ASTvisitor {
     }
 
     public type visitSubsciptionExpression(subscriptExpression subExp, Scope scope)throws Exception{
+        System.out.println("visitSubsciptionExpression");
         type tmp = new type();
-        variable va = new variable();
-        va = subExp.father;
         type t = new type();
-        //System.out.println(va.name);
-        if (va.ty.arrExp.isEmpty()) {
-            t = visitExpressionVariable(va,scope);
-            //System.out.println(t.typeName);
+        if (subExp.father.name!=null) {
+            System.out.println(subExp.father.name);
+            variable va = new variable();
+            va = subExp.father;
+            //type t = new type();
+            if (va.ty.arrExp.isEmpty()) {
+                t = visitExpressionVariable(va, scope);
+                if (t.arrExp.isEmpty()) throw new Exception("subscriptExpression error");
+            }
+        }
+        else{
+            t = visitExpression(subExp.fatherExp,scope);
             if (t.arrExp.isEmpty()) throw new Exception("subscriptExpression error");
         }
         //if (!visitExpression(subExp.son,scope).typeName.equals("Int")) throw new Exception("subscriptExpression index error.");

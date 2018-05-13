@@ -194,7 +194,8 @@ valuebleSingleExpression
                 ;
 
     subscriptExpression
-        :className (OpenBlacket (valuebleSingleExpression) CloseBlacket)*
+        //:(OpenParen)?(className|OpenParen newExpression CloseParen) (OpenBlacket (valuebleSingleExpression) CloseBlacket)* (CloseParen (OpenBlacket (valuebleSingleExpression) CloseBlacket)*)?
+        :(className|OpenParen valuebleSingleExpression CloseParen )(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         ;
 
     callFunctionExpression
