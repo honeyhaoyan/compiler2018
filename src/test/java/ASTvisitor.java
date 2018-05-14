@@ -173,10 +173,10 @@ public class ASTvisitor {
                 ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
                 //if (((assignmentStatement) item).expLe instanceof callFunctionExpression) throw new Exception("function name can not be left value");
                 //System.out.println("*************************");
-                //System.out.println(ty1.typeName);
-                //System.out.println(ty2.typeName);
-                //System.out.println(ty1.arrExp.size());
-                //System.out.println(ty2.arrExp.size());
+                System.out.println(ty1.typeName);
+                System.out.println(ty2.typeName);
+                System.out.println(ty1.arrExp.size());
+                System.out.println(ty2.arrExp.size());
                 if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) {
                     if (ty2.typeName.equals("NullConstant")) {
                         if (ty1.arrExp.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
@@ -421,6 +421,71 @@ public class ASTvisitor {
             System.out.println(((functionScope) scope).functionName);
             if (returnNum==false&&!returnType.typeName.equals("Void")&&!((functionScope) scope).functionName.equals("main")) throw new Exception("No return");
         }*/
+    }
+
+    public void visitAssignmentStatement(assignmentStatement item,Scope scope) throws Exception{
+        if (((assignmentStatement) item).expLe.sons.get(0) instanceof constant) throw new Exception("constant left.");
+        type ty1 = new type();
+        type ty2 = new type();
+        if (((assignmentStatement) item).expLe.sons.get(0) instanceof callFunctionExpression) throw new Exception("function name can not be left value");
+        ty1 = visitExpression(((assignmentStatement) item).expLe,scope);
+        ty2 = visitExpression(((assignmentStatement) item).expRi,scope);
+        //if (((assignmentStatement) item).expLe instanceof callFunctionExpression) throw new Exception("function name can not be left value");
+        //System.out.println("*************************");
+        System.out.println(ty1.typeName);
+        System.out.println(ty2.typeName);
+        System.out.println(ty1.arrExp.size());
+        System.out.println(ty2.arrExp.size());
+        if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) {
+            if (ty2.typeName.equals("NullConstant")) {
+                if (ty1.arrExp.size()!=0||((!ty1.typeName.equals("Int"))&&(!ty1.typeName.equals("String"))&&(!ty1.typeName.equals("Bool")))){ }
+                else throw new Exception("Illegal assignment.");
+            }
+            else throw new Exception("Illegal assignment.");
+        }
+    }
+
+    public void visitDefinitionStatement(definitionStatement item, Scope scope) throws Exception{
+        variable va = new variable();
+        if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
+            type ty = visitExpression(((definitionStatement) item).exp,scope);
+        }
+        va = ((definitionStatement) item).variableSon;
+        type Ty = new type();
+        Ty = visitExpressionVariable(va,scope);
+        checkDefinition(va.name,scope);
+        scope.variable.put(va.name,va);
+        scope.name.add(va.name);
+        //System.out.println(scope.scopleType);
+        //System.out.println(scope.name);
+        //System.out.println("*************************");
+        //System.out.println("visit definitionStatement");
+        //System.out.println(va.name);
+        //System.out.println(va.ty.typeName);
+        if (va.ty.typeName.equals("Void")) throw new Exception("Definition error: void exception.");
+        //System.out.println(va.ty.typeName);
+        //System.out.println("*************************");
+        //System.out.println("visit definitionStatement");
+        if (visitExpression(((definitionStatement) item).exp,scope).typeName!=null){
+            //System.out.println(((definitionStatement) item).exp.toString());
+            //type tyDefi = new type();
+            type ty = visitExpression(((definitionStatement) item).exp,scope);
+            //System.out.println(ty.typeName);
+            //System.out.println(ty.arr);
+            if (ty.typeName.equals("NullConstant")){
+                if (va.ty.typeName.equals("Int")||va.ty.typeName.equals("Bool")||va.ty.typeName.equals("String")||va.ty.typeName.equals("LogicConstant")){
+                    throw new Exception("null to int or bool");
+                }
+            }
+            if (!Ty.typeName.equals(ty.typeName)||Ty.arrExp.size()!=ty.arrExp.size()) {
+                if (ty.typeName.equals("NullConstant")) {
+                    if (Ty.arrExp.size()!=0||((!Ty.typeName.equals("Int"))&&(!Ty.typeName.equals("String"))&&(!Ty.typeName.equals("Bool")))){ }
+                    else throw new Exception("In definition, assignment error.");
+                }
+                else throw new Exception("In definition, assignment error.");
+            }
+        }
+
     }
 
     public void checkDefinition(String name, Scope scope) throws Exception{
@@ -1092,6 +1157,9 @@ public class ASTvisitor {
         //System.out.println("visit forStatement.");
         //System.out.println(node.ifEmptyCon);
         //System.out.println(visitExpression(node.variableCondition,scope).typeName);
+        if (node.circleVariable instanceof assignmentStatement) visitAssignmentStatement((assignmentStatement) node.circleVariable,scope);
+        if (node.circleVariable instanceof definitionStatement) visitDefinitionStatement((definitionStatement)node.circleVariable,scope);
+
         if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
         Scope forScope = new Scope();
         forScope.scopleType = "For";

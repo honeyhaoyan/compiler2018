@@ -335,7 +335,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public assignmentStatement visitAssignStatement(MxParser.AssignStatementContext context) {
-        //System.out.println("visit AssignStatement");
+        System.out.println("visit AssignStatement");
         assignmentStatement tmp = new assignmentStatement();
         /*
         tmp.exp = visitValuebleSingleExpression(context.assignExpression().valuebleSingleExpression(1));
@@ -352,6 +352,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     /* Notice : it is rewritten for forStatement for(int i; i<=5; i=i+1)*/
     @Override public assignmentStatement visitAssignExpression(MxParser.AssignExpressionContext context) {
+        System.out.println("assignmentStatement");
         assignmentStatement tmp = new assignmentStatement();
         tmp.expLe = visitValuebleSingleExpression(context.valuebleSingleExpression(0));
         tmp.expRi = visitValuebleSingleExpression(context.valuebleSingleExpression(1));
@@ -373,6 +374,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit ForStatement");
         forStatement tmp = new forStatement();
         if (context.assignStatement()!=null){
+            //System.out.println("in it");
             tmp.circleVariable = visitAssignStatement(context.assignStatement());
         }
         else {
@@ -924,9 +926,19 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     tmp.typeName = "String";
                 }
             }
+
             if (context.variableTypeExpression().variableArrayTypeExpression()!=null){
-                for (ParseTree item : context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression()){
+               /* for (ParseTree item : context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression()){
                     tmp.arrExp.add((expression) visit(item));
+                }*/
+                expression exp = new expression();
+                int i=0;
+                while (context.variableTypeExpression().variableArrayTypeExpression().OpenBlacket(i)!=null){
+                    if (context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression(i)!=null){
+                        tmp.arrExp.add((expression) visit(context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression(i)));
+                    }
+                    else tmp.arrExp.add(exp);
+                    i++;
                 }
             }
         }
