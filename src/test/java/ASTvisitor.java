@@ -638,13 +638,12 @@ public class ASTvisitor {
     public type checkException (type ty1,type ty2) throws Exception{
         type ty = new type();
         if (ty1.typeName==null) {ty1=ty2;ty=ty2;}
-        else if (ty2.typeName!=null){
-            //System.out.println(ty1.typeName);
-            //System.out.println(ty2.typeName);
-            //System.out.println(ty1.arrExp.size());
-            //System.out.println(ty2.arrExp.size());
+        else {
+            if (ty2.typeName!=null){
             if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("expression type conflict.");
             else ty=ty1;
+            }
+            else ty = ty1;
         }
         return ty;
     }
@@ -653,6 +652,10 @@ public class ASTvisitor {
         if (!ty.typeName.equals(str)||ty.arrExp.size()!=0) throw new Exception("type error") ;
     }
 
+    public boolean checkConstantType(type ty) throws Exception{
+        if (ty.typeName.equals("Int")||ty.typeName.equals("Bool")||ty.typeName.equals("String")) return true;
+        else return false;
+    }
 
     //--------------------------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------------------------
@@ -700,7 +703,9 @@ public class ASTvisitor {
                 }
                 if (((Op) item).op.equals(".")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
-                    type type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
+                    type type2 = new type();
+                    if (!checkConstantType(type1)) type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
+                    else type2 = visitExpression((expression)node.sons.get(2),scope);
                    // classScope classTmp = findClass(type1.typeName,scope);
                    // if (!classTmp.name.contains(type2.typeName)) throw new Exception("dot error");
                     globalType = type2;
@@ -766,7 +771,7 @@ public class ASTvisitor {
                 subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
-            else if (item instanceof expression){
+            if (item instanceof expression){
                 subType = visitExpression((expression)item,scope);
                 globalType = checkException(globalType,subType);
             }
