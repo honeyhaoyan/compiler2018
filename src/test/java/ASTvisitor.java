@@ -252,6 +252,7 @@ public class ASTvisitor {
 
     public void visitAssignmentStatement(assignmentStatement item,Scope scope) throws Exception{
         if (((assignmentStatement) item).expLe.sons.get(0) instanceof constant) throw new Exception("constant left.");
+        //if (item.expLe.sons.get(0) instanceof callFunctionExpression) throw new Exception("callFunction left");
         type ty1 = new type();
         type ty2 = new type();
         if (((assignmentStatement) item).expLe.sons.get(0) instanceof callFunctionExpression) throw new Exception("function name can not be left value");
@@ -329,19 +330,20 @@ public class ASTvisitor {
     public void visitNewStatement(newStatement item, Scope scope) throws Exception{
         type ty1 = ((newStatement) item).newType1;
         type ty2 = ((newStatement) item).newType2;
-        /*
+
         System.out.println("------------------------------------new--------------------------------");
         System.out.println(ty1.typeName);
         System.out.println(ty2.typeName);
         System.out.println(ty1.arrExp.size());
         System.out.println(ty2.arrExp.size());
         System.out.println("-----------------------------------------------------------------------");
-       */
+
         if (ty2.typeName.equals("Void")) throw new Exception("new void");
         if (ty1.typeName==null){
             //System.out.println("find for ty1");
             if (item.name==null){
                 ty1 = visitExpression(item.exp,scope);
+                if (item.exp.sons.get(0) instanceof callFunctionExpression) throw new Exception("callFunction left");
             }
             //if ((!((newStatement) item).method.equals("subscript"))&&(!((newStatement) item).method.equals("dotVariable"))){
             else{
@@ -892,6 +894,7 @@ public class ASTvisitor {
     }
 
     public type visitType(type ty, Scope scope)throws Exception{
+        if (ty.typeName!=null) if (ty.typeName.equals("Void")) throw new Exception("new void");
         type tmp = new type();
         //if (ty.typeName.equals("newVoid")) throw new Exception("new void");
         tmp = ty;

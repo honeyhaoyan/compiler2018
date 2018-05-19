@@ -958,6 +958,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().String()!=null){
                         tmp.typeName = "String";
                     }
+                    if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Void()!=null){
+                        tmp.typeName = "Void";
+                    }
                 }
                 expression exp = new expression();
                 int i=0;
@@ -968,20 +971,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     else tmp.arrExp.add(exp);
                     i++;
                 }
-            }/*
-            if (context.variableTypeExpression().variableNormalTypeExpression()!=null){
-                if (context.variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
-                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Bool()!=null){
-                        tmp.typeName = "Bool";
-                    }
-                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Int()!=null){
-                        tmp.typeName = "Int";
-                    }
-                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().String()!=null){
-                        tmp.typeName = "String";
-                    }
-                }
-            }*/
+            }
+
         }
         return tmp;
     }
