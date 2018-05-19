@@ -657,6 +657,27 @@ public class ASTvisitor {
         else return false;
     }
 
+    public void checkEqual(type ty1,type ty2) throws Exception{
+        if (checkConstantType(ty1)){
+            if (!ty2.typeName.equals(ty1.typeName)) {
+                if ((ty2.typeName.equals("null")||ty2.typeName.equals("NullConstant"))&&ty1.arrExp.size()!=0){}
+                else throw new Exception("== type error");
+            }
+            else {
+                if (ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("== type error");
+            }
+        }
+        else{
+            if (!ty2.typeName.equals(ty1.typeName)) {
+                if (ty2.typeName.equals("null")||ty2.typeName.equals("NullConstant")){}
+                else throw new Exception("== type error");
+            }
+            else {
+                if (ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("== type error");
+            }
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -679,7 +700,9 @@ public class ASTvisitor {
                 if (((Op) item).op.equals("==")||((Op) item).op.equals("!=")||((Op) item).op.equals("<")||((Op) item).op.equals(">")||((Op) item).op.equals("<=")||((Op) item).op.equals(">=")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
-                    checkType(type1,"Int");checkType(type2,"Int");
+                    //checkType(type1,"Int");checkType(type2,"Int");
+                    //checkException(type1,type2);
+                    checkEqual(type1,type2);
                     globalType.typeName = "Bool";
                     return globalType;
                 }

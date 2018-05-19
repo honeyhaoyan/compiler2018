@@ -356,29 +356,16 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             //System.out.println(tmp.newType2.typeName);
         }
         else {
-            //System.out.println("--------------------------------- else --------------------------------");
-            /*
-            if (context.subscriptExpression()!=null){
-                tmp.subscri = visitSubscriptExpression(context.subscriptExpression());
-                tmp.method = "subscript";
-            }
-            if (context.dotVariableExpression()!=null){
-                tmp.dotVa = visitDotVariableExpression(context.dotVariableExpression());
-                tmp.method = "dotVariable";
-            }
-            if (context.variableTypeExpression(0).variableNormalTypeExpression() != null) {
+            if (context.valuebleSingleExpression()!=null){tmp.exp = visitValuebleSingleExpression(context.valuebleSingleExpression());}
+            else tmp.name = context.Identifier().toString();
+            if (context.variableTypeExpression(0).variableNormalTypeExpression()!=null){
                 tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(0).variableNormalTypeExpression());
             }
-            if (context.variableTypeExpression(0).variableArrayTypeExpression() != null) {
-                tmp.newType2 = visitVariableArrayTypeExpression(context.variableTypeExpression(0).variableArrayTypeExpression());
-            }*/
-            tmp.exp = visitValuebleSingleExpression(context.valuebleSingleExpression());
-            if (context.variableTypeExpression(0).variableNormalTypeExpression()!=null){
-                tmp.newType2 = visitVariableNormalTypeExpression(context.variableTypeExpression(1).variableNormalTypeExpression());
-            }
             if (context.variableTypeExpression(0).variableArrayTypeExpression()!=null){
-                tmp.newType2 = visitVariableArrayTypeExpression(context.variableTypeExpression(1).variableArrayTypeExpression());
+                tmp.newType2 = visitVariableArrayTypeExpression(context.variableTypeExpression(0).variableArrayTypeExpression());
             }
+
+
         }
         return tmp;
     }
