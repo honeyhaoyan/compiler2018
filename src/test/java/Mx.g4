@@ -131,6 +131,7 @@ statement
 
 valuebleSingleExpression
     :Identifier
+    |newExpression
     |variableTypeExpression
     |constant
     |This
@@ -154,15 +155,15 @@ valuebleSingleExpression
     |valuebleSingleExpression Lor valuebleSingleExpression
     |callFunctionExpression
     |OpenParen valuebleSingleExpression CloseParen
-    |newExpression
+    //|newExpression
     ;
 
     newExpression
         :New (Identifier|variableTypeExpression) (OpenParen CloseParen)?
         ;
     variableTypeExpression
-        :variableNormalTypeExpression
-        |variableArrayTypeExpression
+        :variableArrayTypeExpression
+        |variableNormalTypeExpression
         ;
         variableNormalTypeExpression
             :(primaryType|Identifier)

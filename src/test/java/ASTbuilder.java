@@ -930,7 +930,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         System.out.println(tmp.typeName);*/
         if (context.variableTypeExpression()!=null){
-            if (context.variableTypeExpression().variableArrayTypeExpression().Identifier()!=null) tmp.typeName = context.variableTypeExpression().variableArrayTypeExpression().Identifier().toString();
+            /*if (context.variableTypeExpression().variableArrayTypeExpression().Identifier()!=null) tmp.typeName = context.variableTypeExpression().variableArrayTypeExpression().Identifier().toString();
             if (context.variableTypeExpression().variableArrayTypeExpression().primaryType()!=null){
                 if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Bool()!=null){
                     tmp.typeName = "Bool";
@@ -941,12 +941,24 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().String()!=null){
                     tmp.typeName = "String";
                 }
-            }
+            }*/
 
             if (context.variableTypeExpression().variableArrayTypeExpression()!=null){
                /* for (ParseTree item : context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression()){
                     tmp.arrExp.add((expression) visit(item));
                 }*/
+                if (context.variableTypeExpression().variableArrayTypeExpression().Identifier()!=null) tmp.typeName = context.variableTypeExpression().variableArrayTypeExpression().Identifier().toString();
+                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType()!=null){
+                    if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Bool()!=null){
+                        tmp.typeName = "Bool";
+                    }
+                    if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Int()!=null){
+                        tmp.typeName = "Int";
+                    }
+                    if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().String()!=null){
+                        tmp.typeName = "String";
+                    }
+                }
                 expression exp = new expression();
                 int i=0;
                 while (context.variableTypeExpression().variableArrayTypeExpression().OpenBlacket(i)!=null){
@@ -956,7 +968,20 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                     else tmp.arrExp.add(exp);
                     i++;
                 }
-            }
+            }/*
+            if (context.variableTypeExpression().variableNormalTypeExpression()!=null){
+                if (context.variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
+                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Bool()!=null){
+                        tmp.typeName = "Bool";
+                    }
+                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Int()!=null){
+                        tmp.typeName = "Int";
+                    }
+                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().String()!=null){
+                        tmp.typeName = "String";
+                    }
+                }
+            }*/
         }
         return tmp;
     }

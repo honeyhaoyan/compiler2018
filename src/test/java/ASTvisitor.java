@@ -741,6 +741,7 @@ public class ASTvisitor {
                 if (((Op) item).op.equals(".")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = new type();
+                    //System.out.println(type1.typeName);
                     if (!checkConstantType(type1)) {
                         //if (type1.typeName.equals("this")) type2 = visitExpression((expression)node.sons.get(2),scope);
                        type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
@@ -754,7 +755,8 @@ public class ASTvisitor {
                 if (((Op) item).op.equals("[")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
-                    if (type1.arrExp.size()==0) throw new Exception("subscript error");
+                    //System.out.println(type1.typeName);
+                    if (type1.typeName!=null) if (type1.arrExp.size()==0) throw new Exception("subscript error");
                     if (!type2.typeName.equals("Int")) throw new Exception("index error");
                     globalType.typeName = type1.typeName;
                     int i = 0;
