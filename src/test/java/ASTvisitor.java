@@ -641,8 +641,8 @@ public class ASTvisitor {
         else if (ty2.typeName!=null){
             //System.out.println(ty1.typeName);
             //System.out.println(ty2.typeName);
-            //System.out.println(ty1.arr.size());
-            // System.out.println(ty2.arr.size());
+            //System.out.println(ty1.arrExp.size());
+            //System.out.println(ty2.arrExp.size());
             if (!ty1.typeName.equals(ty2.typeName)||ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("expression type conflict.");
             else ty=ty1;
         }
@@ -693,7 +693,7 @@ public class ASTvisitor {
                     globalType.typeName = "Bool";
                     //return globalType;
                 }
-                if (((Op) item).op.equals("++")||((Op) item).op.equals("--")||((Op) item).op.equals("~")||((Op) item).op.equals("+")||((Op) item).op.equals("-")||((Op) item).op.equals("*")||((Op) item).op.equals("/")||((Op) item).op.equals("%")||((Op) item).op.equals("^")||((Op) item).op.equals("&")||((Op) item).op.equals("|")||((Op) item).op.equals("^")||((Op) item).op.equals("<<")||((Op) item).op.equals(">>")){
+                if (((Op) item).op.equals("++")||((Op) item).op.equals("--")||((Op) item).op.equals("~")||((Op) item).op.equals("-")||((Op) item).op.equals("*")||((Op) item).op.equals("/")||((Op) item).op.equals("%")||((Op) item).op.equals("^")||((Op) item).op.equals("&")||((Op) item).op.equals("|")||((Op) item).op.equals("^")||((Op) item).op.equals("<<")||((Op) item).op.equals(">>")){
                     /*type type1 = visitExpression((expression) node.sons.get(0),scope);*/
                     //checkType(type1,"Int");
                     globalType.typeName = "Int";
@@ -721,6 +721,7 @@ public class ASTvisitor {
                     }
                     return globalType;
                 }
+                op.op = ((Op) item).op;
             }
             if (item instanceof variable){
                 System.out.println("variable");
@@ -765,7 +766,7 @@ public class ASTvisitor {
                 subType = visitCallFunctionExpression((callFunctionExpression)item,scope);
                 globalType = checkException(globalType,subType);
             }
-            if (item instanceof expression){
+            else if (item instanceof expression){
                 subType = visitExpression((expression)item,scope);
                 globalType = checkException(globalType,subType);
             }
@@ -775,7 +776,7 @@ public class ASTvisitor {
             if (op.op.equals("+")){
                 //System.out.println("============================================================");
                 //System.out.println(globalType.typeName);
-                if (!globalType.typeName.equals("String")&&!globalType.typeName.equals("Int")) throw new Exception("Expression type conflicts.");
+                if (globalType.typeName!=null) if (!globalType.typeName.equals("String")&&!globalType.typeName.equals("Int")) throw new Exception("Expression type conflicts.");
             }
         }
         return globalType;
