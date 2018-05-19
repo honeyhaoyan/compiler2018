@@ -16,7 +16,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             if (context.programItem(i).functionDefinition()!=null){
                 System.out.println("program function");
-                functionDefinition functionNode = (functionDefinition) visit(item);
+                functionDefinition functionNode = visitFunctionDefinition(context.programItem(i).functionDefinition());
                 tmp.functionSons.add(functionNode);
                 tmp.sequenceSons.add(functionNode);
             }
@@ -76,7 +76,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 i++;
             }
         }
-        tmp.blockSon=(blockDefinition)visit(context.blockStatement());
+        //tmp.blockSon=(blockDefinition)visit(context.blockStatement());
+        tmp.blockSon = visitBlockStatement(context.blockStatement());
         return tmp;
     }
 
@@ -128,6 +129,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.blockStatement()!=null) return visitBlockStatement(context.blockStatement());
         else {
             blockDefinition tmp = new blockDefinition();
+            /*
             if (context.statement().assignStatement()!=null){
                 tmp.statementSons.add(visitAssignStatement(context.statement().assignStatement()));
             }
@@ -156,21 +158,15 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             if (context.statement().whileStatement()!=null){
                 tmp.statementSons.add(visitWhileStatement(context.statement().whileStatement()));
             }
-            /*
-            if (context.statement().selfOperationStatement()!=null){
-                tmp.statementSons.add(visitSelfOperationStatement(context.statement().selfOperationStatement()));
-            }
-            if (context.statement().callFunctionStatement()!=null){
-                tmp.statementSons.add(visitCallFunctionStatement(context.statement().callFunctionStatement()));
-            }
-            */
+
             if (context.statement().emptyStatement()!=null){
                 tmp.statementSons.add(visitEmptyStatement(context.statement().emptyStatement()));
             }
 
             if (context.statement().valuebleSingleStatement()!=null){
                 tmp.statementSons.add(visitValuebleSingleStatement(context.statement().valuebleSingleStatement()));
-            }
+            }*/
+            tmp.statementSons.add(visitStatement(context.statement()));
             return tmp;
         }
     }
@@ -178,7 +174,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
     @Override public blockDefinition visitBlockStatement(MxParser.BlockStatementContext context) {
         //System.out.println("visit BlockStatement");
-        //blockDefinition tmp = new blockDefinition();
+        blockDefinition tmp = new blockDefinition();
         //int num1 = context.statement().size();
         //int num2 = context.blockStatement().size();
         //System.out.println(num);
@@ -186,7 +182,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //int i=0;int j=0;
         //System.out.println(num1);
         //System.out.println(num2);
-        /*
+
         int num = context.blockOrStatement().size();
         //System.out.println(num);
         for (int i=0;i<num;++i){
@@ -194,6 +190,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             //System.out.println(context.getChild(k+1).toStringTree());
             if (context.blockOrStatement(i).statement()!=null){
                 //int initialNum = tmp.statementSons.size();
+                /*
                 if (context.blockOrStatement(i).statement().assignStatement()!=null){
                     System.out.println("assignStatement");
                     tmp.statementSons.add(visitAssignStatement(context.blockOrStatement(i).statement().assignStatement()));
@@ -256,7 +253,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 if (initialNum == tmp.statementSons.size()){
                     //System.out.println("blockOrStatement");
                     tmp.statementSons.add(new illegal());
-                }
+                }*/
+                tmp.statementSons.add(visitStatement(context.blockOrStatement(i).statement()));
             }
             if (context.blockOrStatement(i).blockStatement()!=null){
                 tmp.statementSons.add(visitBlockStatement(context.blockOrStatement(i).blockStatement()));
@@ -265,9 +263,57 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                // System.out.println(initialNum);
                 tmp.statementSons.add(new illegal());
             }
-        }*/
-        blockDefinition tmp = new blockDefinition();
-        tmp = visitBlockOrStatement(context.blockOrStatement(0));
+        }
+        //blockDefinition tmp = new blockDefinition();
+        //tmp = visitBlockOrStatement(context.blockOrStatement(0));
+        return tmp;
+    }
+
+    @Override public statement visitStatement(MxParser.StatementContext context){
+        statement tmp = new statement();
+        if (context.assignStatement()!=null){
+            return (visitAssignStatement(context.assignStatement()));
+        }
+        if (context.breakStatement()!=null){
+            return (visitBreakStatement(context.breakStatement()));
+        }
+        if (context.continueStatement()!=null){
+            //System.out.println("continueStatement(");
+            return (visitContinueStatement(context.continueStatement()));
+        }
+        if (context.definitionStatement()!=null){
+            return (visitDefinitionStatement(context.definitionStatement()));
+        }
+        if (context.forStatement()!=null){
+            return (visitForStatement(context.forStatement()));
+        }
+        if (context.ifStatement()!=null){
+            return (visitIfStatement(context.ifStatement()));
+        }
+        if (context.newStatement()!=null){
+            return (visitNewStatement(context.newStatement()));
+        }
+        if (context.returnStatement()!=null){
+            return (visitReturnStatement(context.returnStatement()));
+        }
+        if (context.whileStatement()!=null){
+            return (visitWhileStatement(context.whileStatement()));
+        }
+            /*
+            if (context.statement().selfOperationStatement()!=null){
+                tmp.statementSons.add(visitSelfOperationStatement(context.statement().selfOperationStatement()));
+            }
+            if (context.statement().callFunctionStatement()!=null){
+                tmp.statementSons.add(visitCallFunctionStatement(context.statement().callFunctionStatement()));
+            }
+            */
+        if (context.emptyStatement()!=null){
+            return (visitEmptyStatement(context.emptyStatement()));
+        }
+
+        if (context.valuebleSingleStatement()!=null){
+            return (visitValuebleSingleStatement(context.valuebleSingleStatement()));
+        }
         return tmp;
     }
 
@@ -481,13 +527,13 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit ValuebleSingleExpression");
         //System.out.println(context.getText());
         expression tmp = new expression();
-        if (context.constant()!=null) {
+        /*if (context.constant()!=null) {
             //System.out.println("visit constant");
             //System.out.println(context.constant().getText());
             constant con = new constant();
             con=visitConstant(context.constant());
             tmp.addSon(con);
-        }
+        }*/
         if (context.Inc()!=null||context.Dec()!=null||context.Not()!=null||context.Lnot()!=null){
             //System.out.println("visit op");
             Op op = new Op();
@@ -530,6 +576,13 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             Op op = new Op();
             if (context.Dot()!=null) op.op = context.Dot().toString();
             if (context.OpenBlacket()!=null) op.op = context.OpenBlacket().toString();
+        }
+        if (context.constant()!=null) {
+            //System.out.println("visit constant");
+            //System.out.println(context.constant().getText());
+            constant con = new constant();
+            con=visitConstant(context.constant());
+            tmp.addSon(con);
         }
         if (context.This()!=null){
             //System.out.println("visit this");

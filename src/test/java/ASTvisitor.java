@@ -672,41 +672,42 @@ public class ASTvisitor {
                 globalType = checkException(globalType,subType);
             }*/
             if (item instanceof Op){
-                if (op.op.equals("==")||op.op.equals("!=")||op.op.equals("<")||op.op.equals(">")||op.op.equals("<=")||op.op.equals(">=")||op.op.equals("-")||op.op.equals("/")||op.op.equals("*")||op.op.equals("&")||op.op.equals("|")||op.op.equals("^")||op.op.equals("<<")||op.op.equals(">>")){
-                    type type1 = visitExpression((expression) node.sons.get(0),scope);
+                item = (Op)item;
+                if (((Op) item).op.equals("==")||((Op) item).op.equals("!=")||((Op) item).op.equals("<")||((Op) item).op.equals(">")||((Op) item).op.equals("<=")||((Op) item).op.equals(">=")){
+                    type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
                     checkType(type1,"Int");checkType(type2,"Int");
                     globalType.typeName = "Bool";
                     return globalType;
                 }
-                if (op.op.equals('!')){
+                if (((Op) item).op.equals('!')){
                     /*type type1 = visitExpression((expression) node.sons.get(1),scope);
                     checkType(type1,"Bool");*/
                     globalType.typeName = "Bool";
                     //return globalType;
                 }
-                if (op.op.equals("||")||op.op.equals("&&")){
+                if (((Op) item).op.equals("||")||((Op) item).op.equals("&&")){
                     /*type type1 = visitExpression((expression) node.sons.get(0),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
                     checkType(type1,"Bool");checkType(type2,"Bool");*/
                     globalType.typeName = "Bool";
                     //return globalType;
                 }
-                if (op.op.equals("++")||op.op.equals("--")||op.op.equals("~")){
+                if (((Op) item).op.equals("++")||((Op) item).op.equals("--")||((Op) item).op.equals("~")||((Op) item).op.equals("+")||((Op) item).op.equals("-")||((Op) item).op.equals("*")||((Op) item).op.equals("/")||((Op) item).op.equals("%")||((Op) item).op.equals("^")||((Op) item).op.equals("&")||((Op) item).op.equals("|")||((Op) item).op.equals("^")||((Op) item).op.equals("<<")||((Op) item).op.equals(">>")){
                     /*type type1 = visitExpression((expression) node.sons.get(0),scope);*/
                     //checkType(type1,"Int");
                     globalType.typeName = "Int";
                 }
-                if (op.op.equals('.')){
-                    type type1 = visitExpression((expression) node.sons.get(0),scope);
+                if (((Op) item).op.equals('.')){
+                    type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
                    // classScope classTmp = findClass(type1.typeName,scope);
                    // if (!classTmp.name.contains(type2.typeName)) throw new Exception("dot error");
                     globalType = type2;
                     return globalType;
                 }
-                if (op.op.equals('[')){
-                    type type1 = visitExpression((expression) node.sons.get(0),scope);
+                if (((Op) item).op.equals('[')){
+                    type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
                     if (type1.arrExp.size()==0) throw new Exception("subscript error");
                     if (!type2.typeName.equals("Int")) throw new Exception("index error");
