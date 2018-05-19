@@ -187,10 +187,12 @@ public class ASTvisitor {
                     int numRequire = returnType2.arrExp.size();
                     int numProvide = visitExpression(((returnStatement) item).returnExpression,scope).arrExp.size();
                     if (!nameRequire.equals(nameProvide)||numRequire!=numProvide){
-                        if (nameProvide==null){
+                        if (nameProvide==null||nameProvide.equals("NullConstant")){
                             if ((nameRequire.equals("Int")&&!((functionScope) scopeTmp).functionName.equals("main"))||nameRequire.equals("Bool")) throw new Exception("return type error");
                         }
-                        else throw new Exception("return type error");
+                        else {
+                            throw new Exception("return type error");
+                        }
                     }
                 }
             }
@@ -626,6 +628,7 @@ public class ASTvisitor {
                     type typeTest = visitExpressionVariable(createVariable(scope.inputVariable.get(i).typeName),scope);
                     if (typeTest.arrExp.size()==0){
                         //System.out.println("+++++++++++++"+typeTest.typeName);
+                        //System.out.println(scope.inputVariable.get(i).typeName);
                         findClass(scope.inputVariable.get(i).typeName,scope);
                     }
                 }
@@ -653,7 +656,10 @@ public class ASTvisitor {
     }
 
     public boolean checkConstantType(type ty) throws Exception{
-        if (ty.typeName.equals("Int")||ty.typeName.equals("Bool")||ty.typeName.equals("String")) return true;
+        if (ty.typeName!=null) {
+            if (ty.typeName.equals("Int")||ty.typeName.equals("Bool")||ty.typeName.equals("String")) return true;
+            else return false;
+        }
         else return false;
     }
 
@@ -676,6 +682,13 @@ public class ASTvisitor {
                 if (ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("== type error");
             }
         }
+    }
+
+    public classScope findClassScope(Scope scope)throws Exception{
+        Scope scopeTmp = scope;
+        while(!scopeTmp.scopleType.equals("class")&&!scopeTmp.scopleType.equals("top")) scopeTmp = scopeTmp.scopeFather;
+        if (!scopeTmp.scopleType.equals("class")) throw new Exception("can not find class scope");
+        return (classScope) scopeTmp;
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------
@@ -727,7 +740,10 @@ public class ASTvisitor {
                 if (((Op) item).op.equals(".")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = new type();
-                    if (!checkConstantType(type1)) type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
+                    if (!checkConstantType(type1)) {
+                        //if (type1.typeName.equals("this")) type2 = visitExpression((expression)node.sons.get(2),scope);
+                       type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
+                    }
                     else type2 = visitExpression((expression)node.sons.get(2),scope);
                    // classScope classTmp = findClass(type1.typeName,scope);
                    // if (!classTmp.name.contains(type2.typeName)) throw new Exception("dot error");
@@ -866,6 +882,8 @@ public class ASTvisitor {
 
     public type visitThis(Scope scope)throws Exception{
         type tmp = new type();
+        //scope = (classScope)scope;
+        tmp.typeName = findClassScope(scope).className;
         /*remain to be finished.*/
         return tmp;
     }
@@ -1126,17 +1144,10 @@ public class ASTvisitor {
     }*/
 
     public type visitCallFunctionExpression(callFunctionExpression exp, Scope scope)throws Exception{
-        //System.out.println("visit CallFunctionExpression");
         type tmp = new type();
         functionScope func = new functionScope();
-        //System.out.println(exp.functionName);
-        //System.out.println(scope.name);
         func = findFunction(exp.functionName,scope);
-        //System.out.println("==================================");
-        //System.out.println(func.returnType.typeName);
-        //System.out.println(func.functionName);
-        //System.out.println(":::::::::::::::::::::::::::::::::::");
-        checkInputVariable(exp.expressionSons,func,scope);
+        if (scope.scopleType.equals("top")) checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
         return tmp;
     }
