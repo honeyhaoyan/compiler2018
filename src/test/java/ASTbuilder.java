@@ -576,6 +576,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             Op op = new Op();
             if (context.Dot()!=null) op.op = context.Dot().toString();
             if (context.OpenBlacket()!=null) op.op = context.OpenBlacket().toString();
+            tmp.addSon(op);
         }
         if (context.constant()!=null) {
             //System.out.println("visit constant");

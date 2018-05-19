@@ -680,7 +680,7 @@ public class ASTvisitor {
                     globalType.typeName = "Bool";
                     return globalType;
                 }
-                if (((Op) item).op.equals('!')){
+                if (((Op) item).op.equals("!")){
                     /*type type1 = visitExpression((expression) node.sons.get(1),scope);
                     checkType(type1,"Bool");*/
                     globalType.typeName = "Bool";
@@ -698,7 +698,7 @@ public class ASTvisitor {
                     //checkType(type1,"Int");
                     globalType.typeName = "Int";
                 }
-                if (((Op) item).op.equals('.')){
+                if (((Op) item).op.equals(".")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),findClass(type1.typeName,scope));
                    // classScope classTmp = findClass(type1.typeName,scope);
@@ -706,7 +706,7 @@ public class ASTvisitor {
                     globalType = type2;
                     return globalType;
                 }
-                if (((Op) item).op.equals('[')){
+                if (((Op) item).op.equals("[")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
                     if (type1.arrExp.size()==0) throw new Exception("subscript error");
