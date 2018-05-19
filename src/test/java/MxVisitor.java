@@ -52,6 +52,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionDefinition(MxParser.FunctionDefinitionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxParser#functionName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionName(MxParser.FunctionNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxParser#globalVariable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -142,24 +148,6 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitContinueStatement(MxParser.ContinueStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MxParser#selfOperationStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSelfOperationStatement(MxParser.SelfOperationStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#callFunctionStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCallFunctionStatement(MxParser.CallFunctionStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#dotFunctionStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDotFunctionStatement(MxParser.DotFunctionStatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MxParser#valuebleSingleExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -189,36 +177,6 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableArrayTypeExpression(MxParser.VariableArrayTypeExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#dotExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDotExpression(MxParser.DotExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#dotVariableExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDotVariableExpression(MxParser.DotVariableExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#dotFunctionExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDotFunctionExpression(MxParser.DotFunctionExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#functionName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionName(MxParser.FunctionNameContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxParser#subscriptExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSubscriptExpression(MxParser.SubscriptExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxParser#callFunctionExpression}.
 	 * @param ctx the parse tree

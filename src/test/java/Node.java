@@ -181,20 +181,22 @@ class continueStatement extends statement{
 class newStatement extends statement{
     //variable newVariable;
     String name;
-    String method;
+    //String method;
     type newType1;
     type newType2;
-    subscriptExpression subscri;
-    dotVariableExpression dotVa;
+    //subscriptExpression subscri;
+    //dotVariableExpression dotVa;
+    expression exp;
     public newStatement(){
         super();
         newType1 = new type();
         newType2 = new type();
-        subscri = new subscriptExpression();
-        dotVa = new dotVariableExpression();
+        //subscri = new subscriptExpression();
+        //dotVa = new dotVariableExpression();
+        exp = new expression();
     }
 }
-
+/*
 class selfOperationStatement extends statement{
     Op op;
     variable va;
@@ -219,6 +221,14 @@ class dotFunctionStatement extends statement{
     dotFunctionStatement(){
         super();
         dotFunc = new dotFunctionExpression();
+    }
+}
+*/
+class valuebleSingleStatement extends statement{
+    expression exp;
+    valuebleSingleStatement(){
+        super();
+        exp = new expression();
     }
 }
 
@@ -250,24 +260,14 @@ class This extends Node{
     }
 }
 
+/*
 class dotExpression extends expression{
     dotExpression(){
         super();
     }
 }
 class dotVariableExpression extends dotExpression{
-    /*
-    variable father;
-    //variable son;
-    expression son;
-    subscriptExpression subFather;
-    dotVariableExpression(){
-        super();
-        father = new variable();
-        //son = new variable();
-        son = new expression();
-        subFather = new subscriptExpression();
-    }*/
+
     String father;
     String son;
 
@@ -292,18 +292,7 @@ class dotVariableExpression extends dotExpression{
 }
 
 class dotFunctionExpression extends dotExpression{
-    /*
-    variable father;
-    callFunctionExpression son;
-    subscriptExpression subFather;
-    //expression son;
-    dotFunctionExpression(){
-        super();
-        father = new variable();
-        son = new callFunctionExpression();
-        subFather = new subscriptExpression();
-        //son = new expression();
-    }*/
+
     String father;
     String son;
 
@@ -342,7 +331,7 @@ class subscriptExpression extends expression{
         Son = new ArrayList<expression>();
     }
 }
-
+*/
 class callFunctionExpression extends expression{
     public variable va;
     public String functionName;

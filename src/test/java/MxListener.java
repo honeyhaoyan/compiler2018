@@ -77,6 +77,16 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitFunctionDefinition(MxParser.FunctionDefinitionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxParser#functionName}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionName(MxParser.FunctionNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#functionName}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionName(MxParser.FunctionNameContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxParser#globalVariable}.
 	 * @param ctx the parse tree
 	 */
@@ -227,36 +237,6 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitContinueStatement(MxParser.ContinueStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link MxParser#selfOperationStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterSelfOperationStatement(MxParser.SelfOperationStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#selfOperationStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitSelfOperationStatement(MxParser.SelfOperationStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#callFunctionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterCallFunctionStatement(MxParser.CallFunctionStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#callFunctionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitCallFunctionStatement(MxParser.CallFunctionStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#dotFunctionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterDotFunctionStatement(MxParser.DotFunctionStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#dotFunctionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitDotFunctionStatement(MxParser.DotFunctionStatementContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link MxParser#valuebleSingleExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -306,56 +286,6 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariableArrayTypeExpression(MxParser.VariableArrayTypeExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#dotExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterDotExpression(MxParser.DotExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#dotExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitDotExpression(MxParser.DotExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#dotVariableExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterDotVariableExpression(MxParser.DotVariableExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#dotVariableExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitDotVariableExpression(MxParser.DotVariableExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#dotFunctionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterDotFunctionExpression(MxParser.DotFunctionExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#dotFunctionExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitDotFunctionExpression(MxParser.DotFunctionExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#functionName}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionName(MxParser.FunctionNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#functionName}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionName(MxParser.FunctionNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxParser#subscriptExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubscriptExpression(MxParser.SubscriptExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#subscriptExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubscriptExpression(MxParser.SubscriptExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxParser#callFunctionExpression}.
 	 * @param ctx the parse tree

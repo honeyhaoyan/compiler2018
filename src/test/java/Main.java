@@ -14,7 +14,9 @@ public class Main {
         ANTLRInputStream input = new ANTLRInputStream (is);
         MxLexer lexer = new MxLexer (input);
         CommonTokenStream tokens = new CommonTokenStream (lexer);
+        //parser.setErrorHandler( new BailErrorStrategy());
         MxParser parser = new MxParser (tokens);
+        parser.setErrorHandler( new BailErrorStrategy());
         ParseTree tree = parser.program();
 
         //System.out.print("123");

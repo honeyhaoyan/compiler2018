@@ -35,6 +35,9 @@ classDefinition
 functionDefinition
     :variableTypeExpression functionName OpenParen (definitionExpression (Comma definitionExpression)*)* CloseParen blockStatement
     ;
+    functionName
+        :Identifier
+        ;
 
 globalVariable
     :(definitionStatement|assignStatement|newStatement)
@@ -52,10 +55,8 @@ blockStatement
     ;
 
 statement
-    //:emptyStatement
     :newStatement
     |definitionStatement
-    //|newStatement
     |assignStatement
     |ifStatement
     |forStatement
@@ -63,10 +64,9 @@ statement
     |breakStatement
     |returnStatement
     |continueStatement
-    |selfOperationStatement
-    |callFunctionStatement
-    |dotFunctionStatement
-    //|valuebleSingleStatement Semi
+    //|selfOperationStatement
+    //|callFunctionStatement
+    //|dotFunctionStatement
     |valuebleSingleStatement
     |emptyStatement
     ;
@@ -84,8 +84,9 @@ statement
 
     newStatement
         :(variableTypeExpression)? Identifier Assign New variableTypeExpression Semi
-        |subscriptExpression Assign New variableTypeExpression Semi
-        |dotVariableExpression Assign New variableTypeExpression Semi
+        //|subscriptExpression Assign New variableTypeExpression Semi
+        //|dotVariableExpression Assign New variableTypeExpression Semi
+        |valuebleSingleExpression  Assign New variableTypeExpression Semi
         ;
 
     assignStatement
@@ -111,22 +112,20 @@ statement
         ;
     returnStatement
         :Return (valuebleSingleExpression|valuebleListExpression)? Semi
-        //|Return New Identifier OpenParen CloseParen Semi
         ;
     continueStatement
         :Continue Semi
         ;
-    selfOperationStatement
-        :(Inc | Dec) (Identifier|dotVariableExpression) Semi
-        |(Identifier|dotVariableExpression) (Inc|Dec) Semi
-        //|(Not | Lnot) (Identifier|dotVariableExpression) Semi
+    /*selfOperationStatement
+        :(Inc | Dec) (valuebleSingleExpression) Semi
+        |(valuebleSingleExpression) (Inc|Dec) Semi
         ;
     callFunctionStatement
         :callFunctionExpression Semi
         ;
     dotFunctionStatement
         :dotFunctionExpression Semi
-        ;
+        ;*/
 
 //expression 从上到下依次匹配，所以把优先级大的放在上面，优先级小的放在下面
 
@@ -135,15 +134,16 @@ valuebleSingleExpression
     |variableTypeExpression
     |constant
     |This
-    |dotExpression
-    |subscriptExpression
+    //|dotExpression
+    //|subscriptExpression
+    |valuebleSingleExpression Dot valuebleSingleExpression
+    |valuebleSingleExpression OpenBlacket (valuebleSingleExpression)? CloseBlacket
     |(Inc | Dec) valuebleSingleExpression
     |valuebleSingleExpression (Inc|Dec)
     |(Not | Lnot) valuebleSingleExpression
     |valuebleSingleExpression (Mul|Div) valuebleSingleExpression
     |Sub valuebleSingleExpression
     |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
-    //|valuebleSingleExpression (Mul|Div) valuebleSingleExpression
     |valuebleSingleExpression (Lshift | Rshift) valuebleSingleExpression
     |valuebleSingleExpression (Le | Ge | Lt | Gt) valuebleSingleExpression
     |valuebleSingleExpression (Equal | Notequal) valuebleSingleExpression
@@ -155,8 +155,6 @@ valuebleSingleExpression
     |callFunctionExpression
     |OpenParen valuebleSingleExpression CloseParen
     |newExpression
-
-    //|newExpression
     ;
 
     newExpression
@@ -170,22 +168,19 @@ valuebleSingleExpression
             :(primaryType|Identifier)
             ;
         variableArrayTypeExpression
-            :(primaryType|Identifier) ((OpenBlacket (valuebleSingleExpression)? CloseBlacket )*)?
+            :(primaryType|Identifier) (OpenBlacket (valuebleSingleExpression)? CloseBlacket )*
             ;
-
+    /*
     dotExpression
         :dotVariableExpression
         |dotFunctionExpression
         ;
         dotVariableExpression
-            //:className Dot valuebleSingleExpression
             :(className|subscriptExpression|callFunctionExpression|This) Dot (dotExpression|className)
-           // |className Dot className
-            //|subscriptExpression Dot valuebleSingleExpression
-            //:className Dot className
+
             ;
         dotFunctionExpression
-            :(className|subscriptExpression|StringConstant|callFunctionExpression|This|(OpenParen callFunctionExpression Add callFunctionExpression CloseParen)) Dot (dotFunctionExpression|callFunctionExpression)
+            :(OpenParen)?(className|subscriptExpression|StringConstant|callFunctionExpression|This|(OpenParen callFunctionExpression Add callFunctionExpression CloseParen)) Dot (dotFunctionExpression|callFunctionExpression)(CloseParen)?
             //|StringConstant Dot callFunctionExpression
             //|subscriptExpression Dot callFunctionExpression
             ;
@@ -194,12 +189,12 @@ valuebleSingleExpression
                 ;
 
     subscriptExpression
-        //:(OpenParen)?(className|OpenParen newExpression CloseParen) (OpenBlacket (valuebleSingleExpression) CloseBlacket)* (CloseParen (OpenBlacket (valuebleSingleExpression) CloseBlacket)*)?
-        //:(className|OpenParen valuebleSingleExpression CloseParen )(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
-        :(className)(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
-        //|(valuebleSingleExpression)(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
+
+        :(className|dotVariableExpression)(OpenBlacket (valuebleSingleExpression) CloseBlacket)*
+
         |(OpenParen)*(OpenParen newExpression CloseParen)((OpenBlacket valuebleSingleExpression CloseBlacket)* CloseParen)* (OpenBlacket (valuebleSingleExpression) CloseBlacket)*
         ;
+    */
 
     callFunctionExpression
         :Identifier OpenParen (valuebleListExpression|valuebleSingleExpression)? CloseParen
@@ -212,22 +207,17 @@ valuebleListExpression
 definitionExpression  // int a(b) / int a=b
     :definitionNormalExpression
     |definitionArrayExpression
-    |New
     ;
     definitionNormalExpression
         :variableNormalTypeExpression Identifier (Assign valuebleSingleExpression)?
         |variableNormalTypeExpression Identifier (OpenParen valuebleSingleExpression CloseParen)?
         ;
     definitionArrayExpression
-        //:variableArrayTypeExpression Identifier (Assign OpenCurly valuebleListExpression CloseCurly)?
-        :variableArrayTypeExpression Identifier (Assign subscriptExpression)?
+        :variableArrayTypeExpression Identifier (Assign valuebleSingleExpression)?
         ;
 
 assignExpression
-    //:variableTypeExpression Assign valuebleSingleExpression
-
     : valuebleSingleExpression Assign valuebleSingleExpression
-    //| Identifier Assign OpenCurly valuebleListExpression CloseCurly
     ;
 
 
