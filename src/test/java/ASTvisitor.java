@@ -268,6 +268,7 @@ public class ASTvisitor {
             }
             else throw new Exception("Illegal assignment.");
         }
+        if (item.expLe.sons.get(0) instanceof This) throw new Exception("this play as left value");
     }
 
     public void visitDefinitionStatement(definitionStatement item, Scope scope) throws Exception{
@@ -1147,7 +1148,7 @@ public class ASTvisitor {
         type tmp = new type();
         functionScope func = new functionScope();
         func = findFunction(exp.functionName,scope);
-        if (scope.scopleType.equals("top")) checkInputVariable(exp.expressionSons,func,scope);
+        if (func.scopeFather.scopleType.equals("top")) checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
         return tmp;
     }
