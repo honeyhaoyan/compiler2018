@@ -212,6 +212,12 @@ class Ret extends assembly{
         System.out.println("ret");fout.println("ret");
     }
 }
+class Leave extends assembly{
+    public Leave(){}
+    public void print(PrintStream fout){
+        System.out.println("leave");fout.println("leave");
+    }
+}
 /*
 class Load extends assembly{
     Address right;
