@@ -95,7 +95,7 @@ class Add extends Two{
     public Add(assembly left,assembly right){super(left,right);type = "add";}
 }
 class Sub extends Two{
-    //x : x – y
+    //x : x - y
     Phyregister regLe;
     public Sub(assembly left,assembly right){super(left,right);type = "sub";}
 }
@@ -114,7 +114,7 @@ class Inc{
 
 }
 class Dec{
-    //x : x – 1
+    //x :x - 1
 
 }
 class Syscall{
