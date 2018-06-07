@@ -6,6 +6,8 @@ public class codeGenerator implements IRBasicVisitor {
     List<assembly>global = new ArrayList<assembly>();
     List<String>globalNames = new ArrayList<String>();
     BuildinPrinter builtinPrinter = new BuildinPrinter();
+    BuildinPrinter2 builtinPrinter2 = new BuildinPrinter2();
+    PrintStream fout;
     /*public register getRegister(virtualRegister node){
 
     }
@@ -29,11 +31,13 @@ public class codeGenerator implements IRBasicVisitor {
         }
         return null;
     }
-    public void visit(IRRoot node) throws IOException{
+    public void visit(IRRoot node,PrintStream ps) throws IOException{
+        fout = ps;
         //BuiltinPrinter builtinPrinter = new BuiltinPrinter();
         node.statics.forEach(x->x.accept(this));
         node.functions.forEach(x->x.accept(this));
         finalPrint();
+
     }
     public void visit(Immediate node){
 
@@ -74,14 +78,15 @@ public class codeGenerator implements IRBasicVisitor {
 
     }
     public void visit(Return node){
-        global.add(new Mov(new Phyregister("eax"),getMem(node.getRegister())));
+        global.add(new Mov(new Phyregister("rax"),getMem(node.getRegister())));
         global.add(new Ret());
     }
     public void visit(Move node){
         assembly left = getMem(node.getDest());
         assembly right = getMem(node.getSource());
         if (left instanceof Address && right instanceof Address){
-            global.add(new Load(new Phyregister("r11"),(Address)right));
+            //global.add(new Load(new Phyregister("r11"),(Address)right));
+            global.add(new Mov(new Phyregister("r11"),(Address)right));
             right = new Phyregister("r11");
         }
         global.add(new Mov(left,right));
@@ -143,7 +148,7 @@ public class codeGenerator implements IRBasicVisitor {
         assembly left = getMem(node.getLhs());
         assembly right = getMem(node.getRhs());
         if (left instanceof Address && right instanceof Address){
-            global.add(new Load(new Phyregister("r11"),(Address)right));
+            global.add(new Mov(new Phyregister("r11"),(Address)right));
             right = new Phyregister("r11");
         }
         if (node.getOp() == binaryOperation.Op.ADD){
@@ -191,22 +196,24 @@ public class codeGenerator implements IRBasicVisitor {
     }
     public void finalPrint()throws IOException{
         for (String item:globalNames){
-            System.out.println("global "+item);
+            System.out.println("global "+item);fout.println("global "+item);
         }
-        builtinPrinter.printBuiltin("extern");
-        System.out.println();
-        System.out.println();
-        System.out.println("SECTION .text");
+        builtinPrinter.printBuiltin("extern");builtinPrinter2.printBuiltin("extern",fout);
+        System.out.println();fout.println();
+        System.out.println();fout.println();
+        System.out.println("SECTION .text");fout.println("SECTION .text");
         //builtinPrinter.printBuiltin("method");
         for (assembly item:global){
-            item.print();
+            item.print(fout);
         }
-        System.out.println();
-        builtinPrinter.printBuiltin("method");
+        System.out.println();fout.println();
+        builtinPrinter.printBuiltin("method");builtinPrinter2.printBuiltin("method",fout);
         //builtinPrinter.printBuiltin("extern");
-        System.out.println("SECTION .data");
-        System.out.println("SECTION .bss");
-        builtinPrinter.printBuiltin("const_str");
+        System.out.println("SECTION .bss");fout.println("SECTION .bss");
+        System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
+        System.out.println("SECTION .data");fout.println("SECTION .data");
+        //System.out.println("SECTION .bss");fout.println("SECTION .bss");
+        builtinPrinter.printBuiltin("const_str");builtinPrinter2.printBuiltin("const_str",fout);
     }
 
 }

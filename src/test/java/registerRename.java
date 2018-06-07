@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class registerRename implements IRBasicVisitor{
     Function currentFunction;
@@ -18,7 +19,7 @@ public class registerRename implements IRBasicVisitor{
         }
         return null;
     }*/
-    public void visit(IRRoot node)throws IOException {
+    public void visit(IRRoot node,PrintStream pri)throws IOException {
         node.functions.forEach(x -> x.accept(this));
     }
     public void visit(Immediate node){

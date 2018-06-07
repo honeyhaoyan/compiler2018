@@ -1,6 +1,8 @@
+import java.io.PrintStream;
+
 //The .bss section is for writable data.
 public abstract class assembly {
-    public abstract void print();
+    public abstract void print(PrintStream fout);
 }
 
 class Address extends assembly{
@@ -13,23 +15,27 @@ class Address extends assembly{
         this.reg = reg;
     }
     @Override
-    public void print(){
-        System.out.print("qword[");
-        reg.print();
-        System.out.print(op);
-        System.out.print(offset);
-        System.out.print("]");
+    public void print(PrintStream fout){
+        System.out.print("qword[");fout.print("qword[");
+        reg.print(fout);
+        System.out.print(op);fout.print(op);
+        System.out.print(offset);fout.print(offset);
+        System.out.print("]");fout.print("]");
     }
 }
 class Imm extends assembly{
     int data;
     public Imm(int data){this.data = data;}
-    public void print(){System.out.print(data);}
+    public void print(PrintStream fout){
+        System.out.print(data);fout.print(data);
+    }
 }
 class Label extends assembly{
     String la;
     public Label(String la){this.la = la;}
-    public void print(){System.out.print(la+":"+'\n');}
+    public void print(PrintStream fout){
+        System.out.print(la+":"+'\n');fout.print(la+":"+'\n');
+    }
 }
 class Phyregister extends assembly{
     /*public enum names{
@@ -56,7 +62,9 @@ class Phyregister extends assembly{
     public Phyregister(String na){
         this.registername = na;
     }
-    @Override public void print(){System.out.print(registername);}
+    @Override public void print(PrintStream fout){
+        System.out.print(registername);fout.print(registername);
+    }
 }
 class Two extends assembly{
     assembly left;
@@ -66,12 +74,12 @@ class Two extends assembly{
         this.left = left;
         this.right = right;
     }
-    public void print(){
-        System.out.print(type+" ");
-        left.print();
-        System.out.print(" , ");
-        right.print();
-        System.out.print('\n');
+    public void print(PrintStream fout){
+        System.out.print(type+" ");fout.print(type+" ");
+        left.print(fout);
+        System.out.print(" , ");fout.print(" , ");
+        right.print(fout);
+        System.out.print('\n');fout.print('\n');
     }
 }
 class Mov extends Two{
@@ -171,10 +179,10 @@ class Push extends assembly{
     public Push(Phyregister name){
         reg = name;
     }
-    public void print(){
-        System.out.print("push ");
-        reg.print();
-        System.out.print("\n");
+    public void print(PrintStream fout){
+        System.out.print("push ");fout.print("push ");
+        reg.print(fout);
+        System.out.print("\n");fout.print("\n");
     }
 }
 class Pop extends assembly{
@@ -182,10 +190,10 @@ class Pop extends assembly{
     public Pop(Phyregister name){
         reg = name;
     }
-    public void print(){
-        System.out.print("pop ");
-        reg.print();
-        System.out.print("\n");
+    public void print(PrintStream fout){
+        System.out.print("pop ");fout.print("pop ");
+        reg.print(fout);
+        System.out.print("\n");fout.print("\n");
     }
 }
 class Jnz{
@@ -194,14 +202,17 @@ class Jnz{
 class CallF extends assembly{
     String fun;
     public CallF(String fun){this.fun =fun;}
-    public void print(){
-        System.out.print("call "+fun);
+    public void print(PrintStream fout){
+        System.out.print("call "+fun);fout.print("call "+fun);
     }
 }
 class Ret extends assembly{
     public Ret(){}
-    public void print(){System.out.println("ret");}
+    public void print(PrintStream fout){
+        System.out.println("ret");fout.println("ret");
+    }
 }
+/*
 class Load extends assembly{
     Address right;
     Phyregister left;
@@ -209,11 +220,11 @@ class Load extends assembly{
         this.right = right;
         this.left = left;
     }
-    public void print(){
-        System.out.print("load ");
-        left.print();
-        System.out.print(" , ");
-        right.print();
-        System.out.println();
+    public void print(PrintStream fout){
+        System.out.print("load ");fout.print("load ");
+        left.print(fout);
+        System.out.print(" , "); fout.print(" , ");
+        right.print(fout);
+        System.out.println();fout.println();
     }
-}
+}*/

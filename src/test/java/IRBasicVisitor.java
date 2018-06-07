@@ -1,7 +1,8 @@
 import java.io.IOException;
+import java.io.PrintStream;
 
 public interface IRBasicVisitor {
-    void visit(IRRoot node)throws IOException;
+    void visit(IRRoot node,PrintStream pri)throws IOException;
     void visit(Immediate node);
     void visit(virtualRegister node);
 

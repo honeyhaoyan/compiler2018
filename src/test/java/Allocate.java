@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintStream;
 
 /*
     1. Stack Frame
@@ -20,7 +21,7 @@ import java.io.IOException;
     rdi     rsi     rdx     rcx     r8      r9
      */
 public class Allocate implements IRBasicVisitor {
-    public void visit(IRRoot node)throws IOException {
+    public void visit(IRRoot node,PrintStream pri)throws IOException {
 
 
     }

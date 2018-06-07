@@ -35,12 +35,14 @@ public class Main {
         irBuilder.visit(root);
         IRRoot irRoot = irBuilder.getIRRoot();
         //irRoot.print();
-
+        PrintStream ps = null ;
         registerRename rename = new registerRename();
-        rename.visit(irRoot);
+        rename.visit(irRoot,ps);
 
+        //PrintStream ps = null ;
+        ps = new PrintStream("code/out.asm");
         codeGenerator generator = new codeGenerator();
-        generator.visit(irRoot);
+        generator.visit(irRoot,ps);
         //IRPrinter irPrinter = new IRPrinter();
         //irPrinter.print(irRoot);
         //root.visit();

@@ -524,7 +524,7 @@ class IRRoot extends IRNode{
     public void print(){
         basicBlocks.forEach(x -> x.print());
     }
-    public void accept(IRBasicVisitor visitor)throws IOException {visitor.visit(this);}
+    public void accept(IRBasicVisitor visitor)throws IOException {visitor.visit(this,null);}
 }
 
 
