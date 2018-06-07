@@ -75,27 +75,27 @@ class Two extends assembly{
     }
 }
 class Mov extends Two{
-    //x ← y
+    //x : y
     public Mov(assembly left,assembly right){super(left,right);type = "mov";}
 }
 class And extends Two{
-    //x ← x and y
+    //x : x and y
     public And(assembly left,assembly right){super(left,right);type = "and";}
 }
 class Or extends Two{
-    //x ← x or y
+    //x : x or y
     public Or(assembly left,assembly right){super(left,right);type = "or";}
 }
 class Xor extends Two{
-    //x ← x xor y
+    //x : x xor y
     public Xor(assembly left,assembly right){super(left,right);type = "xor";}
 }
 class Add extends Two{
-    //x ← x + y
+    //x : x + y
     public Add(assembly left,assembly right){super(left,right);type = "add";}
 }
 class Sub extends Two{
-    //x ← x – y
+    //x : x – y
     Phyregister regLe;
     public Sub(assembly left,assembly right){super(left,right);type = "sub";}
 }
@@ -110,11 +110,11 @@ class one extends assembly{
     }
 }*/
 class Inc{
-    //x ← x + 1
+    //x : x + 1
 
 }
 class Dec{
-    //x ← x – 1
+    //x : x – 1
 
 }
 class Syscall{
