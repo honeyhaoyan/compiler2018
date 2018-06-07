@@ -5,8 +5,8 @@ import java.io.*;
 
 public class Main {
     public static void main (String[] args) throws Exception {
-        InputStream is = new FileInputStream ("program.txt");
-        //InputStream is = new FileInputStream ("code/testProgram.txt");
+        //InputStream is = new FileInputStream ("program.txt");
+        InputStream is = new FileInputStream ("code/testProgram.txt");
         //String pathname = "//testProgram.txt";
        // File filename = new File(pathname);
        // InputStreamReader is = new InputStreamReader(
@@ -24,12 +24,25 @@ public class Main {
         //System.out.println("build ASTtree success");
         Program root = ASTtree.visitProgram((MxParser.ProgramContext) tree);
         //System.out.println("build root success");
-        System.out.println("===================================================================================================");
+        //System.out.println("===================================================================================================");
         ASTvisitor visitor = new ASTvisitor();
         try { visitor.visit(root); }
         catch(Exception exp) {
             throw exp;
         }
+        //System.out.println("===================================================================================================");
+        IRBuilder irBuilder = new IRBuilder();
+        irBuilder.visit(root);
+        IRRoot irRoot = irBuilder.getIRRoot();
+        //irRoot.print();
+
+        registerRename rename = new registerRename();
+        rename.visit(irRoot);
+
+        codeGenerator generator = new codeGenerator();
+        generator.visit(irRoot);
+        //IRPrinter irPrinter = new IRPrinter();
+        //irPrinter.print(irRoot);
         //root.visit();
         //System.out.println(root.functionSons.toString());
 

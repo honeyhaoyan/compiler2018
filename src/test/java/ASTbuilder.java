@@ -4,24 +4,24 @@ import org.antlr.v4.runtime.tree.*;
 public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public Program visitProgram(MxParser.ProgramContext context) {
         Program tmp = new Program();
-        System.out.println("new program");
+        //System.out.println("new program");
         int i=0;
         //System.out.println(context.programItem().size());
         for (ParseTree item : context.programItem()){
             if (context.programItem(i).classDefinition()!=null){
-                System.out.println("program class");
+                //System.out.println("program class");
                 classDefinition classNode = (classDefinition) visit(item);
                 tmp.classSons.add(classNode);
                 tmp.sequenceSons.add(classNode);
             }
             if (context.programItem(i).functionDefinition()!=null){
-                System.out.println("program function");
+                //System.out.println("program function");
                 functionDefinition functionNode = visitFunctionDefinition(context.programItem(i).functionDefinition());
                 tmp.functionSons.add(functionNode);
                 tmp.sequenceSons.add(functionNode);
             }
             if (context.programItem(i).globalVariable()!=null){
-                System.out.println("program global variable");
+                //System.out.println("program global variable");
                 variable globalVariableNode = new variable();
                 if (context.programItem(i).globalVariable().definitionStatement()!=null){
                     definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement());

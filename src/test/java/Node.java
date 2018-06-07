@@ -10,6 +10,9 @@ public class Node {
     public void addSon(Node son){
         sons.add(son);
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class Program extends Node{
@@ -24,6 +27,9 @@ class Program extends Node{
         functionSons = new ArrayList<functionDefinition>();
         sequenceSons = new ArrayList<Node>();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class classDefinition extends Node{
@@ -34,6 +40,9 @@ class classDefinition extends Node{
         super();
         variableSons = new ArrayList<definitionStatement>();
         functionSons = new ArrayList<functionDefinition>();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -48,6 +57,9 @@ class functionDefinition extends Node{
         returnType = new type();
         blockSon = new blockDefinition();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class blockDefinition extends Node{
@@ -56,6 +68,9 @@ class blockDefinition extends Node{
         super();
         statementSons = new ArrayList<Node>();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class statement extends Node{
@@ -63,9 +78,12 @@ class statement extends Node{
     public statement(){
         super();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
-class type extends Node{
+class type extends expression{
     public String typeName;
     //List<String>arr;
     List<expression>arrExp;
@@ -74,9 +92,12 @@ class type extends Node{
         //arr=new ArrayList<>();
         arrExp = new ArrayList<expression>();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
-class variable extends Node{
+class variable extends expression{
     type ty;
     //String father;
     String name;
@@ -85,16 +106,25 @@ class variable extends Node{
         super();
         ty = new type();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
-class constant extends Node{
+class constant extends expression{
     public String type;
     public String value;
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class illegal extends Node{
     illegal(){
         super();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -105,6 +135,9 @@ class definitionStatement extends statement{
         super();
         variableSon = new variable();
         exp = new expression();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -117,6 +150,9 @@ class assignmentStatement extends statement{
         expLe = new expression();
         expRi = new expression();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class ifStatement extends statement{
@@ -128,6 +164,9 @@ class ifStatement extends statement{
         ifcondition = new expression();
         ifblock = new blockDefinition();
         elseblock = new blockDefinition();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -147,6 +186,9 @@ class forStatement extends statement{
         ifEmptyCon = false;
         ifEmptyBlock = false;
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class whileStatement extends statement{
@@ -155,11 +197,17 @@ class whileStatement extends statement{
     public whileStatement(){
         super();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class breakStatement extends statement{
     public breakStatement(){
         super();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -169,11 +217,17 @@ class returnStatement extends statement{
         super();
         returnExpression = new expression();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class continueStatement extends statement{
     public continueStatement(){
         super();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -194,6 +248,9 @@ class newStatement extends statement{
         //subscri = new subscriptExpression();
         //dotVa = new dotVariableExpression();
         exp = new expression();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 /*
@@ -230,6 +287,9 @@ class valuebleSingleStatement extends statement{
         super();
         exp = new expression();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class emptyStatement extends statement{
@@ -238,12 +298,18 @@ class emptyStatement extends statement{
         super();
         islegal = true;
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 
 class expression extends Node {
     public expression(){
         super();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -252,11 +318,17 @@ class Op extends Node{
     Op(){
         super();
     }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
+    }
 }
 
 class This extends Node{
     This(){
         super();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
 
@@ -340,5 +412,8 @@ class callFunctionExpression extends expression{
         super();
         expressionSons = new ArrayList<expression>();
         va = new variable();
+    }
+    public void accept(IRBuilder visitor){
+        visitor.visit(this);
     }
 }
