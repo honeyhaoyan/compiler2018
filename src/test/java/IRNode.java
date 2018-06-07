@@ -46,13 +46,14 @@ class virtualRegister extends Value{
     public virtualRegister(String registerName,int id){
         this.name = registerName;
         this.id = id;
+        ifRenamed = false;
     }
     public String getRegisterName (){return name;}
     @Override public virtualRegister copy(){return new virtualRegister(name,id);}
     public void print(){System.out.print("%"+Integer.toString(id));}
 
     public void setName(String name) {
-        this.name = name;ifRenamed = true;
+        this.name = name;
     }
     public String getNewName(){return newName;}
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}

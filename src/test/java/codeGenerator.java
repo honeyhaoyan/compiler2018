@@ -62,6 +62,7 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Label(node.functionName));
         global.add(new Push(new Phyregister("rbp")));
         global.add(new Mov(new Phyregister("rbp"),new Phyregister("rsp")));
+        global.add(new Sub(new Phyregister("rsp"),new Imm(node.totalOffset)));
         node.basicBlocks.forEach(x->x.accept(this));
         global.add(new Pop(new Phyregister("rbp")));
         global.add(new Ret());

@@ -69,7 +69,7 @@ class Two extends assembly{
     public void print(){
         System.out.print(type+" ");
         left.print();
-        System.out.print(",");
+        System.out.print(" , ");
         right.print();
         System.out.print('\n');
     }
@@ -212,7 +212,7 @@ class Load extends assembly{
     public void print(){
         System.out.print("load ");
         left.print();
-        System.out.print(",");
+        System.out.print(" , ");
         right.print();
         System.out.println();
     }

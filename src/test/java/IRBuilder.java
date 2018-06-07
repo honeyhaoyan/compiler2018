@@ -97,15 +97,17 @@ public class IRBuilder implements IRBasicBuilder {
     public void visit(definitionStatement node) {
         //virtualRegister register = visit(node.exp);
         virtualRegister registerVa;
-        if (!(node.variableSon.ty.arrExp.size()>1)) {
+        if ((node.variableSon.ty.arrExp.size()==0)) {
             registerVa = visit(node.variableSon);
-            if (node.exp != null) {
+            //registerMap.put(registerVa.getRegisterName(),registerVa);
+            int a = node.exp.sons.size();
+            if (node.exp.sons.size() != 0) {
                 virtualRegister registerExp = visit(node.exp);
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
                 curBasicBlock.append(move);
             }
         }
-        else {
+        if (node.variableSon.ty.arrExp.size()>1) {
             alloca(node.variableSon);
         }
 
@@ -385,11 +387,23 @@ public class IRBuilder implements IRBasicBuilder {
                 Comparison com = new Comparison(curBasicBlock,register,newop,registerRi,registerLe);
                 return register;
             }
-            else{binaryOperation.Op newop;
-                newop = visitBinaryOp(op);
-                registerLe = visit((expression)node.sons.get(2));
-                binaryOperation binary = new binaryOperation(curBasicBlock,register,newop,registerLe,registerRi);
-                curBasicBlock.append(binary);}
+            else{
+                if (op.equals("++")||op.equals("--")){
+                    Immediate imm = new Immediate(1);
+                    binaryOperation.Op newop = null;
+                    if (op.equals("++")) newop = visitBinaryOp("+");
+                    if (op.equals("--")) newop = visitBinaryOp("-");
+                    binaryOperation binary = new binaryOperation(curBasicBlock,register,newop,registerRi,imm);
+                    curBasicBlock.append(binary);
+                }
+                else {
+                    binaryOperation.Op newop;
+                    newop = visitBinaryOp(op);
+                    registerLe = visit((expression)node.sons.get(2));
+                    binaryOperation binary = new binaryOperation(curBasicBlock,register,newop,registerLe,registerRi);
+                    curBasicBlock.append(binary);
+                }
+            }
         }
         return register;
     }
@@ -424,7 +438,8 @@ public class IRBuilder implements IRBasicBuilder {
             //if (node.ty.arrExp.size()!=0) getSize(node.ty,register);
             //register.setName(node.name);
             //registerMap.put(node.name,register);
-
+            register.setName(node.name);
+            registerMap.put(node.name,register);
         }
         return register;
     }
