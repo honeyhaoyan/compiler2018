@@ -80,7 +80,7 @@ public class codeGenerator implements IRBasicVisitor {
     }
     public void visit(Return node){
         global.add(new Mov(new Phyregister("rax"),getMem(node.getRegister())));
-        global.add(new Ret());
+        //global.add(new Ret());
     }
     public void visit(Move node){
         assembly left = getMem(node.getDest());
