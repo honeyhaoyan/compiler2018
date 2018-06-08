@@ -148,15 +148,18 @@ public class codeGenerator implements IRBasicVisitor {
         }*/
         assembly left = getMem(node.getLhs());
         assembly right = getMem(node.getRhs());
-        if (left instanceof Address && right instanceof Address){
+        /*if (left instanceof Address && right instanceof Address){
             global.add(new Mov(new Phyregister("r11"),(Address)right));
             right = new Phyregister("r11");
-        }
+        }*/
+        Phyregister dest = new Phyregister("r11");
+        global.add(new Mov(dest,left));
+        //right = new Phyregister("r11");
         if (node.getOp() == binaryOperation.Op.ADD){
-            global.add(new Add(left,right));
+            global.add(new Add(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.SUB){
-            global.add(new Sub(left,right));
+            global.add(new Sub(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.MUL){
             //global.add(new mul());
@@ -185,6 +188,7 @@ public class codeGenerator implements IRBasicVisitor {
         if (node.getOp() == binaryOperation.Op.SHR){
 
         }
+        global.add(new Mov(getMem(node.getDest()),dest));
     }
     public void visit(Comparison node){
 

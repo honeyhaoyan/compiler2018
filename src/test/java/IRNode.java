@@ -39,7 +39,7 @@ class Immediate extends Value{
 class virtualRegister extends Value{
 /*have no idea what to do*/
     private String name;
-    private int id;
+     int id;
     boolean ifRenamed = false;
     private String newName;
     public int offset;
