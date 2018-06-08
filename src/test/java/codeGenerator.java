@@ -8,6 +8,7 @@ public class codeGenerator implements IRBasicVisitor {
     BuildinPrinter builtinPrinter = new BuildinPrinter();
     BuildinPrinter2 builtinPrinter2 = new BuildinPrinter2();
     PrintStream fout;
+    JJump br = null;
     /*public register getRegister(virtualRegister node){
 
     }
@@ -59,6 +60,7 @@ public class codeGenerator implements IRBasicVisitor {
 
     }
     public void visit(basicBlock node){
+        if (node.label!=0) global.add(new Label("b"+Integer.toString(node.label)));
         node.irInstructions.forEach(x->x.accept(this));
     }
     public void visit(Function node){
@@ -68,15 +70,18 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Mov(new Phyregister("rbp"),new Phyregister("rsp")));
         global.add(new Sub(new Phyregister("rsp"),new Imm(node.totalOffset)));
         node.basicBlocks.forEach(x->x.accept(this));
+        //node.basicBlocks.get(0).accept(this);
         //global.add(new Pop(new Phyregister("rbp")));
         global.add(new Leave());
         global.add(new Ret());
     }
     public void visit(Branch node){
-
+        br.setLabel("b"+Integer.toString(node.findThen().label));
+        global.add(br);
+        global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
     }
     public void visit(Jump node){
-
+        global.add(new Jmp("b"+Integer.toString(node.getJumpTo().label)));
     }
     public void visit(Return node){
         global.add(new Mov(new Phyregister("rax"),getMem(node.getRegister())));
@@ -191,7 +196,33 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Mov(getMem(node.getDest()),dest));
     }
     public void visit(Comparison node){
-
+        assembly left = getMem(node.getLhs());
+        assembly right = getMem(node.getRhs());
+        if (left instanceof Address && right instanceof Address){
+            //global.add(new Load(new Phyregister("r11"),(Address)right));
+            global.add(new Mov(new Phyregister("r11"),(Address)right));
+            right = new Phyregister("r11");
+        }
+        global.add(new Cmp(left,right));
+        Comparison.Condition con = node.cond;
+        if (con == Comparison.Condition.EQ){
+            br = new Je(null);
+        }
+        if (con == Comparison.Condition.GE){
+            br = new Jnl(null);
+        }
+        if (con == Comparison.Condition.GT){
+            br = new Jg(null);
+        }
+        if (con == Comparison.Condition.LE){
+            br = new Jng(null);
+        }
+        if (con == Comparison.Condition.LT){
+            br = new Jl(null);
+        }
+        if (con == Comparison.Condition.NE){
+            br = new Jne(null);
+        }
     }
     public void visit(HeapAllocate node){
 

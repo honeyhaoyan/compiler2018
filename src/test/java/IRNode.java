@@ -293,6 +293,7 @@ class Branch extends branchInstruction {
     public void addThen(basicBlock then) {this.then = then;}
     public void addOtherWise(basicBlock otherwise){this.otherwise = otherwise;}
     public basicBlock findOtherwise(){return otherwise;}
+    public basicBlock findThen(){return then;}
     @Override
     public void print(){
         System.out.print("br ");
@@ -471,7 +472,7 @@ class Comparison extends IRInstruction{
         EQ, NE, GT, GE, LT, LE
     }
     private virtualRegister dest;
-    private Condition cond;
+    public Condition cond;
     private Value lhs;
     private Value rhs;
     public Comparison (basicBlock B, virtualRegister dest, Condition cond, Value lhs, Value rhs){
@@ -482,7 +483,13 @@ class Comparison extends IRInstruction{
         this.rhs = rhs;
     }
     @Override
-    public void print(){}
+    public void print(){
+        System.out.print("compare ");
+        dest.print();System.out.print(" ");
+        lhs.print();System.out.print(" ");
+        System.out.print(cond+" ");
+        rhs.print();System.out.println(" ");
+    }
     public virtualRegister getDest(){return dest;}
     public Value getLhs(){return lhs;}
     public Value getRhs(){return rhs;}

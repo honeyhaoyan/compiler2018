@@ -385,6 +385,7 @@ public class IRBuilder implements IRBasicBuilder {
                 newop = visitComparison(op);
                 registerLe = visit((expression)node.sons.get(2));
                 Comparison com = new Comparison(curBasicBlock,register,newop,registerRi,registerLe);
+                curBasicBlock.append(com);
                 return register;
             }
             else{

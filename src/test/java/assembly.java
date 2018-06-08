@@ -133,45 +133,78 @@ class Db{
     //A pseudo-instruction that declares bytes that will be in memory when the program runs
 
 }
-class Cmp{
+class Cmp extends assembly{
     //does a comparison
+    assembly left;
+    assembly right;
+    public Cmp(assembly left, assembly right){
+        this.left = left;
+        this.right = right;
+    }
+    public void print(PrintStream fout){
+        System.out.print("cmp ");fout.print("cmp ");
+        left.print(fout);
+        System.out.print(" , ");fout.print(" , ");
+        right.print(fout);
+        System.out.print('\n');fout.print('\n');
+    }
 }
-class Je{
+class JJump extends assembly{
+    String type;
+    String label;
+    public JJump(String label){
+        this.label = label;
+    }
+    @Override
+    public void print(PrintStream ps){
+        System.out.print(type+" ");
+        System.out.print(label);
+        System.out.println();
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+}
+class Je extends JJump{
     //jumps to a label if the previous comparison was equal
+    Je(String label){ super(label);type = "je"; }
 }
-class Jne{
+class Jne extends JJump{
     //jump if not equal
+    Jne(String label){ super(label);type = "jne"; }
 }
-class Jl{
+class Jl extends JJump{
     //jump if less
-
+    Jl(String label){ super(label);type = "jl"; }
 }
-class Jnl{
+class Jnl extends JJump{
     //jump if not less
-
+    Jnl(String label){ super(label);type = "jnl"; }
 }
-class Jg{
+class Jg extends JJump{
     //jump if greater
+    Jg(String label){ super(label);type = "jg"; }
 }
-class Jng{
+class Jng extends JJump{
     //jump if not greater
-
+    Jng(String label){ super(label);type = "jng"; }
 }
-class Jle{
+class Jle extends JJump{
     //jump if less or equal
-
+    Jle(String label){ super(label);type = "jle"; }
 }
-class Jnle{
+class Jnle extends JJump{
     //jump if not less or equal
-
+    Jnle(String label){ super(label);type = "jnle"; }
 }
-class Jge{
+class Jge extends JJump{
     //jump if greater or equal
-
+    Jge(String label){ super(label);type = "jge"; }
 }
-class Jnge{
+class Jnge extends JJump{
     //jump if not greater or equal
-
+    Jnge(String label){ super(label);type = "jnge"; }
 }
 class Push extends assembly{
     //Decrement rsp by the size of the operand, then store x in [rsp]
@@ -196,8 +229,10 @@ class Pop extends assembly{
         System.out.print("\n");fout.print("\n");
     }
 }
-class Jnz{
-
+class Jmp extends JJump{
+    //If the processor’s Z (zero) flag, is set, jump to the given label
+    //String label;
+    Jmp(String label){ super(label);type = "jmp"; }
 }
 class CallF extends assembly{
     String fun;
@@ -217,7 +252,12 @@ class Leave extends assembly{
     public void print(PrintStream fout){
         System.out.println("leave");fout.println("leave");
     }
-}
+}/*
+class Label extends assembly{
+    int id;
+    public Label (int id){this.id = id;}
+    public void print(PrintStream fout){System.out.println(id);}
+}*/
 /*
 class Load extends assembly{
     Address right;
