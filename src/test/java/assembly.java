@@ -230,7 +230,7 @@ class Pop extends assembly{
     }
 }
 class Jmp extends JJump{
-    //If the processor’s Z (zero) flag, is set, jump to the given label
+    
     //String label;
     Jmp(String label){ super(label);type = "jmp"; }
 }
