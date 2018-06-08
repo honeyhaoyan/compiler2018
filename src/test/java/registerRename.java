@@ -27,11 +27,11 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(virtualRegister node){
         if (!currentFunction.registers.contains(node)){
-            if (node.getRegisterName()!=null) {
+            //if (node.getRegisterName()!=null) {
                 offset = offset+4;
                 node.offset = offset;
                 currentFunction.registers.add(node);
-            }
+            //}
 
         }
     }
