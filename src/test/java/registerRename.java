@@ -28,7 +28,7 @@ public class registerRename implements IRBasicVisitor{
     public void visit(virtualRegister node){
         if (!currentFunction.registers.contains(node)){
             //if (node.getRegisterName()!=null) {
-                offset = offset+4;
+                offset = offset+8;
                 //System.out.println(offset);
                 //System.out.println(node.getRegisterName());
                 //System.out.println(node.id);
