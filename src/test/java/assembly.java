@@ -230,7 +230,7 @@ class Pop extends assembly{
     }
 }
 class Jmp extends JJump{
-    
+
     //String label;
     Jmp(String label){ super(label);type = "jmp"; }
 }

@@ -6,7 +6,7 @@ import java.io.*;
 public class Main {
     public static void main (String[] args) throws Exception {
         //InputStream is = new FileInputStream ("program.txt");
-        InputStream is = new FileInputStream ("code/testProgram.txt");
+        InputStream is = new FileInputStream ("program.txt");
         //String pathname = "//testProgram.txt";
        // File filename = new File(pathname);
        // InputStreamReader is = new InputStreamReader(
@@ -40,7 +40,7 @@ public class Main {
         rename.visit(irRoot,ps);
 
         //PrintStream ps = null ;
-        ps = new PrintStream("code/out.asm");
+        ps = System.err;
         codeGenerator generator = new codeGenerator();
         generator.visit(irRoot,ps);
         //IRPrinter irPrinter = new IRPrinter();
