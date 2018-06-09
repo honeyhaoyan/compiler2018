@@ -42,6 +42,7 @@ public class IRBuilder implements IRBasicBuilder {
         if (node instanceof type) return visit((type)node);
         if (node instanceof callFunctionExpression) return visit((callFunctionExpression)node);
         if (node instanceof constant) return visit((constant)node);
+        if (node instanceof expression) return visit((expression)node);
         virtualRegister register = new virtualRegister(null,registerNumber++);
         return register;
     }
@@ -181,7 +182,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
-        visit(node.operateVariable);
+        //visit(node.operateVariable);
         virtualRegister register = visit(node.variableCondition);
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
@@ -194,6 +195,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop content
         visit(node.forBlock);
+        visit(node.operateVariable);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
@@ -403,8 +405,9 @@ public class IRBuilder implements IRBasicBuilder {
                     binaryOperation.Op newop = null;
                     if (op.equals("++")) newop = visitBinaryOp("+");
                     if (op.equals("--")) newop = visitBinaryOp("-");
-                    binaryOperation binary = new binaryOperation(curBasicBlock,register,newop,registerRi,imm);
+                    binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop,registerRi,imm);
                     curBasicBlock.append(binary);
+                    return registerRi;
                 }
                 else {
                     binaryOperation.Op newop;
