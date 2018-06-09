@@ -40,7 +40,7 @@ public class Main {
         rename.visit(irRoot,ps);
 
         //PrintStream ps = null ;
-        ps = System.err;
+        ps = new PrintStream("code/out.asm");
         codeGenerator generator = new codeGenerator();
         generator.visit(irRoot,ps);
         //IRPrinter irPrinter = new IRPrinter();

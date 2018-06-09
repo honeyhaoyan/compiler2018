@@ -9,6 +9,9 @@ public class codeGenerator implements IRBasicVisitor {
     BuildinPrinter2 builtinPrinter2 = new BuildinPrinter2();
     PrintStream fout;
     JJump br = null;
+    boolean first = false;
+    int returnNum = 0;
+
     /*public register getRegister(virtualRegister node){
 
     }
@@ -60,18 +63,35 @@ public class codeGenerator implements IRBasicVisitor {
 
     }
     public void visit(basicBlock node){
-        if (node.label!=0) global.add(new Label("b"+Integer.toString(node.label)));
+        if (first == false) global.add(new Label("b"+Integer.toString(node.label)));
+        else first = false;
         node.irInstructions.forEach(x->x.accept(this));
     }
     public void visit(Function node){
         globalNames.add(node.functionName);
         global.add(new Label(node.functionName));
+        first = true;
         global.add(new Push(new Phyregister("rbp")));
         global.add(new Mov(new Phyregister("rbp"),new Phyregister("rsp")));
         global.add(new Sub(new Phyregister("rsp"),new Imm(node.totalOffset)));
+        int i=1;
+        for (stackSlot item : node.params){
+            if (i==1) global.add(new Mov(getMem(item.va),new Phyregister("rdi")));
+            if (i==2) global.add(new Mov(getMem(item.va),new Phyregister("rsi")));
+            if (i==3) global.add(new Mov(getMem(item.va),new Phyregister("rdx")));
+            if (i==4) global.add(new Mov(getMem(item.va),new Phyregister("rcx")));
+            if (i==5) global.add(new Mov(getMem(item.va),new Phyregister("r8")));
+            if (i==6) global.add(new Mov(getMem(item.va),new Phyregister("r9")));
+            if (i>6){
+
+            }
+            i++;
+
+        }
         node.basicBlocks.forEach(x->x.accept(this));
         //node.basicBlocks.get(0).accept(this);
         //global.add(new Pop(new Phyregister("rbp")));
+        global.add(new Label("r"+Integer.toString(returnNum++)));
         global.add(new Leave());
         global.add(new Ret());
     }
@@ -86,6 +106,7 @@ public class codeGenerator implements IRBasicVisitor {
     public void visit(Return node){
         global.add(new Mov(new Phyregister("rax"),getMem(node.getRegister())));
         //global.add(new Ret());
+        global.add(new Jmp("r"+Integer.toString(returnNum)));
     }
     public void visit(Move node){
         assembly left = getMem(node.getDest());
@@ -119,6 +140,7 @@ public class codeGenerator implements IRBasicVisitor {
 
             }
             global.add(new Mov(reg,getMem(item)));
+            i++;
         }
         global.add(new CallF(node.functionName()));
     }

@@ -26,6 +26,8 @@ public class IRBuilder implements IRBasicBuilder {
     boolean single = true;
     int registerNumber = 0;
     private Map<String,virtualRegister> registerMap = new HashMap<>();
+    private Map<String,Function> functionMap = new HashMap<>();
+
 
     public IRRoot getIRRoot() {
         return root;
@@ -59,6 +61,13 @@ public class IRBuilder implements IRBasicBuilder {
     public void visit(functionDefinition node) {
         Function function = new Function(node.functionName);
         curFunction = function;
+        functionMap.put(node.functionName,function);
+        //node.inputVariableSons.forEach(x->x.accept(this));
+        for (variable item : node.inputVariableSons){
+            virtualRegister reg = visit(item);
+            stackSlot tmp = new stackSlot(curFunction,reg);
+            function.params.add(tmp);
+        }
         function.blockStart = curBasicBlock;
         visit(node.blockSon);
         function.blockEnd = curBasicBlock;
@@ -130,7 +139,7 @@ public class IRBuilder implements IRBasicBuilder {
         //end the current block with a branch: take the then or take the else
         virtualRegister register = visit(node.ifcondition);
         Branch branch = new Branch(curBasicBlock, register, null, null);
-        curBasicBlock.end(branch);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpEnd = curBasicBlock;
         basicBlockList.add(tmpEnd);
 
@@ -142,7 +151,7 @@ public class IRBuilder implements IRBasicBuilder {
         tmpIf = curBasicBlock;
         branch.addThen(tmpIf);
         Jump jumpIf = new Jump(tmpIf, newBlock);
-        curBasicBlock.end(jumpIf);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
 
         //visit elseblock
         if (node.elseblock != null) {
@@ -150,7 +159,7 @@ public class IRBuilder implements IRBasicBuilder {
             tmpElse = curBasicBlock;
             branch.addOtherWise(tmpElse);
             Jump jumpElse = new Jump(tmpElse, newBlock);
-            curBasicBlock.end(jumpElse);
+            if (!curBasicBlock.isEnded())curBasicBlock.end(jumpElse);
         }
 
         curBasicBlock = newBlock;
@@ -166,7 +175,7 @@ public class IRBuilder implements IRBasicBuilder {
         //end the current block with a jump: jump to the loop information
         visit(node.circleVariable);
         Jump jump = new Jump(curBasicBlock, null);
-        curBasicBlock.end(jump);
+        if (!curBasicBlock.isEnded())curBasicBlock.end(jump);
         tmpEnd = curBasicBlock;
         basicBlockList.add(tmpEnd);
 
@@ -175,7 +184,7 @@ public class IRBuilder implements IRBasicBuilder {
         visit(node.operateVariable);
         virtualRegister register = visit(node.variableCondition);
         Branch branch = new Branch(curBasicBlock, register, null, null);
-        curBasicBlock.end(branch);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
         basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
@@ -186,7 +195,7 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop content
         visit(node.forBlock);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
-        curBasicBlock.end(jumpReturn);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
         branch.addThen(tmpLoop);
 
@@ -204,7 +213,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         //end the current block with a jump: jump to the loop information
         Jump jump = new Jump(curBasicBlock, null);
-        curBasicBlock.end(jump);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jump);
         tmpEnd = curBasicBlock;
         basicBlockList.add(tmpEnd);
 
@@ -212,7 +221,7 @@ public class IRBuilder implements IRBasicBuilder {
         curBasicBlock = new basicBlock(curFunction, "whileInformation");
         virtualRegister register = visit(node.whileCondition);
         Branch branch = new Branch(curBasicBlock, register, null, null);
-        curBasicBlock.end(branch);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
         basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
@@ -223,7 +232,7 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop content
         visit(node.whileBlock);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
-        curBasicBlock.end(jumpReturn);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
         branch.addThen(tmpLoop);
 
@@ -256,7 +265,7 @@ public class IRBuilder implements IRBasicBuilder {
     @Override
     public void visit(breakStatement node) {
         Jump jump = new Jump(curBasicBlock, findBreakBlock());
-        curBasicBlock.end(jump);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jump);
         endCurBasicBlock();
         curBasicBlock = new basicBlock(curFunction, "afterBreak");
     }
@@ -271,7 +280,7 @@ public class IRBuilder implements IRBasicBuilder {
     @Override
     public void visit(continueStatement node) {
         Jump jump = new Jump(curBasicBlock, findContinueBlock());
-        curBasicBlock.end(jump);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jump);
         endCurBasicBlock();
         curBasicBlock = new basicBlock(curFunction, "afterContinue");
     }
@@ -469,10 +478,13 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public virtualRegister visit(callFunctionExpression node) {
-        virtualRegister register = new virtualRegister("eax", registerNumber++);
-        callFunction call = new callFunction(curBasicBlock,register,curFunction);
+        //virtualRegister register = new virtualRegister("eax", registerNumber++);
+        callFunction call = new callFunction(curBasicBlock,functionMap.get(node.functionName));
         node.expressionSons.forEach(x->call.addParam(visit(x)));
-        return register;
+        curBasicBlock.append(call);
+        virtualRegister reg = new virtualRegister(null,registerNumber++);
+        reg.setNewName("rax");
+        return reg;
     }
 }
 

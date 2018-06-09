@@ -43,8 +43,8 @@ class virtualRegister extends Value{
     boolean ifRenamed = false;
     private String newName;
     public int offset;
-    public virtualRegister(String registerName,int id){
-        this.name = registerName;
+    public virtualRegister(String variableName, int id){
+        this.name = variableName;
         this.id = id;
         ifRenamed = false;
     }
@@ -55,7 +55,10 @@ class virtualRegister extends Value{
     public void setName(String name) {
         this.name = name;
     }
+    public void setNewName(String str){this.newName = str;ifRenamed = true;}
+
     public String getNewName(){return newName;}
+
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
 }
 /*
@@ -109,18 +112,19 @@ class staticSpace extends Static{
 
 class stackSlot extends Value{
     private Function parent;
-    private String name;
+    virtualRegister va;
 
-    public stackSlot(Function parent, String name){
+    public stackSlot(Function parent, virtualRegister va){
         this.parent = parent;
-        this.name = name;
+        //this.name = name;
+        this.va = va;
     }
     public Function getParent(){
         return parent;
     }
-    public String getName(){
+    /*public String getName(){
         return name;
-    }
+    }*/
     @Override
     public Value copy(){
         return null;
@@ -149,6 +153,9 @@ class basicBlock extends IRNode{
     public void append (IRInstruction next){
         //if (ended) throw new Exception("append after end");
         //else {
+            if (ended == true) return;
+            if (next instanceof Return) ended = true;
+           // if (ended == true) return;
             irInstructions.add(next);
             if (tail!=null){
                 tail.linkPrev(next);
@@ -388,14 +395,16 @@ class callFunction extends IRInstruction{
     private Function func;
     List<virtualRegister>params;
     int off;
-    public callFunction(basicBlock B, virtualRegister dest, Function func){
+    public callFunction(basicBlock B, Function func){
         super(B);
         //this.dest = dest;
         this.func = func;
         params = new ArrayList<virtualRegister>();
     }
     @Override
-    public void print(){}
+    public void print(){
+        System.out.println("call " + func.functionName);
+    }
     public void addParam(virtualRegister param){
         params.add(param);
     }

@@ -27,7 +27,7 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(virtualRegister node){
         if (!currentFunction.registers.contains(node)){
-            //if (node.getRegisterName()!=null) {
+            if (node.ifRenamed == false) {
                 offset = offset+8;
                 //System.out.println(offset);
                 //System.out.println(node.getRegisterName());
@@ -35,7 +35,7 @@ public class registerRename implements IRBasicVisitor{
                 //System.out.println("------------------------------");
                 node.offset = offset;
                 currentFunction.registers.add(node);
-            //}
+            }
 
         }
     }
@@ -61,6 +61,9 @@ public class registerRename implements IRBasicVisitor{
     public void visit(Function node){
         currentFunction = node;
         offset = 0;
+        for (stackSlot item:node.params){
+            visit(item.va);
+        }
         node.basicBlocks.forEach(x -> x.accept(this));
         node.totalOffset = offset;
     }

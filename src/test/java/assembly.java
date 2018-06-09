@@ -188,7 +188,7 @@ class Jg extends JJump{
 }
 class Jng extends JJump{
     //jump if not greater
-    Jng(String label){ super(label);type = "jng"; }
+    Jng(String label){ super(label);type = "jle"; }
 }
 class Jle extends JJump{
     //jump if less or equal
@@ -238,7 +238,7 @@ class CallF extends assembly{
     String fun;
     public CallF(String fun){this.fun =fun;}
     public void print(PrintStream fout){
-        System.out.print("call "+fun);fout.print("call "+fun);
+        System.out.println("call "+fun);fout.println("call "+fun);
     }
 }
 class Ret extends assembly{
