@@ -400,7 +400,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         ifStatement tmp = new ifStatement();
         tmp.ifcondition=visitValuebleSingleExpression(context.valuebleSingleExpression());
         tmp.ifblock = visitBlockOrStatement(context.blockOrStatement(0));
-        System.out.println(tmp.ifblock.statementSons.size());
+        //System.out.println(tmp.ifblock.statementSons.size());
         //System.out.println(context.blockStatement(0).getChildCount());
         if (context.blockOrStatement(1)!=null) tmp.elseblock = visitBlockOrStatement(context.blockOrStatement(1));
         return tmp;
