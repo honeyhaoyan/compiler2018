@@ -34,7 +34,7 @@ public class Main {
         IRBuilder irBuilder = new IRBuilder();
         irBuilder.visit(root);
         IRRoot irRoot = irBuilder.getIRRoot();
-        //irRoot.print();
+        irRoot.print();
         PrintStream ps = null ;
         registerRename rename = new registerRename();
         rename.visit(irRoot,ps);

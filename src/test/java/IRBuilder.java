@@ -27,7 +27,9 @@ public class IRBuilder implements IRBasicBuilder {
     int registerNumber = 0;
     private Map<String,virtualRegister> registerMap = new HashMap<>();
     private Map<String,Function> functionMap = new HashMap<>();
-
+    private Stack<basicBlock> otherwise = new Stack<>();
+    Jump globalJump;
+    boolean ifJump = false;
 
     public IRRoot getIRRoot() {
         return root;
@@ -69,6 +71,7 @@ public class IRBuilder implements IRBasicBuilder {
             stackSlot tmp = new stackSlot(curFunction,reg);
             function.params.add(tmp);
         }
+        curBasicBlock = new basicBlock(curFunction, node.functionName);
         function.blockStart = curBasicBlock;
         visit(node.blockSon);
         function.blockEnd = curBasicBlock;
@@ -79,7 +82,9 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(blockDefinition node) {
-        curBasicBlock = new basicBlock(curFunction, curFunction.functionName);
+        //curBasicBlock = new basicBlock(curFunction, curFunction.functionName);
+        //if (ifJump) globalJump.setJumpTo(curBasicBlock);
+        //ifJump = false;
 
         node.statementSons.forEach(x -> x.accept(this));
         basicBlock tmp = curBasicBlock;
@@ -100,6 +105,16 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(statement node) {
+        if (node instanceof definitionStatement) visit((definitionStatement )node);
+        if (node instanceof assignmentStatement) visit((assignmentStatement) node);
+        if (node instanceof ifStatement) visit((ifStatement) node);
+        if (node instanceof forStatement) visit((forStatement) node);
+        if (node instanceof whileStatement) visit((whileStatement) node);
+        if (node instanceof breakStatement) visit((breakStatement) node);
+        if (node instanceof returnStatement) visit((returnStatement) node);
+        if (node instanceof continueStatement)visit((continueStatement) node);
+        if (node instanceof newStatement) visit((newStatement) node);
+       if (node instanceof valuebleSingleStatement) visit((valuebleSingleStatement) node);
 
     }
 
@@ -148,22 +163,32 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterIf");
 
         //visit ifblock
-        visit(node.ifblock);
+        curBasicBlock = new basicBlock(curFunction,"if");
         tmpIf = curBasicBlock;
         branch.addThen(tmpIf);
-        Jump jumpIf = new Jump(tmpIf, newBlock);
+        visit(node.ifblock);
+        //tmpIf = curBasicBlock;
+        //branch.addThen(tmpIf);
+        Jump jumpIf;
+        //if (!otherwise.empty()) jumpIf = new Jump(tmpIf,otherwise.peek());
+        jumpIf = new Jump(tmpIf,newBlock);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
 
         //visit elseblock
         if (node.elseblock != null) {
+            curBasicBlock = new basicBlock(curFunction,"otherwise");
             visit(node.elseblock);
             tmpElse = curBasicBlock;
             branch.addOtherWise(tmpElse);
-            Jump jumpElse = new Jump(tmpElse, newBlock);
+            Jump jumpElse;
+            //if (!otherwise.empty()) jumpElse = new Jump(tmpElse, otherwise.peek());
+            jumpElse = new Jump(tmpElse,newBlock);
             if (!curBasicBlock.isEnded())curBasicBlock.end(jumpElse);
         }
 
         curBasicBlock = newBlock;
+        //otherwise.push(newBlock);
+        //branch.addOtherWise(otherwise.peek());
     }
 
     @Override
@@ -194,16 +219,19 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterFor");
 
         //start a new block for loop content
+        curBasicBlock = new basicBlock(curFunction,"for");
+        basicBlock tmpfor = curBasicBlock;
+        branch.addThen(tmpfor);
         visit(node.forBlock);
+
         visit(node.operateVariable);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
-        branch.addThen(tmpLoop);
 
         curBasicBlock = newBlock;
-        tmpNew = curBasicBlock;
-        branch.addOtherWise(tmpNew);
+        otherwise.push(newBlock);
+        branch.addOtherWise(otherwise.peek());
     }
 
     @Override
