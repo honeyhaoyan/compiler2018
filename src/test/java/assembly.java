@@ -107,6 +107,9 @@ class Sub extends Two{
     Phyregister regLe;
     public Sub(assembly left,assembly right){super(left,right);type = "sub";}
 }
+class Imul extends Two{
+    public Imul(assembly left, assembly right){super(left,right);type = "imul";}
+}
 /*
 class one extends assembly{
     assembly item;
@@ -252,25 +255,18 @@ class Leave extends assembly{
     public void print(PrintStream fout){
         System.out.println("leave");fout.println("leave");
     }
-}/*
-class Label extends assembly{
-    int id;
-    public Label (int id){this.id = id;}
-    public void print(PrintStream fout){System.out.println(id);}
-}*/
-/*
-class Load extends assembly{
-    Address right;
-    Phyregister left;
-    public Load( Phyregister left,Address right){
-        this.right = right;
-        this.left = left;
-    }
+}
+class Memory extends assembly{
+    Phyregister reg;
+    int offset;
+    String op;
+    public Memory(Phyregister reg, String op,int offset){this.reg = reg; this.op = op;this.offset = offset;}
     public void print(PrintStream fout){
-        System.out.print("load ");fout.print("load ");
-        left.print(fout);
-        System.out.print(" , "); fout.print(" , ");
-        right.print(fout);
-        System.out.println();fout.println();
+        System.out.print("[");
+        reg.print(fout);
+        System.out.print(op);
+        System.out.print(offset);
+        System.out.print("]");
+        //System.out.println();
     }
-}*/
+}

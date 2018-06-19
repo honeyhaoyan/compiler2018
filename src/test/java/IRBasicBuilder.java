@@ -1,5 +1,5 @@
 public interface IRBasicBuilder {
-    virtualRegister visit(Node node);
+    void visit(Node node);
     void visit(Program node);
     void visit(classDefinition node);
     void visit(functionDefinition node);
@@ -17,12 +17,12 @@ public interface IRBasicBuilder {
     void visit(newStatement node);
     void visit(valuebleSingleStatement node);
 
-    virtualRegister visit(expression node);
-    virtualRegister visit(type node);
-    virtualRegister visit(variable node);
-    virtualRegister visit(constant node);
+    void visit(expression node);
+    void visit(type node);
+    void visit(variable node);
+    void visit(constant node);
     void visit(Op node);
     void visit(This node);
-    virtualRegister visit(callFunctionExpression node);
+    void visit(callFunctionExpression node);
 
 }

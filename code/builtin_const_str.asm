@@ -1,6 +1,7 @@
-intbuffer:
-        dq 0
-format1:
-        db "%lld", 0
-format2:
-        db "%s", 0
+SECTION .rodata
+
+L_039:
+        db 25H, 73H, 00H
+
+L_040:
+        db 25H, 6CH, 6CH, 64H, 00H

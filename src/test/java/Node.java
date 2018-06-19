@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Node {
     public List<Node> sons;
+    virtualRegister registerValue;
     public Node(){
         sons = new ArrayList<Node>();
     }
@@ -87,6 +88,7 @@ class type extends expression{
     public String typeName;
     //List<String>arr;
     List<expression>arrExp;
+    //virtualRegister registerValue;
     type(){
         super();
         //arr=new ArrayList<>();
@@ -98,6 +100,7 @@ class type extends expression{
 }
 
 class variable extends expression{
+    //virtualRegister registerValue;
     type ty;
     //String father;
     String name;
@@ -114,6 +117,7 @@ class variable extends expression{
 class constant extends expression{
     public String type;
     public String value;
+    //virtualRegister registerValue;
     public void accept(IRBuilder visitor){
         visitor.visit(this);
     }
@@ -233,54 +237,21 @@ class continueStatement extends statement{
 
 
 class newStatement extends statement{
-    //variable newVariable;
     String name;
-    //String method;
     type newType1;
     type newType2;
-    //subscriptExpression subscri;
-    //dotVariableExpression dotVa;
     expression exp;
     public newStatement(){
         super();
         newType1 = new type();
         newType2 = new type();
-        //subscri = new subscriptExpression();
-        //dotVa = new dotVariableExpression();
         exp = new expression();
     }
     public void accept(IRBuilder visitor){
         visitor.visit(this);
     }
 }
-/*
-class selfOperationStatement extends statement{
-    Op op;
-    variable va;
-    expression exp;
-    selfOperationStatement(){
-        super();
-        op = new Op();
-        exp = new expression();
-        va = new variable();
-    }
-}
-class callFunctionStatement extends statement{
-    callFunctionExpression callFunc;
-    callFunctionStatement(){
-        super();
-        callFunc = new callFunctionExpression();
-    }
-}
 
-class dotFunctionStatement extends statement{
-    dotFunctionExpression dotFunc;
-    dotFunctionStatement(){
-        super();
-        dotFunc = new dotFunctionExpression();
-    }
-}
-*/
 class valuebleSingleStatement extends statement{
     expression exp;
     valuebleSingleStatement(){
@@ -305,6 +276,7 @@ class emptyStatement extends statement{
 
 
 class expression extends Node {
+    //virtualRegister registerValue;
     public expression(){
         super();
     }
@@ -332,82 +304,12 @@ class This extends Node{
     }
 }
 
-/*
-class dotExpression extends expression{
-    dotExpression(){
-        super();
-    }
-}
-class dotVariableExpression extends dotExpression{
 
-    String father;
-    String son;
-
-    String classNameF;
-    subscriptExpression subscript;
-    callFunctionExpression callFun;
-
-    String classNameS;
-     //dotVariableExpression dotVa;
-    //dotFunctionExpression dotFun;
-    //dotVariableExpression dotVariable;
-    dotExpression dotEx;
-    dotVariableExpression (){
-        super();
-        subscript = new subscriptExpression();
-        callFun = new callFunctionExpression();
-        //dotVa = new dotVariableExpression();
-        //dotFun = new dotFunctionExpression();
-        dotEx = new dotExpression();
-
-    }
-}
-
-class dotFunctionExpression extends dotExpression{
-
-    String father;
-    String son;
-
-    String classNameF;
-    subscriptExpression subscript;
-    callFunctionExpression callFunF;
-    String constantStr;
-
-    callFunctionExpression callFunS;
-    dotExpression dotEx;
-    //List<callFunctionExpression>callFun;
-
-    dotFunctionExpression(){
-        super();
-        subscript = new subscriptExpression();
-        callFunF = new callFunctionExpression();
-        //callFun = new ArrayList<callFunctionExpression>();
-        callFunS = new callFunctionExpression();
-        dotEx = new dotExpression();
-    }
-
-}
-
-class subscriptExpression extends expression{
-    variable father;
-    //expression son;
-    type typeFather;
-    List<expression>Son;
-
-    subscriptExpression(){
-        super();
-        father = new variable();
-        //fatherExp = new expression();
-        //son = new expression();
-        typeFather = new type();
-        Son = new ArrayList<expression>();
-    }
-}
-*/
 class callFunctionExpression extends expression{
     public variable va;
     public String functionName;
     public List<expression>expressionSons;
+    //virtualRegister registerValue;
     callFunctionExpression(){
         super();
         expressionSons = new ArrayList<expression>();

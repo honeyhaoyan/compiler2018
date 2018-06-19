@@ -4,6 +4,10 @@ import java.io.PrintStream;
 public class registerRename implements IRBasicVisitor{
     Function currentFunction;
     int offset;
+    /*boolean isClassFunction;
+    virtualRegister classRegister;
+    staticSpace classSpace;*/
+    //virtualRegister classRegister;
     /*boolean[]r = new boolean[3];
     public void reset(){
         for (int i=0;i<=2;i++){
@@ -27,12 +31,13 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(virtualRegister node){
         if (!currentFunction.registers.contains(node)){
-            if (node.ifRenamed == false) {
+            /*if (isClassFunction && classSpace.memberOffset.containsKey(node.getRegisterName())){
+                node.content = true;
+                node.base = classRegister;
+                node.memberoffset = new Immediate(classSpace.memberOffset.get(node.getRegisterName()));
+            }
+            else */if (node.ifRenamed == false) {
                 offset = offset+8;
-                //System.out.println(offset);
-                //System.out.println(node.getRegisterName());
-                //System.out.println(node.id);
-                //System.out.println("------------------------------");
                 node.offset = offset;
                 currentFunction.registers.add(node);
             }
@@ -61,8 +66,17 @@ public class registerRename implements IRBasicVisitor{
     public void visit(Function node){
         currentFunction = node;
         offset = 0;
+        //int i = 1;
+        /*if (node.isClassFunction){
+            i = 0;
+            isClassFunction = true;
+            classRegister = node.params.get(0).va;
+            visit(classRegister);
+            classSpace = node.classSpace;
+        }*/
         for (stackSlot item:node.params){
-            visit(item.va);
+           visit(item.va);
+            //i++;
         }
         node.basicBlocks.forEach(x -> x.accept(this));
         node.totalOffset = offset;
@@ -109,6 +123,8 @@ public class registerRename implements IRBasicVisitor{
         if (node.getRhs() instanceof virtualRegister) visit((virtualRegister)node.getRhs());
     }
     public void visit(HeapAllocate node){
-
+        //visit((virtualRegister) node.allocSize);
+        visit(node.space);
+        visit(node.dest);
     }
 }

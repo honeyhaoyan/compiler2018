@@ -111,11 +111,29 @@ public class codeGenerator implements IRBasicVisitor {
     public void visit(Move node){
         assembly left = getMem(node.getDest());
         assembly right = getMem(node.getSource());
+        if (node.sourceAddress == true){
+            global.add(new Mov(new Phyregister("r10"),right));
+            //right = new Phyregister("r11");
+            Address rightTmp = new Address("+",0,new Phyregister("r10"));
+            global.add(new Mov(new Phyregister("r11"),rightTmp));
+            right = new Phyregister("r11");
+            /*if (left instanceof Address){
+                global.add(new Mov(new Phyregister("r11"),(Address)left));
+                Phyregister leftTmp = new Phyregister("r11");
+                global.add(new Mov(leftTmp,rightTmp));
+            }*/
+            //global.add(new Mov(leftTmp,rightTmp));
+
+            //return;
+        }
         if (left instanceof Address && right instanceof Address){
             //global.add(new Load(new Phyregister("r11"),(Address)right));
-            global.add(new Mov(new Phyregister("r11"),(Address)right));
-            right = new Phyregister("r11");
+        global.add(new Mov(new Phyregister("r11"),(Address)right));
+        right = new Phyregister("r11");
         }
+        /*if (node.sourceAddress == true){
+            right = new Address("+",0,new Phyregister("r11"));
+        }*/
         global.add(new Mov(left,right));
     }
     public void visit(Store node){
@@ -126,6 +144,9 @@ public class codeGenerator implements IRBasicVisitor {
     }*/
     public void visit(callFunction node){
         /* rdi     rsi     rdx     rcx     r8      r9*/
+        if (node.functionName().equals("size")){
+            //global.add(new Mov(new ))
+        }
         int i=1;
         Phyregister reg = new Phyregister(null);
         for (virtualRegister item : node.params){
@@ -247,7 +268,30 @@ public class codeGenerator implements IRBasicVisitor {
         }
     }
     public void visit(HeapAllocate node){
-
+        //global.add(new Add(getMem(node.allocSize),new Imm(8)));
+        //global.add(new Mov(new Phyregister("r11"),getMem(node.allocSize)));
+        //global.add(new Mov(new Phyregister("r10"),getMem(node.allocSize)));
+        /*global.add(new Imul(new Phyregister("r10"),new Imm(8)));
+        global.add(new Mov(new Phyregister("rdi"),new Phyregister("r10")));
+        global.add(new CallF("malloc"));
+        global.add(new Mov(getMem(node.dest),new Phyregister("rax")));
+        global.add(new Mov(new Phyregister("r9"),getMem(node.dest)));
+        global.add(new Mov(new Memory(new Phyregister("r9"),"-",8),new Phyregister("r11")));*/
+        //global.add(new Mov(new Phyregister("rdi"),getMem(node.allocSize)));
+        global.add(new Mov(new Phyregister("rdi"),new Imm(node.space.nArray.size())));
+        global.add(new CallF("_malloc"));
+        global.add(new Mov(getMem(node.dest),new Phyregister("rax")));
+        global.add(new Mov(new Phyregister("r9"),getMem(node.dest)));
+        for (Value item : node.space.nArray){
+            global.add(new Add(new Phyregister("r9"),new Imm(8)));
+            global.add(new Mov(new Phyregister("r10"),getMem(item)));
+            global.add(new Mov(new Address("+",0,new Phyregister("r9")),new Phyregister("r10")));
+            //global.add(new Add(new Phyregister("r9"),new Imm(8)));
+        }
+        //global.add(new Mov(getMem(node.dest),new Phyregister("rdi")));
+        global.add(new Mov(new Phyregister("rdi"),getMem(node.dest)));
+        global.add(new CallF("newArray"));
+        global.add(new Mov(getMem(node.dest),new Phyregister("rax")));
     }
     public void visit(IRInstruction node){
 
@@ -268,7 +312,7 @@ public class codeGenerator implements IRBasicVisitor {
         builtinPrinter.printBuiltin("method");builtinPrinter2.printBuiltin("method",fout);
         //builtinPrinter.printBuiltin("extern");
         System.out.println("SECTION .bss");fout.println("SECTION .bss");
-        System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
+        //System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
         System.out.println("SECTION .data");fout.println("SECTION .data");
         //System.out.println("SECTION .bss");fout.println("SECTION .bss");
         builtinPrinter.printBuiltin("const_str");builtinPrinter2.printBuiltin("const_str",fout);

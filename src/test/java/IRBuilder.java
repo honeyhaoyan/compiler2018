@@ -30,6 +30,13 @@ public class IRBuilder implements IRBasicBuilder {
     private Stack<basicBlock> otherwise = new Stack<>();
     Jump globalJump;
     boolean ifJump = false;
+    Map<String, staticSpace> classTable = new HashMap<>();
+    List<String>className = new ArrayList<>();
+    Map<String, String> classVariableTable = new HashMap<>();
+
+    boolean isClassFunction;
+    virtualRegister classRegister;
+    staticSpace classSpace;
 
     public IRRoot getIRRoot() {
         return root;
@@ -38,26 +45,78 @@ public class IRBuilder implements IRBasicBuilder {
 //----------------------------------------------------------------------------------------------------
 
     @Override
-    public virtualRegister visit(Node node) {
+    public void visit(Node node) {
         //virtualRegister register = new virtualRegister(null,registerNumber++);
-        if (node instanceof variable) return visit((variable)node);
-        if (node instanceof type) return visit((type)node);
-        if (node instanceof callFunctionExpression) return visit((callFunctionExpression)node);
-        if (node instanceof constant) return visit((constant)node);
-        if (node instanceof expression) return visit((expression)node);
-        virtualRegister register = new virtualRegister(null,registerNumber++);
-        return register;
+        if (node instanceof variable) visit((variable)node);
+        if (node instanceof type) visit((type)node);
+        if (node instanceof callFunctionExpression) visit((callFunctionExpression)node);
+        if (node instanceof constant) visit((constant)node);
+        //if (node instanceof expression) visit((expression)node);
+        //virtualRegister register = new virtualRegister(null,registerNumber++);
+        //return register;
     }
 
     @Override
     public void visit(Program node) {
-        node.sequenceSons.forEach(x -> x.accept(this));
+        //node.sequenceSons.forEach(x -> x.accept(this));
+        for (classDefinition item : node.classSons){
+            visit(item);
+        }
+        for (classDefinition item : node.classSons){
+            visit(item);
+        }
+        for (functionDefinition item : node.functionSons){
+            visit(item);
+        }
         dealBlockList();
     }
 
     @Override
     public void visit(classDefinition node) {
+        if (!classTable.containsKey(node.selfName)) {staticSpace space = new staticSpace(node.selfName);
+            int offset = 0;
+            for (definitionStatement defi : node.variableSons){
+                variable va = defi.variableSon;
+                space.memberOffset.put(va.name,offset);
+                offset = offset+4;
+            }
+            //space.length = offset;
+            space.nArray.add(new Immediate(offset));
+            classTable.put(node.selfName,space);
+            classSpace = space;
+            className.add(node.selfName);
+            //isClassFunction = true;
+        }
+        else {
+            isClassFunction = true;
+            for (functionDefinition fun : node.functionSons){
+                Function function = new Function(fun.functionName);
+                curFunction = function;
+                functionMap.put(fun.functionName,function);
+                //node.inputVariableSons.forEach(x->x.accept(this));
+                classRegister = new virtualRegister("rdi",registerNumber++);
+                function.params.add(new stackSlot(function,classRegister));
+                for (variable item : fun.inputVariableSons){
+                    visit(item);
+                    virtualRegister reg = item.registerValue;
+                    stackSlot tmp = new stackSlot(curFunction,reg);
+                    function.params.add(tmp);
+                }
+                //virtualRegister classRegister = new virtualRegister()
+                //function.params.add()
+                function.isClassFunction = true;
+                function.classSpace = classTable.get(node.selfName);
+                curBasicBlock = new basicBlock(curFunction, fun.functionName);
+                function.blockStart = curBasicBlock;
 
+
+                visit(fun.blockSon);
+
+                function.blockEnd = curBasicBlock;
+                root.functions.add(function);
+            }
+            isClassFunction = false;
+        }
     }
 
     @Override
@@ -67,7 +126,8 @@ public class IRBuilder implements IRBasicBuilder {
         functionMap.put(node.functionName,function);
         //node.inputVariableSons.forEach(x->x.accept(this));
         for (variable item : node.inputVariableSons){
-            virtualRegister reg = visit(item);
+            visit(item);
+            virtualRegister reg = item.registerValue;
             stackSlot tmp = new stackSlot(curFunction,reg);
             function.params.add(tmp);
         }
@@ -114,7 +174,7 @@ public class IRBuilder implements IRBasicBuilder {
         if (node instanceof returnStatement) visit((returnStatement) node);
         if (node instanceof continueStatement)visit((continueStatement) node);
         if (node instanceof newStatement) visit((newStatement) node);
-       if (node instanceof valuebleSingleStatement) visit((valuebleSingleStatement) node);
+        if (node instanceof valuebleSingleStatement) visit((valuebleSingleStatement) node);
 
     }
 
@@ -122,26 +182,31 @@ public class IRBuilder implements IRBasicBuilder {
     public void visit(definitionStatement node) {
         //virtualRegister register = visit(node.exp);
         virtualRegister registerVa;
-        if ((node.variableSon.ty.arrExp.size()==0)) {
-            registerVa = visit(node.variableSon);
+        //if ((node.variableSon.ty.arrExp.size()==0)) {
+            visit(node.variableSon);
+            registerVa = node.variableSon.registerValue;
             //registerMap.put(registerVa.getRegisterName(),registerVa);
-            int a = node.exp.sons.size();
+            //int a = node.exp.sons.size();
             if (node.exp.sons.size() != 0) {
-                virtualRegister registerExp = visit(node.exp);
+                //virtualRegister registerExp = visit(node.exp);
+                virtualRegister registerExp = node.exp.registerValue;
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
                 curBasicBlock.append(move);
             }
-        }
+        //}
+        /*
         if (node.variableSon.ty.arrExp.size()>1) {
             alloca(node.variableSon);
-        }
+        }*/
 
     }
 
     @Override
     public void visit(assignmentStatement node) {
-        virtualRegister registerLe = visit(node.expLe);
-        virtualRegister registerRi = visit(node.expRi);
+        visit(node.expLe);
+        visit(node.expRi);
+        virtualRegister registerLe = node.expLe.registerValue;
+        virtualRegister registerRi = node.expRi.registerValue;
         Move move = new Move(curBasicBlock, registerLe, registerRi);
         curBasicBlock.append(move);
     }
@@ -153,9 +218,26 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock tmpElse;
 
         //end the current block with a branch: take the then or take the else
-        virtualRegister register = visit(node.ifcondition);
+
+        /*
+        visit(node.ifcondition);
+        virtualRegister register =node.ifcondition.registerValue;
+        */
+
+        basicBlock ifBlock = new basicBlock(curFunction,"if");
+        basicBlock elseBlock = new basicBlock(curFunction, "else");
+
+        /*
         Branch branch = new Branch(curBasicBlock, register, null, null);
-        if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);*/
+        if (node.ifcondition.sons.get(0).equals("&&")||node.ifcondition.sons.get(0).equals("||")) logicOperation(node.ifcondition,ifBlock,elseBlock);
+        else{
+            visit(node.ifcondition);
+            virtualRegister register =node.ifcondition.registerValue;
+            Branch branch = new Branch(curBasicBlock, register, ifBlock, elseBlock);
+            if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
+        }
+
         tmpEnd = curBasicBlock;
         basicBlockList.add(tmpEnd);
 
@@ -163,23 +245,24 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterIf");
 
         //visit ifblock
-        curBasicBlock = new basicBlock(curFunction,"if");
+        //curBasicBlock = new basicBlock(curFunction,"if");
+        curBasicBlock = ifBlock;
         tmpIf = curBasicBlock;
-        branch.addThen(tmpIf);
-        visit(node.ifblock);
-        //tmpIf = curBasicBlock;
         //branch.addThen(tmpIf);
+        visit(node.ifblock);
+
         Jump jumpIf;
-        //if (!otherwise.empty()) jumpIf = new Jump(tmpIf,otherwise.peek());
+
         jumpIf = new Jump(tmpIf,newBlock);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
 
         //visit elseblock
         if (node.elseblock != null) {
-            curBasicBlock = new basicBlock(curFunction,"otherwise");
+            //curBasicBlock = new basicBlock(curFunction,"otherwise");
+            curBasicBlock = elseBlock;
             visit(node.elseblock);
             tmpElse = curBasicBlock;
-            branch.addOtherWise(tmpElse);
+            //branch.addOtherWise(tmpElse);
             Jump jumpElse;
             //if (!otherwise.empty()) jumpElse = new Jump(tmpElse, otherwise.peek());
             jumpElse = new Jump(tmpElse,newBlock);
@@ -187,8 +270,7 @@ public class IRBuilder implements IRBasicBuilder {
         }
 
         curBasicBlock = newBlock;
-        //otherwise.push(newBlock);
-        //branch.addOtherWise(otherwise.peek());
+
     }
 
     @Override
@@ -208,7 +290,8 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
         //visit(node.operateVariable);
-        virtualRegister register = visit(node.variableCondition);
+        visit(node.variableCondition);
+        virtualRegister register = node.variableCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
@@ -249,7 +332,8 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "whileInformation");
-        virtualRegister register = visit(node.whileCondition);
+        visit(node.whileCondition);
+        virtualRegister register = node.whileCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
@@ -260,6 +344,7 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterFor");
 
         //start a new block for loop content
+        curBasicBlock = new basicBlock(curFunction,"while");
         visit(node.whileBlock);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
@@ -302,7 +387,8 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(returnStatement node) {
-        virtualRegister register = visit(node.returnExpression);
+        visit(node.returnExpression);
+        virtualRegister register = node.returnExpression.registerValue;
         Return ret = new Return(curBasicBlock, register);
         curBasicBlock.append(ret);
     }
@@ -327,12 +413,26 @@ public class IRBuilder implements IRBasicBuilder {
         //Immediate imm = getSize();
         //HeapAllocate allocate = new HeapAllocate(curBasicBlock, register, imm);
         //curBasicBlock.append(allocate);
-        if (node.newType2.arrExp.size()>1){
+        /*if (node.newType2.arrExp.size()>0){
+            visit(node.newType2.arrExp.get(0));
+            virtualRegister size = node.newType2.arrExp.get(0).registerValue;
+            //virtualRegister size = new virtualRegister(null,registerNumber++);
+            virtualRegister head = new virtualRegister(node.name,registerNumber++);
 
+            //binaryOperation bi = new binaryOperation(curBasicBlock,head,binaryOperation.Op.ADD,head,new Immediate(8));
+            //binaryOperation bi2 = new binaryOperation(curBasicBlock, size, binaryOperation.Op.ADD,size,new Immediate(1));
+            //binaryOperation bi3 = new binaryOperation(curBasicBlock,size,binaryOperation.Op.MUL,size,new Immediate(8));
+
+            HeapAllocate allo = new HeapAllocate(curBasicBlock,head,size);
+            curBasicBlock.append(allo);
         }
         else{
 
-        }
+        }*/
+        variable va = new variable();
+        va.ty = node.newType2;
+        va.name = node.name;
+        visit(va);
     }
 
     @Override
@@ -385,10 +485,10 @@ public class IRBuilder implements IRBasicBuilder {
         //curBasicBlock.append(heap);
         //return imm;
     }*/
-
+    /*
     public void alloca(variable va){
 
-    }
+    }*/
 
     public Comparison.Condition visitComparison(String op){
         Comparison.Condition newop = null;
@@ -400,53 +500,237 @@ public class IRBuilder implements IRBasicBuilder {
         if (op.equals(">=")) newop = Comparison.Condition.GE;
         return newop;
     }
+/*
+    public void visitDot(expression node){
+
+        if (node.sons.get(2) instanceof variable){
+
+        }
+        if (node.sons.get(2) instanceof callFunctionExpression){
+
+        }
+    }*/
 
     @Override
-    public virtualRegister visit(expression node) {
-        if (node.sons.size() == 1){return visit(node.sons.get(0));}
+    public void visit(expression node) {
+        if (node.sons.size() == 1){
+           visit(node.sons.get(0));
+           node.registerValue = node.sons.get(0).registerValue;
+           return;
+        }
+
         virtualRegister register = new virtualRegister(null, registerNumber++);
-        //if (node.sons.size() == 1){return visit(node.sons.get(0));}
-        virtualRegister registerRi = visit((expression) node.sons.get(1));
-        virtualRegister registerLe;
+
+        virtualRegister registerLe,registerRi;
+        String op = null;
+
+        for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
+
+        visit((expression) node.sons.get(1));
+        registerRi = node.sons.get(1).registerValue;
+
+        if (isString(node.sons.get(2))) {StringOperation(node);return;}
+        switch (op){
+            case "." :
+                if (node.sons.get(2) instanceof variable){
+                    isClassFunction = true;
+                    classSpace = classTable.get(registerRi.getRegisterName());
+                    visit(node.sons.get(2));
+                    isClassFunction = false;
+                    node.registerValue = node.sons.get(2).registerValue;
+                }
+                else{
+                    callFunctionExpression fun = (callFunctionExpression) node.sons.get(2).sons.get(0);
+                    if (fun.functionName.equals("size")){
+                        /*virtualRegister registerTmp = registerRi;
+                        registerTmp.content = true;
+                        registerTmp.base = new Immediate(0);
+                        registerTmp.base = new Immediate(0);*/
+                        virtualRegister registerSize = new virtualRegister(null,registerNumber++);
+                        Move move = new Move(curBasicBlock,registerSize,registerRi);
+                        move.sourceAddress = true;
+                        node.registerValue = registerSize;
+                        curBasicBlock.append(move);
+                        break;
+                    }
+                    callFunction call = new callFunction(curBasicBlock,functionMap.get(fun.functionName));
+                    call.addParam(registerRi);
+                    for (expression item : fun.expressionSons){
+                        visit(item);
+                        call.addParam(item.registerValue);
+                    }
+                    curBasicBlock.append(call);
+                    virtualRegister reg = new virtualRegister(null,registerNumber++);
+                    reg.setNewName("rax");
+                    node.registerValue = reg;
+                }
+                break;
+
+            case "~" :
+            case "!" :
+                registerLe = new virtualRegister(null,registerNumber++);
+                unaryOperation.Op newop;
+                newop = visitUnaryOp(op);
+                unaryOperation unary = new unaryOperation(curBasicBlock,registerLe,newop,registerRi);
+                curBasicBlock.append(unary);
+                register = registerLe;
+                break;
+
+            case "==":
+            case "!=":
+            case "<":
+            case ">":
+            case "<=":
+            case ">=":
+                //if (isString(node.sons.get(2))) {StringOperation(node);return;}
+                Comparison.Condition newop2;
+                newop2 = visitComparison(op);
+                visit((expression)node.sons.get(2));
+                registerLe = node.sons.get(2).registerValue;
+                Comparison com = new Comparison(curBasicBlock,register,newop2,registerRi,registerLe);
+                curBasicBlock.append(com);
+                //return register;
+                node.registerValue = register;
+                break;
+
+            case "++":
+            case "--":
+                Immediate imm = new Immediate(1);
+                binaryOperation.Op newop3 = null;
+                if (op.equals("++")) newop3 = visitBinaryOp("+");
+                if (op.equals("--")) newop3 = visitBinaryOp("-");
+                binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop3,registerRi,imm);
+                curBasicBlock.append(binary);
+                //return registerRi;
+                node.registerValue = registerRi;
+                break;
+
+            case "+":
+            case "-":
+            case "%":
+            case "*":
+            case "/":
+            case "<<":
+            case ">>":
+                binaryOperation.Op newop4;
+                newop4 = visitBinaryOp(op);
+                visit((expression)node.sons.get(2));
+                registerLe = node.sons.get(2).registerValue;
+                binaryOperation binary2 = new binaryOperation(curBasicBlock,register,newop4,registerLe,registerRi);
+                curBasicBlock.append(binary2);
+                node.registerValue = register;
+
+            case "&&" :
+            case "||" :
+                expressionLogic(node);
+
+            case "[":
+
+        }
+        //node.registerValue = register;
+        //return register;
+    }
+
+    boolean isString(Node node){
+        //return false;
+        if (node instanceof variable){
+            if (((variable) node).ty.typeName.equals("String")) return true;
+            else return false;
+        }
+        if (node instanceof constant){
+            if(((constant) node).type.equals("String")) return true;
+            else return false;
+        }
+        if (node instanceof callFunctionExpression){
+            if (((callFunctionExpression) node).va.ty.equals("String")) return true;
+            else return false;
+        }
+        return false;
+    }
+
+    void StringOperation(expression node){
         String op = null;
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
-        if (op.equals("~")||op.equals("!")){
-            registerLe = new virtualRegister(null,registerNumber++);
-            unaryOperation.Op newop;
-            newop = visitUnaryOp(op);
-            unaryOperation unary = new unaryOperation(curBasicBlock,registerLe,newop,registerRi);
-            curBasicBlock.append(unary);
-            register = registerLe;
+        visit(node.sons.get(1));
+        virtualRegister regLe = node.sons.get(1).registerValue;
+        visit(node.sons.get(2));
+        virtualRegister regRi = node.sons.get(2).registerValue;
+        switch (op){
+            case "+":
+                callFunction callAdd = new callFunction(curBasicBlock,new Function("_strADD"));
+                callAdd.addParam(regLe);
+                callAdd.addParam(regRi);
+            case "<":
+                callFunction callLt = new callFunction(curBasicBlock,new Function("_strLT"));
+                callLt.addParam(regLe);
+                callLt.addParam(regRi);
+            case ">=":
+                callFunction callGt = new callFunction(curBasicBlock,new Function("_strGT"));
+                callGt.addParam(regLe);
+                callGt.addParam(regRi);
+            case "<=":
+                callFunction callLe = new callFunction(curBasicBlock, new Function("_strLE"));
+                callLe.addParam(regLe);
+                callLe.addParam(regRi);
+            case ">":
+                callFunction callGe = new callFunction(curBasicBlock, new Function("_strGE"));
+                callGe.addParam(regLe);
+                callGe.addParam(regRi);
+            case "==":
+                callFunction callEq = new callFunction(curBasicBlock, new Function("_strEQ"));
+                callEq.addParam(regLe);
+                callEq.addParam(regRi);
+            case "!=":
+                callFunction callNe = new callFunction(curBasicBlock, new Function("_strNE"));
+                callNe.addParam(regLe);
+                callNe.addParam(regRi);
         }
-        else{
-            if (op.equals("==")||op.equals("!=")||op.equals("<")||op.equals(">")||op.equals("<=")||op.equals(">=")){
-                Comparison.Condition newop;
-                newop = visitComparison(op);
-                registerLe = visit((expression)node.sons.get(2));
-                Comparison com = new Comparison(curBasicBlock,register,newop,registerRi,registerLe);
-                curBasicBlock.append(com);
-                return register;
-            }
-            else{
-                if (op.equals("++")||op.equals("--")){
-                    Immediate imm = new Immediate(1);
-                    binaryOperation.Op newop = null;
-                    if (op.equals("++")) newop = visitBinaryOp("+");
-                    if (op.equals("--")) newop = visitBinaryOp("-");
-                    binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop,registerRi,imm);
-                    curBasicBlock.append(binary);
-                    return registerRi;
-                }
-                else {
-                    binaryOperation.Op newop;
-                    newop = visitBinaryOp(op);
-                    registerLe = visit((expression)node.sons.get(2));
-                    binaryOperation binary = new binaryOperation(curBasicBlock,register,newop,registerLe,registerRi);
-                    curBasicBlock.append(binary);
-                }
-            }
+    }
+
+    void expressionLogic(expression node){
+        virtualRegister register = new virtualRegister(null,registerNumber++);
+        basicBlock resultTrue = new basicBlock(curFunction, "resultTrue");
+        basicBlock resultFalse = new basicBlock(curFunction,"resultFalse");
+        resultTrue.append(new Move(resultTrue,register,new Immediate(1)));
+        resultFalse.append(new Move(resultFalse,register,new Immediate(0)));
+        logicOperation(node,resultTrue,resultFalse);
+    }
+
+    void logicOperation(expression node, basicBlock resultTrue, basicBlock resultFalse){
+        basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
+        visit(node.sons.get(1));
+        virtualRegister register = node.sons.get(1).registerValue;
+        if (node.sons.get(0).equals("&&")){
+            /*basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
+            visit(node.sons.get(1));
+            virtualRegister register = node.sons.get(1).registerValue;*/
+            Branch branch = new Branch(curBasicBlock,register,currentBlock,resultFalse);
+            curBasicBlock.end(branch);
+            /*curBasicBlock.end(branch);
+            //basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
+            curBasicBlock = currentBlock;
+            visit(node.sons.get(2));
+            virtualRegister register1 = node.sons.get(2).registerValue;
+            Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);*/
         }
-        return register;
+        else if (node.sons.get(0).equals("||")){
+            /*basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
+            visit(node.sons.get(1));
+            virtualRegister register = node.sons.get(1).registerValue;*/
+            Branch branch = new Branch(curBasicBlock,register,resultTrue,currentBlock);
+            curBasicBlock.end(branch);
+            /*curBasicBlock.end(branch);
+            curBasicBlock = currentBlock;
+            visit(node.sons.get(2));
+            virtualRegister register1 = node.sons.get(2).registerValue;
+            Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);*/
+        }
+        //curBasicBlock.end(branch);
+        //basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
+        curBasicBlock = currentBlock;
+        visit(node.sons.get(2));
+        virtualRegister register1 = node.sons.get(2).registerValue;
+        Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);
     }
 
     @Override
@@ -456,7 +740,7 @@ public class IRBuilder implements IRBasicBuilder {
     }
 
     @Override
-    public virtualRegister visit(type node) {
+    public void visit(type node) {
        virtualRegister register = new virtualRegister(null, registerNumber++);
        /*Immediate imm = new Immediate(0);
        if (node.typeName.equals("Bool")) imm.setImmediateValue(node.arrExp.size());
@@ -466,27 +750,54 @@ public class IRBuilder implements IRBasicBuilder {
        HeapAllocate heap = new HeapAllocate(curBasicBlock,register,imm);
        curBasicBlock.append(heap);*/
        //getSize(node,register);
-       return register;
+       //return register;
+        node.registerValue = register;
     }
 
     @Override
-    public virtualRegister visit(variable node) {
-        virtualRegister register = new virtualRegister(null, registerNumber++);
+    public void visit(variable node) {
+        //virtualRegister register = new virtualRegister(null, registerNumber++);
         if (registerMap.containsKey(node.name)){
-            return registerMap.get(node.name);
+            //return registerMap.get(node.name);
+            node.registerValue = registerMap.get(node.name);
         }
         else{
-            //if (node.ty.arrExp.size()!=0) getSize(node.ty,register);
-            //register.setName(node.name);
-            //registerMap.put(node.name,register);
+            virtualRegister register = new virtualRegister(null, registerNumber++);
+            if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
+                //staticSpace space = new staticSpace(node.ty.typeName);
+                //space.memberOffset =
+                HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(node.ty.typeName));
+                curBasicBlock.append(allocate);
+            }
+            if (node.ty.arrExp.size()!=0){
+                //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
+                staticSpace space = new staticSpace(node.name);
+                for(expression item : node.ty.arrExp){
+                    visit(item);
+                    //virtualRegister tmpRegister = item.registerValue;
+                    //curBasicBlock.append(new binaryOperation(curBasicBlock,tmpRegister, binaryOperation.Op.ADD,tmpRegister,new Immediate(8)));
+                    space.nArray.add(item.registerValue);
+                }
+                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
+                curBasicBlock.append(allocateArray);
+            }
+            if (isClassFunction){
+                if (classSpace.memberOffset.containsKey(node.name)){
+                    /*register.content = true;
+                    register.base = classRegister;
+                    register.memberoffset = new Immediate(classSpace.memberOffset.get(node.name));*/
+                }
+            }
             register.setName(node.name);
             registerMap.put(node.name,register);
+            node.registerValue = register;
         }
-        return register;
+        //node.registerValue = register;
+        //return register;
     }
 
     @Override
-    public virtualRegister visit(constant node) {
+    public void visit(constant node) {
         virtualRegister register = new virtualRegister(null, registerNumber++);
         Immediate imm = new Immediate(0);
         if (node.type.equals("Bool")) {
@@ -498,7 +809,9 @@ public class IRBuilder implements IRBasicBuilder {
         Move move = new Move(curBasicBlock,register,imm);
         curBasicBlock.append(move);
 
-        return register;
+        node.registerValue = register;
+        //return register;
+        //node.registerValue = register;
     }
 
     @Override
@@ -508,14 +821,21 @@ public class IRBuilder implements IRBasicBuilder {
     }
 
     @Override
-    public virtualRegister visit(callFunctionExpression node) {
+    public void visit(callFunctionExpression node) {
         //virtualRegister register = new virtualRegister("eax", registerNumber++);
         callFunction call = new callFunction(curBasicBlock,functionMap.get(node.functionName));
-        node.expressionSons.forEach(x->call.addParam(visit(x)));
+
+        //node.expressionSons.forEach(x->call.addParam(visit(x)));
+        for (expression item : node.expressionSons){
+            visit(item);
+            call.addParam(item.registerValue);
+        }
+
         curBasicBlock.append(call);
         virtualRegister reg = new virtualRegister(null,registerNumber++);
         reg.setNewName("rax");
-        return reg;
+        //return reg;
+        node.registerValue = reg;
     }
 }
 

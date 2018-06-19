@@ -189,71 +189,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             int initialNum = tmp.statementSons.size();
             //System.out.println(context.getChild(k+1).toStringTree());
             if (context.blockOrStatement(i).statement()!=null){
-                //int initialNum = tmp.statementSons.size();
-                /*
-                if (context.blockOrStatement(i).statement().assignStatement()!=null){
-                    System.out.println("assignStatement");
-                    tmp.statementSons.add(visitAssignStatement(context.blockOrStatement(i).statement().assignStatement()));
-                }
-                if (context.blockOrStatement(i).statement().breakStatement()!=null){
-                    System.out.println("breakStatement");
-                    tmp.statementSons.add(visitBreakStatement(context.blockOrStatement(i).statement().breakStatement()));
-                }
-                if (context.blockOrStatement(i).statement().continueStatement()!=null){
-                    System.out.println("continueStatement(");
-                    tmp.statementSons.add(visitContinueStatement(context.blockOrStatement(i).statement().continueStatement()));
-                }
-                if (context.blockOrStatement(i).statement().definitionStatement()!=null){
-                    System.out.println("definitionStatement");
-                    tmp.statementSons.add(visitDefinitionStatement(context.blockOrStatement(i).statement().definitionStatement()));
-                }
-                if (context.blockOrStatement(i).statement().forStatement()!=null){
-                    System.out.println("forStatement");
-                    tmp.statementSons.add(visitForStatement(context.blockOrStatement(i).statement().forStatement()));
-                }
-                if (context.blockOrStatement(i).statement().ifStatement()!=null){
-                    System.out.println("ifStatement");
-                    tmp.statementSons.add(visitIfStatement(context.blockOrStatement(i).statement().ifStatement()));
-                }
-                if (context.blockOrStatement(i).statement().newStatement()!=null){
-                    System.out.println("newStatement");
-                    tmp.statementSons.add(visitNewStatement(context.blockOrStatement(i).statement().newStatement()));
-                }
-                if (context.blockOrStatement(i).statement().returnStatement()!=null){
-                    System.out.println("returnStatement");
-                    tmp.statementSons.add(visitReturnStatement(context.blockOrStatement(i).statement().returnStatement()));
-                }
-                if (context.blockOrStatement(i).statement().whileStatement()!=null){
-                    System.out.println("whileStatement");
-                    tmp.statementSons.add(visitWhileStatement(context.blockOrStatement(i).statement().whileStatement()));
-                }
 
-                if (context.blockOrStatement(i).statement().selfOperationStatement()!=null){
-                    System.out.println("selfOperationStatement");
-                    tmp.statementSons.add(visitSelfOperationStatement(context.blockOrStatement(i).statement().selfOperationStatement()));
-                }
-                if (context.blockOrStatement(i).statement().callFunctionStatement()!=null){
-                    System.out.println("callFunctionStatement");
-                    tmp.statementSons.add(visitCallFunctionStatement(context.blockOrStatement(i).statement().callFunctionStatement()));
-                }
-
-                if (context.blockOrStatement(i).statement().emptyStatement()!=null){
-                    System.out.println("emptyStatement");
-                    tmp.statementSons.add(visitEmptyStatement(context.blockOrStatement(i).statement().emptyStatement()));
-                }
-
-                if (context.blockOrStatement(i).statement().valuebleSingleStatement()!=null){
-                    System.out.println("valuebleSingleStatement");
-                    tmp.statementSons.add(visitValuebleSingleStatement(context.blockOrStatement(i).statement().valuebleSingleStatement()));
-                }
-                if (context.blockOrStatement(i).statement().dotFunctionStatement()!=null){
-                    System.out.println("dotFunctionStatement");
-                    tmp.statementSons.add(visitDotFunctionStatement(context.blockOrStatement(i).statement().dotFunctionStatement()));
-                }
-                if (initialNum == tmp.statementSons.size()){
-                    //System.out.println("blockOrStatement");
-                    tmp.statementSons.add(new illegal());
-                }*/
                 tmp.statementSons.add(visitStatement(context.blockOrStatement(i).statement()));
             }
             if (context.blockOrStatement(i).blockStatement()!=null){
@@ -456,34 +392,6 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         continueStatement tmp = new continueStatement();
         return tmp;
     }
-    /*
-    @Override public selfOperationStatement visitSelfOperationStatement(MxParser.SelfOperationStatementContext context){
-        selfOperationStatement tmp = new selfOperationStatement();
-        Op op = new Op();
-        if (context.Inc()!=null) op.op=context.Inc().toString();
-        if (context.Dec()!=null) op.op=context.Dec().toString();
-        //if (context.Not()!=null) op.op=context.Not().toString();
-        //if (context.Lnot()!=null) op.op=context.Lnot().toString();
-        tmp.op=op;
-        //tmp.va.name=context.Identifier().toString();
-        if (context.dotVariableExpression()!=null) tmp.exp = visitDotVariableExpression(context.dotVariableExpression());
-        else if (context.Identifier()!=null){
-            tmp.va.name=context.Identifier().toString();
-        }
-        return tmp;
-    }
-
-    @Override public callFunctionStatement visitCallFunctionStatement(MxParser.CallFunctionStatementContext context) {
-        callFunctionStatement tmp = new callFunctionStatement();
-        tmp.callFunc = visitCallFunctionExpression(context.callFunctionExpression());
-        return tmp;
-    }
-
-    @Override public dotFunctionStatement visitDotFunctionStatement(MxParser.DotFunctionStatementContext context) {
-        dotFunctionStatement tmp = new dotFunctionStatement();
-        tmp.dotFunc = visitDotFunctionExpression(context.dotFunctionExpression());
-        return tmp;
-    }*/
 
     @Override public emptyStatement visitEmptyStatement(MxParser.EmptyStatementContext context){
         emptyStatement tmp = new emptyStatement();
@@ -491,19 +399,6 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     }
 
     @Override public valuebleSingleStatement visitValuebleSingleStatement(MxParser.ValuebleSingleStatementContext context){
-        /*emptyStatement tmp = new emptyStatement();
-        //System.out.println("123");
-        if (context.valuebleSingleExpression().newExpression()!=null){
-            if (context.valuebleSingleExpression().newExpression().variableTypeExpression()!=null){
-                if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression()!=null){
-                    if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
-                        if (context.valuebleSingleExpression().newExpression().variableTypeExpression().variableNormalTypeExpression().primaryType().Void()!=null){
-                            tmp.islegal = false;
-                        }
-                    }
-                }
-            }
-        }*/
         valuebleSingleStatement tmp = new valuebleSingleStatement();
         tmp.exp = visitValuebleSingleExpression(context.valuebleSingleExpression());
         return tmp;
@@ -511,16 +406,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
 
 
     @Override public expression visitValuebleSingleExpression(MxParser.ValuebleSingleExpressionContext context){
-        //System.out.println("visit ValuebleSingleExpression");
-        //System.out.println(context.getText());
+
         expression tmp = new expression();
-        /*if (context.constant()!=null) {
-            //System.out.println("visit constant");
-            //System.out.println(context.constant().getText());
-            constant con = new constant();
-            con=visitConstant(context.constant());
-            tmp.addSon(con);
-        }*/
+
         if (context.Inc()!=null||context.Dec()!=null||context.Not()!=null||context.Lnot()!=null){
             //System.out.println("visit op");
             Op op = new Op();
@@ -582,29 +470,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             t = visitVariableTypeExpression(context.variableTypeExpression());
             tmp.addSon(t);
         }
-        /*
-        if (context.dotExpression()!=null){
-            if (context.dotExpression().dotVariableExpression()!=null){
-                //System.out.println("*******************************************************");
-                //System.out.println("visit dot expression");
-                //System.out.println(context.dotExpression().dotVariableExpression().className(0).Identifier().toString());
-                dotVariableExpression dotVa = new dotVariableExpression();
-                dotVa = visitDotVariableExpression(context.dotExpression().dotVariableExpression());
-                //System.out.println(dotVa.father.name);
-                //System.out.println(dotVa.son.name);
-                tmp.addSon(dotVa);
-            }
-            else {
-                dotFunctionExpression dotFun = new dotFunctionExpression();
-                dotFun = visitDotFunctionExpression(context.dotExpression().dotFunctionExpression());
-                tmp.addSon(dotFun);
-            }
-        }
-        if (context.subscriptExpression()!=null){
-            subscriptExpression exp = new subscriptExpression();
-            exp=visitSubscriptExpression(context.subscriptExpression());
-            tmp.addSon(exp);
-        }*/
+
         if (context.valuebleSingleExpression(0)!=null){
             expression exp = new expression();
             exp = visitValuebleSingleExpression(context.valuebleSingleExpression(0));
@@ -635,148 +501,6 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         return tmp;
     }
-/*
-    @Override public subscriptExpression visitSubscriptExpression(MxParser.SubscriptExpressionContext context) {
-        //int i=0;
-        //subscriptExpression tmp = new subscriptExpression();
-        subscriptExpression tmp = new subscriptExpression();
-        expression expression1 = new expression();
-        if (context.className()!=null) {
-            tmp.father.name = context.className().Identifier().toString();
-            int i = 0;
-            for (ParseTree item : context.OpenBlacket()) {
-                if (context.valuebleSingleExpression(i) != null) {
-                    tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
-                } else tmp.Son.add(expression1);
-                i++;
-            }
-        }
-        else {
-           // tmp.fatherExp = visitValuebleSingleExpression(context.valuebleSingleExpression(0));
-            tmp.typeFather = visitNewExpression(context.newExpression());
-            //System.out.println(typeFather.typeName);
-            //System.out.println(typeFather.arrExp.size());
-            int i = 0;
-            for (ParseTree item : context.OpenBlacket()) {
-                if (context.valuebleSingleExpression(i) != null) {
-                    tmp.Son.add(visitValuebleSingleExpression(context.valuebleSingleExpression(i)));
-                } else tmp.Son.add(expression1);
-                i++;
-            }
-
-        }
-
-        return tmp;
-    }
-
-    @Override public dotVariableExpression visitDotVariableExpression(MxParser.DotVariableExpressionContext context) {
-        dotVariableExpression tmp = new dotVariableExpression();
-
-        if (context.dotExpression()!=null){
-            //tmp.son = "dotExpression";
-            if (context.dotExpression().dotVariableExpression()!=null){
-                tmp.son = "dotVariableExpression";
-                tmp.dotEx = visitDotVariableExpression(context.dotExpression().dotVariableExpression());
-            }
-            if (context.dotExpression().dotFunctionExpression()!=null){
-                tmp.son = "dotFunctionExpression";
-                tmp.dotEx = visitDotFunctionExpression(context.dotExpression().dotFunctionExpression());
-            }
-            if (context.className(0)!=null){
-                tmp.father = "className";
-                tmp.classNameF = context.className(0).Identifier().toString();
-            }
-            if (context.This()!=null){
-                tmp.father = "this";
-                tmp.classNameF = "this";
-            }
-            if (context.subscriptExpression()!=null){
-                tmp.father = "subscriptExpression";
-                tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
-            }
-            if (context.callFunctionExpression()!=null){
-                tmp.father = "callFunctionExpression";
-                tmp.callFun = visitCallFunctionExpression(context.callFunctionExpression());
-            }
-        }
-        else{
-            tmp.son = "className";
-            if (context.subscriptExpression()!=null){
-                tmp.father = "subscriptExpression";
-                tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
-                tmp.classNameS = context.className(0).Identifier().toString();
-            }
-            if (context.callFunctionExpression()!=null){
-                tmp.father = "callFunctionExpression";
-                tmp.callFun=visitCallFunctionExpression(context.callFunctionExpression());
-                tmp.classNameS = context.className(0).Identifier().toString();
-            }
-            if (context.This()!=null){
-                tmp.father = "this";
-                tmp.classNameF = "this";
-                tmp.classNameS = context.className(0).Identifier().toString();
-            }
-            if (context.callFunctionExpression()==null&&context.subscriptExpression()==null&&context.This()==null){
-                tmp.father = "className";
-                tmp.classNameF = context.className(0).Identifier().toString();
-                tmp.classNameS = context.className(1).Identifier().toString();
-            }
-            //System.out.println(tmp.classNameS);
-        }
-        return tmp;
-    }
-
-    @Override public dotFunctionExpression visitDotFunctionExpression(MxParser.DotFunctionExpressionContext context) {
-       // System.out.println("visit DotFunctionExpression");
-        dotFunctionExpression tmp = new dotFunctionExpression();
-
-        if (context.className()!=null){
-            System.out.println("className");
-            System.out.println(context.className().Identifier().toString());
-            tmp.father = "className";
-            tmp.classNameF = context.className().Identifier().toString();
-
-            if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-            if (context.callFunctionExpression(0)!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
-            //if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-        }
-        if (context.subscriptExpression()!=null){
-            //System.out.println("subscriptExpression");
-            tmp.father = "subscriptExpression";
-            tmp.subscript = visitSubscriptExpression(context.subscriptExpression());
-
-            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
-            if (context.callFunctionExpression()!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
-            if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-        }
-        if (context.StringConstant()!=null){
-            //System.out.println("StringConstant");
-            tmp.father  = "StringConstant";
-            tmp.constantStr = context.StringConstant().toString();
-
-            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
-            if (context.callFunctionExpression()!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
-            if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-        }
-        if (context.callFunctionExpression(1)!=null&&context.callFunctionExpression(0)!=null){
-            System.out.println("two callFunctionExpression");
-            tmp.father = "callFunctionExpression";
-            tmp.callFunF = visitCallFunctionExpression(context.callFunctionExpression(0));
-
-            if (context.callFunctionExpression(1)!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(1));tmp.son = "callFunctionExpression";}
-            if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-        }
-        if (context.This()!=null){
-            System.out.println("This");
-            tmp.father = "this";
-
-            //tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));
-            if (context.callFunctionExpression()!=null) {tmp.callFunS = visitCallFunctionExpression(context.callFunctionExpression(0));tmp.son = "callFunctionExpression";}
-            if (context.dotFunctionExpression()!=null) {tmp.dotEx = visitDotFunctionExpression(context.dotFunctionExpression());tmp.son = "DotFunctionExpression";}
-        }
-
-        return tmp;
-    }*/
 
     @Override public callFunctionExpression visitCallFunctionExpression(MxParser.CallFunctionExpressionContext context) {
         //System.out.println("visitCallFunctionExpression");
@@ -901,19 +625,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
             }
             else t.arrExp.add(expression1);
             i++;
-        }/*
-        if (context.CloseBlacket(0) != null) {
-            if (context.valuebleSingleExpression(0)!=null){
-                t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(0)));
-            }
-            else t.arrExp.add(expression1);
         }
-        if (context.CloseBlacket(1) != null) {
-            if (context.valuebleSingleExpression(1)!=null){
-                t.arrExp.add(visitValuebleSingleExpression(context.valuebleSingleExpression(1)));
-            }
-            else t.arrExp.add(expression2);
-        }*/
         return t;
     }
 
@@ -921,27 +633,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         type tmp = new type();
         if (context.Identifier()!=null) tmp.typeName = context.Identifier().toString();
 
-        /*if (context.variableTypeExpression()!=null){
-            if (context.variableTypeExpression().variableNormalTypeExpression()!=null){
-                if (context.variableTypeExpression().variableNormalTypeExpression().primaryType()!=null){
-                    if (context.variableTypeExpression().variableNormalTypeExpression().primaryType().Void()!=null) tmp.typeName="newVoid";
-                }
-            }
-        }
-        System.out.println(tmp.typeName);*/
+
         if (context.variableTypeExpression()!=null){
-            /*if (context.variableTypeExpression().variableArrayTypeExpression().Identifier()!=null) tmp.typeName = context.variableTypeExpression().variableArrayTypeExpression().Identifier().toString();
-            if (context.variableTypeExpression().variableArrayTypeExpression().primaryType()!=null){
-                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Bool()!=null){
-                    tmp.typeName = "Bool";
-                }
-                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().Int()!=null){
-                    tmp.typeName = "Int";
-                }
-                if (context.variableTypeExpression().variableArrayTypeExpression().primaryType().String()!=null){
-                    tmp.typeName = "String";
-                }
-            }*/
 
             if (context.variableTypeExpression().variableArrayTypeExpression()!=null){
                /* for (ParseTree item : context.variableTypeExpression().variableArrayTypeExpression().valuebleSingleExpression()){

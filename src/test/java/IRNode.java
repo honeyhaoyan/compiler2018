@@ -39,14 +39,22 @@ class Immediate extends Value{
 class virtualRegister extends Value{
 /*have no idea what to do*/
     private String name;
-     int id;
+    int id;
     boolean ifRenamed = false;
     private String newName;
     public int offset;
+
+    //***********
+    /*boolean content;
+    Value base;
+    Value memberoffset;*/
+    //***********
+
     public virtualRegister(String variableName, int id){
         this.name = variableName;
         this.id = id;
         ifRenamed = false;
+        //content = false;
     }
     public String getRegisterName (){return name;}
     @Override public virtualRegister copy(){return new virtualRegister(name,id);}
@@ -59,6 +67,7 @@ class virtualRegister extends Value{
 
     public String getNewName(){return newName;}
 
+    //public void setContent(){content = true;}
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
 }
 /*
@@ -100,13 +109,22 @@ class staticString extends Static{
 
 class staticSpace extends Static{
     /*have no idea what to do*/
-    public int length;
-    public staticSpace(int length,String name){
+    //public int length;
+    Map<String,Integer> memberOffset;
+    List<Value>nArray;
+    public staticSpace(String name){
         super(name);
-        this.length = length;
+        //this.length = length;
+        //memberOffset = new HashMap<>();
+        memberOffset = new HashMap<>();
+        nArray = new ArrayList<>();
     }
-    @Override public staticSpace copy(){return new staticSpace(length,name);}
-    @Override public void print(){System.out.print(length);}
+    @Override public staticSpace copy(){return new staticSpace(name);}
+    @Override public void print(){
+        System.out.print("staticSpace ");
+        nArray.forEach(x->x.print());
+        System.out.println();
+    }
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
 }
 
@@ -213,9 +231,10 @@ class Function extends IRNode{
     List<virtualRegister>registers;
     basicBlock blockStart;
     basicBlock blockEnd;
-    //int registerStart;
-    //int registerEnd;
     int totalOffset;
+    boolean isClassFunction = false;
+    //Map<String,Integer> memberMap;
+    staticSpace classSpace;
     public Function(String functionName){
         super();
         //basicBlocks = new ArrayList<basicBlock>();
@@ -223,6 +242,7 @@ class Function extends IRNode{
         basicBlocks = new ArrayList<basicBlock>();
         this.functionName = functionName;
         registers = new ArrayList<virtualRegister>();
+        //memberMap = new HashMap<>();
     }
     public void append(basicBlock block){
         basicBlocks.add(block);
@@ -345,13 +365,21 @@ class Return extends branchInstruction{
 class Move extends IRInstruction{
     private virtualRegister dest;
     private Value source;
+    boolean destAddress;
+    boolean sourceAddress;
     public Move(basicBlock B, virtualRegister dest, Value source){
         super(B);
         this.dest = dest;
         this.source = source;
+        destAddress = false;
+        sourceAddress = false;
     }
     public void print(){
-        System.out.print("Mov"+" ");dest.print();System.out.print(" ");source.print();System.out.print(" ");System.out.print('\n');
+        if (destAddress==false&&sourceAddress==false)
+        {System.out.print("Mov"+" ");dest.print();System.out.print(" ");source.print();System.out.print(" ");System.out.print('\n');}
+        if (sourceAddress==true) {
+            System.out.print("Mov"+" ");dest.print();System.out.print(" ");System.out.print("[");source.print();System.out.print("]");System.out.print(" ");System.out.print('\n');
+        }
     }
     public virtualRegister getDest(){return dest;}
     public Value getSource(){return source;}
@@ -395,6 +423,7 @@ class callFunction extends IRInstruction{
     private Function func;
     List<virtualRegister>params;
     int off;
+    //virtualRegister reg;
     public callFunction(basicBlock B, Function func){
         super(B);
         //this.dest = dest;
@@ -420,6 +449,7 @@ class SystemCall extends IRInstruction{
 }
 
 class unaryOperation extends IRInstruction{
+    //virtualRegister reg;
     public enum Op{NEG,NOT};
     private virtualRegister dest;
     private Op op;
@@ -506,18 +536,22 @@ class Comparison extends IRInstruction{
 }
 
 class HeapAllocate extends IRInstruction{
-    private virtualRegister dest;
-    private Value allocSize;
-    public HeapAllocate(basicBlock B, virtualRegister dest, Value allocSize){
+    virtualRegister dest;
+    //Value allocSize;
+    staticSpace space;
+    public HeapAllocate(basicBlock B, virtualRegister dest, staticSpace space){
         super(B);
         this.dest = dest;
-        this.allocSize = allocSize;
+        //this.allocSize = allocSize;
+        this.space = space;
     }
     @Override
     public void print(){
-        System.out.print("alloca");
+        System.out.print("alloca ");
         dest.print();
-        allocSize.print();
+        //allocSize.print();
+        System.out.print(" ");
+        space.print();
         System.out.println();
     }
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
