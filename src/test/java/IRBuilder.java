@@ -232,9 +232,12 @@ public class IRBuilder implements IRBasicBuilder {
         /*
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);*/
-        if (node.ifcondition.sons.size()==3) {if (((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||")) {
+        if (node.ifcondition.sons.size()==3&&(((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||"))) {
+            //if (((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||")) {
             logicOperation(node.ifcondition,ifBlock,elseBlock);
-        }}
+            //}
+            //else visit(node.ifcondition);
+        }
         else{
             visit(node.ifcondition);
             if (node.ifcondition.sons.size() == 1){
