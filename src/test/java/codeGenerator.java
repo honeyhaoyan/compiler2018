@@ -23,6 +23,12 @@ public class codeGenerator implements IRBasicVisitor {
             Imm imm = new Imm(((Immediate) node).immediateValue);
             return imm;
         }
+        if (node instanceof Mem){
+            //Address addr = new Address("-",((virtualRegister) node).offset,new Phyregister("rbp"));
+            global.add(new Mov(new Phyregister("rsp"),(getMem(((Mem) node).reg))));
+            Address address = new Address("+",0,new Phyregister("rsp"));
+            return address;
+        }
         if (node instanceof virtualRegister){
             if (((virtualRegister) node).ifRenamed){
                 Phyregister reg = new Phyregister(((virtualRegister) node).getNewName());
@@ -128,15 +134,19 @@ public class codeGenerator implements IRBasicVisitor {
             Address rightTmp = new Address("+",0,new Phyregister("r10"));
             global.add(new Mov(new Phyregister("r11"),rightTmp));
             right = new Phyregister("r11");
-            /*if (left instanceof Address){
-                global.add(new Mov(new Phyregister("r11"),(Address)left));
-                Phyregister leftTmp = new Phyregister("r11");
-                global.add(new Mov(leftTmp,rightTmp));
-            }*/
-            //global.add(new Mov(leftTmp,rightTmp));
-
-            //return;
         }
+       /* if (node.getDest().content == true){
+            global.add(new Mov(new Phyregister("r9"),getMem(node.getDest())));
+            global.add(new Mov(new Phyregister("r8"),new Memory(new Phyregister("r9"),"+",0)));
+            left = new Phyregister("r8");
+        }
+        if (node.getSource() instanceof virtualRegister){
+            if (((virtualRegister) node.getSource()).content == true){
+                global.add(new Mov(new Phyregister("r7"),getMem(node.getSource())));
+                global.add(new Mov(new Phyregister("r6"),new Memory(new Phyregister("r7"),"+",0)));
+                right = new Phyregister("r6");
+            }
+        }*/
         if (left instanceof Address && right instanceof Address){
             //global.add(new Load(new Phyregister("r11"),(Address)right));
         global.add(new Mov(new Phyregister("r11"),(Address)right));
@@ -229,7 +239,7 @@ public class codeGenerator implements IRBasicVisitor {
             global.add(new Sub(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.MUL){
-            //global.add(new mul());
+            global.add(new Imul(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.DIV){
 

@@ -44,6 +44,7 @@ class virtualRegister extends Value{
     private String newName;
     public int offset;
 
+    boolean content;
     //***********
     /*boolean content;
     Value base;
@@ -54,11 +55,16 @@ class virtualRegister extends Value{
         this.name = variableName;
         this.id = id;
         ifRenamed = false;
-        //content = false;
+        content = false;
     }
     public String getRegisterName (){return name;}
     @Override public virtualRegister copy(){return new virtualRegister(name,id);}
-    public void print(){System.out.print("%"+Integer.toString(id));}
+    public void print(){
+        if (content==false) System.out.print("%"+Integer.toString(id));
+        else {
+            System.out.print("%"+Integer.toString(id));
+        }
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -69,6 +75,14 @@ class virtualRegister extends Value{
 
     //public void setContent(){content = true;}
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
+}
+
+class Mem extends virtualRegister{
+    virtualRegister reg;
+    public Mem(virtualRegister reg){
+        super(reg.getRegisterName(),reg.id);
+        this.reg = reg;
+    }
 }
 /*
 class physicalRegister extends Register{

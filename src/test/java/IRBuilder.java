@@ -79,10 +79,10 @@ public class IRBuilder implements IRBasicBuilder {
             for (definitionStatement defi : node.variableSons){
                 variable va = defi.variableSon;
                 space.memberOffset.put(va.name,offset);
-                offset = offset+4;
+                offset = offset+8;
             }
             //space.length = offset;
-            space.nArray.add(new Immediate(offset));
+            space.nArray.add(new Immediate(offset/8));
             classTable.put(node.selfName,space);
             classSpace = space;
             className.add(node.selfName);
@@ -564,9 +564,10 @@ public class IRBuilder implements IRBasicBuilder {
         if (isString(node.sons.get(1))) {StringOperation(node);return;}
         switch (op){
             case "." :
-                if (node.sons.get(2) instanceof variable){
+                if (node.sons.get(2).sons.get(0) instanceof variable){
+                    classRegister = registerRi;
                     isClassFunction = true;
-                    classSpace = classTable.get(registerRi.getRegisterName());
+                    //classSpace = classTable.get(registerRi.getRegisterName());
                     visit(node.sons.get(2));
                     isClassFunction = false;
                     node.registerValue = node.sons.get(2).registerValue;
@@ -815,6 +816,10 @@ public class IRBuilder implements IRBasicBuilder {
         if (registerMap.containsKey(node.name)){
             //return registerMap.get(node.name);
             node.registerValue = registerMap.get(node.name);
+            if (classVariableTable.containsKey(node.name)){
+                classSpace = classTable.get(classVariableTable.get(node.name));
+                classRegister = registerMap.get(node.name);
+            }
         }
         else{
             virtualRegister register = new virtualRegister(null, registerNumber++);
@@ -823,6 +828,7 @@ public class IRBuilder implements IRBasicBuilder {
                 //space.memberOffset =
                 HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(node.ty.typeName));
                 curBasicBlock.append(allocate);
+                classVariableTable.put(node.name,node.ty.typeName);
             }
             if (node.ty.arrExp.size()!=0){
                 //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
@@ -841,6 +847,14 @@ public class IRBuilder implements IRBasicBuilder {
                     /*register.content = true;
                     register.base = classRegister;
                     register.memberoffset = new Immediate(classSpace.memberOffset.get(node.name));*/
+                    //virtualRegister reg = new virtualRegister(node.name,registerNumber++);
+                    binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister,new Immediate(classSpace.memberOffset.get(node.name)+8));
+                    curBasicBlock.append(binary);
+                    Mem mem = new Mem(register);
+                    node.registerValue = mem;
+                    return;
+                    //register.content = true;
+
                 }
             }
             register.setName(node.name);
