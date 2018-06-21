@@ -96,9 +96,11 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Ret());
     }
     public void visit(Branch node){
-        br.setLabel("b"+Integer.toString(node.findThen().label));
-        global.add(br);
-        global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
+        //int a  = node.findThen().label;
+        //global.add(new Cmp(getMem(node.cond),new Imm(0)));
+        //br.setLabel("b"+Integer.toString(node.findThen().label));
+        global.add(new Jmp("b"+Integer.toString(node.findThen().label)));
+        //global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
     }
     public void visit(Jump node){
         global.add(new Jmp("b"+Integer.toString(node.getJumpTo().label)));
@@ -169,7 +171,15 @@ public class codeGenerator implements IRBasicVisitor {
 
     }
     public void visit(unaryOperation node){
+        if (node.op == unaryOperation.Op.NEG){
 
+        }
+        if (node.op == unaryOperation.Op.NOT){
+            global.add(new Mov(new Phyregister("r11"),getMem(node.getDest())));
+            //global.add(new Not(new Phyregister("r11")));
+            global.add(new Xor(new Phyregister("r11"),new Imm(1)));
+            global.add(new Mov(getMem(node.getDest()),new Phyregister("r11")));
+        }
     }
     public void visit(binaryOperation node){
         /*register left,right;

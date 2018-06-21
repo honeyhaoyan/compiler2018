@@ -136,6 +136,17 @@ class Db{
     //A pseudo-instruction that declares bytes that will be in memory when the program runs
 
 }
+class Not extends assembly{
+    assembly node;
+    public Not(assembly node){
+        this.node = node;
+    }
+    public void print(PrintStream fout){
+        System.out.print("not ");
+        node.print(fout);
+        System.out.println();
+    }
+}
 class Cmp extends assembly{
     //does a comparison
     assembly left;

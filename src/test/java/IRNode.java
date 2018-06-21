@@ -309,7 +309,7 @@ abstract class branchInstruction extends IRInstruction{
 }
 
 class Branch extends branchInstruction {
-    private Value cond;
+    public Value cond;
     private basicBlock then;
     private basicBlock otherwise;
     public Branch (basicBlock B, Value cond, basicBlock then, basicBlock otherwise){
@@ -324,7 +324,7 @@ class Branch extends branchInstruction {
     @Override
     public void print(){
         System.out.print("br ");
-        cond.print();
+        if (cond!=null) cond.print();
         System.out.print(" label:"+Integer.toString(then.getLabel())+" "+ " label:"+Integer.toString(otherwise.getLabel())+"\n");
     }
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
@@ -452,7 +452,7 @@ class unaryOperation extends IRInstruction{
     //virtualRegister reg;
     public enum Op{NEG,NOT};
     private virtualRegister dest;
-    private Op op;
+    Op op;
     private Value initialValue;
     public unaryOperation(basicBlock B, virtualRegister dest, Op op, Value initialValue){
         super(B);
@@ -465,7 +465,7 @@ class unaryOperation extends IRInstruction{
         System.out.print(op.toString());
         dest.print();
         //System.out.print(op.toString());
-        initialValue.print();
+        if (initialValue!=null) initialValue.print();
         System.out.println();
     }
     public virtualRegister getDest(){return dest;}

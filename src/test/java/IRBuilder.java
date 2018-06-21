@@ -47,10 +47,11 @@ public class IRBuilder implements IRBasicBuilder {
     @Override
     public void visit(Node node) {
         //virtualRegister register = new virtualRegister(null,registerNumber++);
-        if (node instanceof variable) visit((variable)node);
-        if (node instanceof type) visit((type)node);
-        if (node instanceof callFunctionExpression) visit((callFunctionExpression)node);
-        if (node instanceof constant) visit((constant)node);
+        if (node instanceof variable) {visit((variable)node);return;}
+        if (node instanceof type) {visit((type)node);return;}
+        if (node instanceof callFunctionExpression) {visit((callFunctionExpression)node);return;}
+        if (node instanceof constant) {visit((constant)node);return;}
+        if (node instanceof expression) {visit((expression)node);return;}
         //if (node instanceof expression) visit((expression)node);
         //virtualRegister register = new virtualRegister(null,registerNumber++);
         //return register;
@@ -189,6 +190,7 @@ public class IRBuilder implements IRBasicBuilder {
             //int a = node.exp.sons.size();
             if (node.exp.sons.size() != 0) {
                 //virtualRegister registerExp = visit(node.exp);
+                visit(node.exp);
                 virtualRegister registerExp = node.exp.registerValue;
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
                 curBasicBlock.append(move);
@@ -230,9 +232,16 @@ public class IRBuilder implements IRBasicBuilder {
         /*
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);*/
-        if (node.ifcondition.sons.get(0).equals("&&")||node.ifcondition.sons.get(0).equals("||")) logicOperation(node.ifcondition,ifBlock,elseBlock);
+        if (node.ifcondition.sons.size()==3) {if (((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||")) {
+            logicOperation(node.ifcondition,ifBlock,elseBlock);
+        }}
         else{
             visit(node.ifcondition);
+            if (node.ifcondition.sons.get(0) instanceof variable){
+                //visit(node.ifcondition);
+                Comparison comp = new Comparison(curBasicBlock,node.ifcondition.registerValue,Comparison.Condition.EQ,node.ifcondition.registerValue,new Immediate(1));
+                curBasicBlock.append(comp);
+            }
             virtualRegister register =node.ifcondition.registerValue;
             Branch branch = new Branch(curBasicBlock, register, ifBlock, elseBlock);
             if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
@@ -245,29 +254,40 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterIf");
 
         //visit ifblock
-        //curBasicBlock = new basicBlock(curFunction,"if");
-        curBasicBlock = ifBlock;
+        /*curBasicBlock = ifBlock;
         tmpIf = curBasicBlock;
-        //branch.addThen(tmpIf);
         visit(node.ifblock);
-
         Jump jumpIf;
-
         jumpIf = new Jump(tmpIf,newBlock);
-        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);*/
 
         //visit elseblock
-        if (node.elseblock != null) {
-            //curBasicBlock = new basicBlock(curFunction,"otherwise");
+        /*if (node.elseblock != null) {
             curBasicBlock = elseBlock;
             visit(node.elseblock);
             tmpElse = curBasicBlock;
-            //branch.addOtherWise(tmpElse);
             Jump jumpElse;
-            //if (!otherwise.empty()) jumpElse = new Jump(tmpElse, otherwise.peek());
+            jumpElse = new Jump(tmpElse,newBlock);
+            if (!curBasicBlock.isEnded())curBasicBlock.end(jumpElse);
+        }*/
+
+        //visit elseblock
+        if (node.elseblock != null) {
+            curBasicBlock = elseBlock;
+            visit(node.elseblock);
+            tmpElse = curBasicBlock;
+            Jump jumpElse;
             jumpElse = new Jump(tmpElse,newBlock);
             if (!curBasicBlock.isEnded())curBasicBlock.end(jumpElse);
         }
+
+        //visit ifblock
+        curBasicBlock = ifBlock;
+        tmpIf = curBasicBlock;
+        visit(node.ifblock);
+        Jump jumpIf;
+        jumpIf = new Jump(tmpIf,newBlock);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
 
         curBasicBlock = newBlock;
 
@@ -526,10 +546,11 @@ public class IRBuilder implements IRBasicBuilder {
 
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
 
+        if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
-        if (isString(node.sons.get(2))) {StringOperation(node);return;}
+        if (isString(node.sons.get(1))) {StringOperation(node);return;}
         switch (op){
             case "." :
                 if (node.sons.get(2) instanceof variable){
@@ -568,14 +589,22 @@ public class IRBuilder implements IRBasicBuilder {
 
             case "~" :
             case "!" :
-                registerLe = new virtualRegister(null,registerNumber++);
+                //registerLe = new virtualRegister(null,registerNumber++);
                 unaryOperation.Op newop;
                 newop = visitUnaryOp(op);
-                unaryOperation unary = new unaryOperation(curBasicBlock,registerLe,newop,registerRi);
+                unaryOperation unary = new unaryOperation(curBasicBlock,registerRi,newop,registerRi);
                 curBasicBlock.append(unary);
-                register = registerLe;
+                register = registerRi;
+                node.registerValue = register;
                 break;
-
+            //case "!":
+                //unaryOperation.Op newop4;
+                //newop4 = visitUnaryOp(op);
+                //unaryOperation unary = new unaryOperation(curBasicBlock,registerRi,newop,registerRi);
+                //curBasicBlock.append(unary);
+                //binaryOperation binaryNot = new binaryOperation(curBasicBlock,registerRi,)
+                //register = registerRi;
+                //node.registerValue = register;
             case "==":
             case "!=":
             case "<":
@@ -619,11 +648,11 @@ public class IRBuilder implements IRBasicBuilder {
                 binaryOperation binary2 = new binaryOperation(curBasicBlock,register,newop4,registerLe,registerRi);
                 curBasicBlock.append(binary2);
                 node.registerValue = register;
-
-            case "&&" :
+                break;
+            /*case "&&" :
             case "||" :
                 expressionLogic(node);
-
+                break;*/
             case "[":
 
         }
@@ -689,18 +718,27 @@ public class IRBuilder implements IRBasicBuilder {
 
     void expressionLogic(expression node){
         virtualRegister register = new virtualRegister(null,registerNumber++);
+        node.registerValue = register;
         basicBlock resultTrue = new basicBlock(curFunction, "resultTrue");
         basicBlock resultFalse = new basicBlock(curFunction,"resultFalse");
         resultTrue.append(new Move(resultTrue,register,new Immediate(1)));
         resultFalse.append(new Move(resultFalse,register,new Immediate(0)));
         logicOperation(node,resultTrue,resultFalse);
+        basicBlock tmp = curBasicBlock;
+        basicBlockList.add(tmp);
+        basicBlockList.add(resultTrue);
+        basicBlockList.add(resultFalse);
+        curBasicBlock = new basicBlock(curFunction,"afterLogic");
+        resultTrue.end(new Jump(resultTrue,curBasicBlock));
+        resultFalse.end(new Jump(resultFalse,curBasicBlock));
+       // curBasicBlock = new basicBlock(curFunction,"afterLogic");
     }
 
     void logicOperation(expression node, basicBlock resultTrue, basicBlock resultFalse){
         basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
         visit(node.sons.get(1));
         virtualRegister register = node.sons.get(1).registerValue;
-        if (node.sons.get(0).equals("&&")){
+        if (((Op)node.sons.get(0)).op.equals("&&")){
             /*basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
             visit(node.sons.get(1));
             virtualRegister register = node.sons.get(1).registerValue;*/
@@ -713,7 +751,7 @@ public class IRBuilder implements IRBasicBuilder {
             virtualRegister register1 = node.sons.get(2).registerValue;
             Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);*/
         }
-        else if (node.sons.get(0).equals("||")){
+        else if (((Op)node.sons.get(0)).op.equals("||")){
             /*basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
             visit(node.sons.get(1));
             virtualRegister register = node.sons.get(1).registerValue;*/
@@ -725,12 +763,18 @@ public class IRBuilder implements IRBasicBuilder {
             virtualRegister register1 = node.sons.get(2).registerValue;
             Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);*/
         }
+        basicBlock tmp = curBasicBlock;
+        basicBlockList.add(tmp);
         //curBasicBlock.end(branch);
         //basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
         curBasicBlock = currentBlock;
         visit(node.sons.get(2));
         virtualRegister register1 = node.sons.get(2).registerValue;
         Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);
+        curBasicBlock.end(branch1);
+        //basicBlock tmp1 = curBasicBlock;
+        //basicBlockList.add(tmp1);
+        //curBasicBlock =
     }
 
     @Override
