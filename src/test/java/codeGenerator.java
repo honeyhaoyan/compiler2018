@@ -100,9 +100,9 @@ public class codeGenerator implements IRBasicVisitor {
         //global.add(new Cmp(getMem(node.cond),new Imm(0)));
         //br.setLabel("b"+Integer.toString(node.findThen().label));
         //visit(node)
-        if (br==null) global.add(new Jmp("b"+Integer.toString(node.findThen().label)));
+        if (br==null) global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
         else {
-            br.label = "b"+Integer.toString(node.findThen().label);
+            br.label = "b"+Integer.toString(node.findOtherwise().label);
             global.add(br);
             br = null;
         }
@@ -265,22 +265,22 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Cmp(left,right));
         Comparison.Condition con = node.cond;
         if (con == Comparison.Condition.EQ){
-            br = new Je(null);
+            br = new Jne(null);
         }
         if (con == Comparison.Condition.GE){
-            br = new Jnl(null);
-        }
-        if (con == Comparison.Condition.GT){
-            br = new Jg(null);
-        }
-        if (con == Comparison.Condition.LE){
-            br = new Jng(null);
-        }
-        if (con == Comparison.Condition.LT){
             br = new Jl(null);
         }
+        if (con == Comparison.Condition.GT){
+            br = new Jng(null);
+        }
+        if (con == Comparison.Condition.LE){
+            br = new Jg(null);
+        }
+        if (con == Comparison.Condition.LT){
+            br = new Jnl(null);
+        }
         if (con == Comparison.Condition.NE){
-            br = new Jne(null);
+            br = new Je(null);
         }
     }
     public void visit(HeapAllocate node){

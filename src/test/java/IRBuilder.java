@@ -257,25 +257,25 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock newBlock = new basicBlock(curFunction, "afterIf");
 
         //visit ifblock
-        /*curBasicBlock = ifBlock;
+        curBasicBlock = ifBlock;
         tmpIf = curBasicBlock;
         visit(node.ifblock);
         Jump jumpIf;
         jumpIf = new Jump(tmpIf,newBlock);
-        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);*/
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
 
         //visit elseblock
-        /*if (node.elseblock != null) {
+        if (node.elseblock != null) {
             curBasicBlock = elseBlock;
             visit(node.elseblock);
             tmpElse = curBasicBlock;
             Jump jumpElse;
             jumpElse = new Jump(tmpElse,newBlock);
             if (!curBasicBlock.isEnded())curBasicBlock.end(jumpElse);
-        }*/
+        }
 
         //visit elseblock
-        if (node.elseblock != null) {
+        /*if (node.elseblock != null) {
             curBasicBlock = elseBlock;
             visit(node.elseblock);
             tmpElse = curBasicBlock;
@@ -290,7 +290,7 @@ public class IRBuilder implements IRBasicBuilder {
         visit(node.ifblock);
         Jump jumpIf;
         jumpIf = new Jump(tmpIf,newBlock);
-        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);
+        if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpIf);*/
 
         curBasicBlock = newBlock;
 
