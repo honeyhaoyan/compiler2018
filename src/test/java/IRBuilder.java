@@ -318,7 +318,7 @@ public class IRBuilder implements IRBasicBuilder {
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
-        //basicBlockList.add(tmpInfor);
+        basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
 
         //start a new block for statements after for
@@ -335,7 +335,7 @@ public class IRBuilder implements IRBasicBuilder {
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
 
-        basicBlockList.add(tmpInfor);
+        //basicBlockList.add(tmpInfor);
 
         curBasicBlock = newBlock;
         otherwise.push(newBlock);
@@ -366,7 +366,7 @@ public class IRBuilder implements IRBasicBuilder {
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
-        //basicBlockList.add(tmpInfor);
+        basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
 
         //start a new block for statements after for
@@ -380,7 +380,7 @@ public class IRBuilder implements IRBasicBuilder {
         tmpLoop = curBasicBlock;
         branch.addThen(tmpLoop);
 
-        basicBlockList.add(tmpInfor);
+        //basicBlockList.add(tmpInfor);
 
         curBasicBlock = newBlock;
         tmpNew = curBasicBlock;
