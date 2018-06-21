@@ -11,6 +11,7 @@ public class codeGenerator implements IRBasicVisitor {
     JJump br = null;
     boolean first = false;
     int returnNum = 0;
+    boolean memFlag;
 
     /*public register getRegister(virtualRegister node){
 
@@ -25,8 +26,11 @@ public class codeGenerator implements IRBasicVisitor {
         }
         if (node instanceof Mem){
             //Address addr = new Address("-",((virtualRegister) node).offset,new Phyregister("rbp"));
-            global.add(new Mov(new Phyregister("rsp"),(getMem(((Mem) node).reg))));
-            Address address = new Address("+",0,new Phyregister("rsp"));
+            String regName;
+            if (memFlag) {regName = "rdx";memFlag =false;}
+            else {regName = "rbx";memFlag = true;}
+            global.add(new Mov(new Phyregister(regName),(getMem(((Mem) node).reg))));
+            Address address = new Address("+",0,new Phyregister(regName));
             return address;
         }
         if (node instanceof virtualRegister){

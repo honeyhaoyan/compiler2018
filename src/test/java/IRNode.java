@@ -61,9 +61,6 @@ class virtualRegister extends Value{
     @Override public virtualRegister copy(){return new virtualRegister(name,id);}
     public void print(){
         if (content==false) System.out.print("%"+Integer.toString(id));
-        else {
-            System.out.print("%"+Integer.toString(id));
-        }
     }
 
     public void setName(String name) {
@@ -82,6 +79,11 @@ class Mem extends virtualRegister{
     public Mem(virtualRegister reg){
         super(reg.getRegisterName(),reg.id);
         this.reg = reg;
+    }
+    public void print(){
+        System.out.print("[");
+        reg.print();
+        System.out.print("]");
     }
 }
 /*
