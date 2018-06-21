@@ -100,7 +100,10 @@ public class codeGenerator implements IRBasicVisitor {
         //global.add(new Cmp(getMem(node.cond),new Imm(0)));
         //br.setLabel("b"+Integer.toString(node.findThen().label));
         //visit(node)
-        if (br==null) global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
+        if (br==null) {
+            global.add(new Cmp(getMem(node.cond),new Imm(0)));
+            global.add(new Je("b"+Integer.toString(node.findOtherwise().label)));
+        }
         else {
             br.label = "b"+Integer.toString(node.findOtherwise().label);
             global.add(br);
