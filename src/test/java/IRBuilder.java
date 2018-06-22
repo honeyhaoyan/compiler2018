@@ -544,6 +544,7 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(expression node) {
+        if (node.sons.size() == 0) return;
         if (node.sons.size() == 1){
            visit(node.sons.get(0));
            node.registerValue = node.sons.get(0).registerValue;
@@ -557,7 +558,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
 
-        if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
+        if (op!=null) if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
@@ -666,7 +667,16 @@ public class IRBuilder implements IRBasicBuilder {
                 expressionLogic(node);
                 break;*/
             case "[":
-
+                visit(node.sons.get(2));
+                registerLe = node.sons.get(2).registerValue;
+                virtualRegister registerOffset = new virtualRegister(null,registerNumber++);
+                binaryOperation binary3 = new binaryOperation(curBasicBlock,registerOffset, binaryOperation.Op.MUL,registerLe,new Immediate(8));
+                binaryOperation binary4 = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,registerOffset,registerRi);
+                //binaryOperation binary4 = new binaryOperation(curBasicBlock,register, binaryOperation.Op.MUL,register,new Immediate(8));
+                curBasicBlock.append(binary3);
+                curBasicBlock.append(binary4);
+                Mem mem = new Mem(register);
+                node.registerValue = mem;
         }
         //node.registerValue = register;
         //return register;
@@ -833,12 +843,16 @@ public class IRBuilder implements IRBasicBuilder {
             if (node.ty.arrExp.size()!=0){
                 //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
                 staticSpace space = new staticSpace(node.name);
+                boolean flag= false;
                 for(expression item : node.ty.arrExp){
+                    //if (item!=null) flag = true;
                     visit(item);
                     //virtualRegister tmpRegister = item.registerValue;
                     //curBasicBlock.append(new binaryOperation(curBasicBlock,tmpRegister, binaryOperation.Op.ADD,tmpRegister,new Immediate(8)));
+                    if (item.registerValue!=null) flag = true;
                     space.nArray.add(item.registerValue);
                 }
+                if (flag==false) return;
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
                 curBasicBlock.append(allocateArray);
             }

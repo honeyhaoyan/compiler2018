@@ -311,13 +311,15 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Mov(new Phyregister("r9"),getMem(node.dest)));
         global.add(new Mov(new Memory(new Phyregister("r9"),"-",8),new Phyregister("r11")));*/
         //global.add(new Mov(new Phyregister("rdi"),getMem(node.allocSize)));
+        if (node.space.nArray.get(0)==null) return;
         global.add(new Mov(new Phyregister("rdi"),new Imm(node.space.nArray.size())));
         global.add(new CallF("_malloc"));
         global.add(new Mov(getMem(node.dest),new Phyregister("rax")));
         global.add(new Mov(new Phyregister("r9"),getMem(node.dest)));
         for (Value item : node.space.nArray){
             global.add(new Add(new Phyregister("r9"),new Imm(8)));
-            global.add(new Mov(new Phyregister("r10"),getMem(item)));
+            if (item!=null) global.add(new Mov(new Phyregister("r10"),getMem(item)));
+            else global.add(new Mov(new Phyregister("r10"),new Imm(0)));
             global.add(new Mov(new Address("+",0,new Phyregister("r9")),new Phyregister("r10")));
             //global.add(new Add(new Phyregister("r9"),new Imm(8)));
         }

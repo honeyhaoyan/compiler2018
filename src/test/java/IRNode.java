@@ -138,7 +138,12 @@ class staticSpace extends Static{
     @Override public staticSpace copy(){return new staticSpace(name);}
     @Override public void print(){
         System.out.print("staticSpace ");
-        nArray.forEach(x->x.print());
+        if(!nArray.isEmpty()) {
+            //nArray.forEach(x->x.print());
+            for (Value item : nArray) {
+                if (item!=null) item.print();
+            }
+        }
         System.out.println();
     }
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}

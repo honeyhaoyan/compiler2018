@@ -191,7 +191,7 @@ public class ASTvisitor {
                             if ((nameRequire.equals("Int")&&!((functionScope) scopeTmp).functionName.equals("main"))||nameRequire.equals("Bool")) throw new Exception("return type error");
                         }
                         else {
-                            throw new Exception("return type error");
+                            //throw new Exception("return type error");
                         }
                     }
                 }
