@@ -282,22 +282,33 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Cmp(left,right));
         Comparison.Condition con = node.cond;
         if (con == Comparison.Condition.EQ){
-            br = new Jne(null);
+            if (node.isBranch) br = new Jne(null);
+            else global.add(new Sete(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.GE){
-            br = new Jl(null);
+            if (node.isBranch) br = new Jl(null);
+            else global.add(new Setge(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.GT){
-            br = new Jng(null);
+            if (node.isBranch) br = new Jng(null);
+            else {
+                //global.add(new Mov(new Phyregister("r15"),getMem(node.getDest())));
+                global.add(new Setg(new Phyregister("cl")));
+                global.add(new Movzlb(getMem(node.getDest()),new Phyregister("cl")));
+
+            }
         }
         if (con == Comparison.Condition.LE){
-            br = new Jg(null);
+            if (node.isBranch) br = new Jg(null);
+            else global.add(new Setle(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.LT){
-            br = new Jnl(null);
+            if (node.isBranch) br = new Jnl(null);
+            else global.add(new Setl(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.NE){
-            br = new Je(null);
+            if (node.isBranch) br = new Je(null);
+            else global.add(new Setne(getMem(node.getDest())));
         }
     }
     public void visit(HeapAllocate node){

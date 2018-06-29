@@ -38,6 +38,8 @@ public class IRBuilder implements IRBasicBuilder {
     virtualRegister classRegister;
     staticSpace classSpace;
 
+    boolean isBranch = false;
+
     public IRRoot getIRRoot() {
         return root;
     }
@@ -234,11 +236,13 @@ public class IRBuilder implements IRBasicBuilder {
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);*/
         if (node.ifcondition.sons.size()==3&&(((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||"))) {
             //if (((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||")) {
+            isBranch = true;
             logicOperation(node.ifcondition,ifBlock,elseBlock);
             //}
             //else visit(node.ifcondition);
         }
         else{
+            isBranch = true;
             visit(node.ifcondition);
             if (node.ifcondition.sons.size() == 1){
                 //visit(node.ifcondition);
@@ -313,6 +317,7 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
         //visit(node.operateVariable);
+        isBranch = true;
         visit(node.variableCondition);
         virtualRegister register = node.variableCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
@@ -361,6 +366,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "whileInformation");
+        isBranch = true;
         visit(node.whileCondition);
         virtualRegister register = node.whileCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
@@ -630,6 +636,7 @@ public class IRBuilder implements IRBasicBuilder {
                 visit((expression)node.sons.get(2));
                 registerLe = node.sons.get(2).registerValue;
                 Comparison com = new Comparison(curBasicBlock,register,newop2,registerRi,registerLe);
+                if (isBranch) {com.isBranch = true;isBranch = false;}
                 curBasicBlock.append(com);
                 //return register;
                 node.registerValue = register;
@@ -906,8 +913,9 @@ public class IRBuilder implements IRBasicBuilder {
     @Override
     public void visit(callFunctionExpression node) {
         //virtualRegister register = new virtualRegister("eax", registerNumber++);
-        callFunction call = new callFunction(curBasicBlock,functionMap.get(node.functionName));
-
+        callFunction call;
+        if(functionMap.containsKey(node.functionName)) call = new callFunction(curBasicBlock,functionMap.get(node.functionName));
+        else call = new callFunction(curBasicBlock,new Function(node.functionName));
         //node.expressionSons.forEach(x->call.addParam(visit(x)));
         for (expression item : node.expressionSons){
             visit(item);

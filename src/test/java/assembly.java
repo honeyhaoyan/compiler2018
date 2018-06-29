@@ -86,6 +86,9 @@ class Mov extends Two{
     //x : y
     public Mov(assembly left,assembly right){super(left,right);type = "mov";}
 }
+class Movzlb extends Two{
+    public Movzlb(assembly left, assembly right){super(left,right);type = "movzlb";}
+}
 class And extends Two{
     //x : x and y
     public And(assembly left,assembly right){super(left,right);type = "and";}
@@ -279,5 +282,48 @@ class Memory extends assembly{
         System.out.print(offset);
         System.out.print("]");
         //System.out.println();
+    }
+}
+class Set extends assembly{
+    String type;
+    assembly dest;
+    public Set(String type, assembly dest){
+        this.type = type;
+        this.dest = dest;
+    }
+    public void print(PrintStream fout){
+        System.out.print(type+" ");
+        dest.print(fout);
+        System.out.println();
+    }
+}
+class Sete extends Set{
+    public Sete(assembly dest){
+        super("sete",dest);
+    }
+}
+class Setne extends Set{
+    public Setne(assembly dest){
+        super("setne",dest);
+    }
+}
+class Setg extends Set{
+    public Setg(assembly dest){
+        super("setg",dest);
+    }
+}
+class Setge extends Set{
+    public Setge(assembly dest){
+        super("setge",dest);
+    }
+}
+class Setl extends Set{
+    public Setl(assembly dest){
+        super("setl",dest);
+    }
+}
+class Setle extends Set{
+    public Setle(assembly dest){
+        super("setle",dest);
     }
 }

@@ -535,12 +535,14 @@ class Comparison extends IRInstruction{
     public Condition cond;
     private Value lhs;
     private Value rhs;
+    boolean isBranch;
     public Comparison (basicBlock B, virtualRegister dest, Condition cond, Value lhs, Value rhs){
         super(B);
         this.dest = dest;
         this.cond = cond;
         this.lhs = lhs;
         this.rhs = rhs;
+        isBranch = false;
     }
     @Override
     public void print(){
