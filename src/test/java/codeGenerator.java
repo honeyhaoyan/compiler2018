@@ -294,14 +294,7 @@ public class codeGenerator implements IRBasicVisitor {
         if (con == Comparison.Condition.GT){
             //if (node.isBranch)
             br = new Jng(null);
-            /*else {
-                //global.add(new Mov(new Phyregister("r15"),getMem(node.getDest())));
-                //mov rcx，0
-                global.add(new Mov(new Phyregister("rcx"),new Imm(0)));
-                global.add(new Setg(new Phyregister("cl")));
-                global.add(new Mov(getMem(node.getDest()),new Phyregister("rcx")));
-
-            }*/
+           
         }
         if (con == Comparison.Condition.LE){
             //if (node.isBranch)
