@@ -636,9 +636,10 @@ public class IRBuilder implements IRBasicBuilder {
                 visit((expression)node.sons.get(2));
                 registerLe = node.sons.get(2).registerValue;
                 Comparison com = new Comparison(curBasicBlock,register,newop2,registerRi,registerLe);
-                if (isBranch) {com.isBranch = true;isBranch = false;}
+                //if (isBranch) {com.isBranch = true;isBranch = false;}
                 curBasicBlock.append(com);
                 //return register;
+                expressionLogic(node);
                 node.registerValue = register;
                 break;
 
@@ -752,7 +753,11 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock resultFalse = new basicBlock(curFunction,"resultFalse");
         resultTrue.append(new Move(resultTrue,register,new Immediate(1)));
         resultFalse.append(new Move(resultFalse,register,new Immediate(0)));
-        logicOperation(node,resultTrue,resultFalse);
+        if (((Op)node.sons.get(0)).op.equals("&&")||((Op)node.sons.get(0)).op.equals("||")) logicOperation(node,resultTrue,resultFalse);
+        else{
+            curBasicBlock.append(new Branch(curBasicBlock,register,resultTrue,resultFalse));
+
+        }
         basicBlock tmp = curBasicBlock;
         basicBlockList.add(tmp);
         basicBlockList.add(resultTrue);

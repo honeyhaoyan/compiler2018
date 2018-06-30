@@ -282,33 +282,41 @@ public class codeGenerator implements IRBasicVisitor {
         global.add(new Cmp(left,right));
         Comparison.Condition con = node.cond;
         if (con == Comparison.Condition.EQ){
-            if (node.isBranch) br = new Jne(null);
-            else global.add(new Sete(getMem(node.getDest())));
+            //if (node.isBranch)
+            br = new Jne(null);
+            //else global.add(new Sete(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.GE){
-            if (node.isBranch) br = new Jl(null);
-            else global.add(new Setge(getMem(node.getDest())));
+            //if (node.isBranch)
+            br = new Jl(null);
+            //else global.add(new Setge(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.GT){
-            if (node.isBranch) br = new Jng(null);
-            else {
+            //if (node.isBranch)
+            br = new Jng(null);
+            /*else {
                 //global.add(new Mov(new Phyregister("r15"),getMem(node.getDest())));
+                //mov rcx，0
+                global.add(new Mov(new Phyregister("rcx"),new Imm(0)));
                 global.add(new Setg(new Phyregister("cl")));
-                global.add(new Movzlb(getMem(node.getDest()),new Phyregister("cl")));
+                global.add(new Mov(getMem(node.getDest()),new Phyregister("rcx")));
 
-            }
+            }*/
         }
         if (con == Comparison.Condition.LE){
-            if (node.isBranch) br = new Jg(null);
-            else global.add(new Setle(getMem(node.getDest())));
+            //if (node.isBranch)
+            br = new Jg(null);
+            //else global.add(new Setle(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.LT){
-            if (node.isBranch) br = new Jnl(null);
-            else global.add(new Setl(getMem(node.getDest())));
+            //if (node.isBranch)
+            br = new Jnl(null);
+            //else global.add(new Setl(getMem(node.getDest())));
         }
         if (con == Comparison.Condition.NE){
-            if (node.isBranch) br = new Je(null);
-            else global.add(new Setne(getMem(node.getDest())));
+            //if (node.isBranch)
+            br = new Je(null);
+            //else global.add(new Setne(getMem(node.getDest())));
         }
     }
     public void visit(HeapAllocate node){
