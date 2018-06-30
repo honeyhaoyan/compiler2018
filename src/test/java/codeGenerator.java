@@ -294,7 +294,7 @@ public class codeGenerator implements IRBasicVisitor {
         if (con == Comparison.Condition.GT){
             //if (node.isBranch)
             br = new Jng(null);
-           
+
         }
         if (con == Comparison.Condition.LE){
             //if (node.isBranch)

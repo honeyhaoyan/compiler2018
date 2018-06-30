@@ -38,7 +38,8 @@ public class IRBuilder implements IRBasicBuilder {
     virtualRegister classRegister;
     staticSpace classSpace;
 
-    boolean isBranch = false;
+    //boolean isBranch = false;
+    boolean loop = false;
 
     public IRRoot getIRRoot() {
         return root;
@@ -236,13 +237,15 @@ public class IRBuilder implements IRBasicBuilder {
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);*/
         if (node.ifcondition.sons.size()==3&&(((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||"))) {
             //if (((Op)node.ifcondition.sons.get(0)).op.equals("&&")||((Op)node.ifcondition.sons.get(0)).op.equals("||")) {
-            isBranch = true;
+            //isBranch = true;
+            loop = true;
             logicOperation(node.ifcondition,ifBlock,elseBlock);
             //}
             //else visit(node.ifcondition);
         }
         else{
-            isBranch = true;
+            //isBranch = true;
+            loop = true;
             visit(node.ifcondition);
             if (node.ifcondition.sons.size() == 1){
                 //visit(node.ifcondition);
@@ -317,7 +320,8 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
         //visit(node.operateVariable);
-        isBranch = true;
+        //isBranch = true;
+        loop = true;
         visit(node.variableCondition);
         virtualRegister register = node.variableCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
@@ -366,7 +370,8 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "whileInformation");
-        isBranch = true;
+        //isBranch = true;
+        loop = true;
         visit(node.whileCondition);
         virtualRegister register = node.whileCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
@@ -639,7 +644,8 @@ public class IRBuilder implements IRBasicBuilder {
                 //if (isBranch) {com.isBranch = true;isBranch = false;}
                 curBasicBlock.append(com);
                 //return register;
-                expressionLogic(node);
+                if (!loop) expressionLogic(node);
+                else loop = false;
                 node.registerValue = register;
                 break;
 
