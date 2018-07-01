@@ -197,7 +197,11 @@ public class codeGenerator implements IRBasicVisitor {
     }
     public void visit(unaryOperation node){
         if (node.op == unaryOperation.Op.NEG){
+            //global.add(new Mov(new Phyregister("rax"),getMem(node.getDest())));
+            global.add(new Neg(getMem(node.getDest())));
+            //global.add(new Mov(getMem(node.getDest()),new Phyregister("rax")));
 
+            //global.add(new Imul(getMem(node.getDest()),new Imm(-1)));
         }
         if (node.op == unaryOperation.Op.NOT){
             global.add(new Mov(new Phyregister("r11"),getMem(node.getDest())));
@@ -262,9 +266,9 @@ public class codeGenerator implements IRBasicVisitor {
             global.add(new Xor(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.MOD){
-            global.add(new Mov(new Phyregister("rax"),dest));
+            global.add(new Mov(new Phyregister("rax"),right));
             global.add(new Cqo());
-            global.add(new Idiv(right));
+            global.add(new Idiv(dest));
             dest = new Phyregister("rdx");
         }
         if (node.getOp() == binaryOperation.Op.OR){

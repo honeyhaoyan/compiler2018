@@ -149,7 +149,7 @@ public class IRBuilder implements IRBasicBuilder {
             //globalVariable.forEach(x->x.accept(this));
             for (variable item : globalVariable){
                 item.accept(this);
-                if (item.globalExpression.sons.get(0)!=null){
+                if (item.globalExpression.sons.size()!=0){
                     item.globalExpression.accept(this);
                     curBasicBlock.append(new Move(curBasicBlock,item.registerValue,item.globalExpression.registerValue));
                 }
@@ -689,7 +689,13 @@ public class IRBuilder implements IRBasicBuilder {
             case ">>":
                 binaryOperation.Op newop4;
                 newop4 = visitBinaryOp(op);
-                visit((expression)node.sons.get(2));
+                if (node.sons.size()==3) visit((expression)node.sons.get(2));
+                else{
+                    unaryOperation unaryNeg = new unaryOperation(curBasicBlock,registerRi,unaryOperation.Op.NEG,registerRi);
+                    curBasicBlock.append(unaryNeg);
+                    node.registerValue = registerRi;
+                    break;
+                }
                 registerLe = node.sons.get(2).registerValue;
                 binaryOperation binary2 = new binaryOperation(curBasicBlock,register,newop4,registerLe,registerRi);
                 curBasicBlock.append(binary2);

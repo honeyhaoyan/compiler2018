@@ -162,6 +162,15 @@ class Not extends assembly{
         System.out.println();
     }
 }
+class Neg extends assembly{
+    assembly node;
+    public Neg(assembly node){this.node = node;}
+    public void print(PrintStream fout){
+        System.out.print("neg ");
+        node.print(fout);
+        System.out.println();
+    }
+}
 class Cmp extends assembly{
     //does a comparison
     assembly left;
