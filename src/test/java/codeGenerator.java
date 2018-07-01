@@ -7,6 +7,7 @@ public class codeGenerator implements IRBasicVisitor {
     List<String>globalNames = new ArrayList<String>();
     BuildinPrinter builtinPrinter = new BuildinPrinter();
     BuildinPrinter2 builtinPrinter2 = new BuildinPrinter2();
+    List<variable>globalVariable;
     PrintStream fout;
     JJump br = null;
     boolean first = false;
@@ -50,6 +51,7 @@ public class codeGenerator implements IRBasicVisitor {
         //BuiltinPrinter builtinPrinter = new BuiltinPrinter();
         node.statics.forEach(x->x.accept(this));
         node.functions.forEach(x->x.accept(this));
+        globalVariable = node.globalVariable;
         finalPrint();
 
     }
@@ -361,6 +363,10 @@ public class codeGenerator implements IRBasicVisitor {
         System.out.println("SECTION .bss");fout.println("SECTION .bss");
         //System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
         System.out.println("SECTION .data");fout.println("SECTION .data");
+        for (variable item : globalVariable){
+            System.out.println("_"+item.name+":");
+            System.out.println("dq 0000000000000000H");
+        }
         //System.out.println("SECTION .bss");fout.println("SECTION .bss");
         builtinPrinter.printBuiltin("const_str");builtinPrinter2.printBuiltin("const_str",fout);
     }

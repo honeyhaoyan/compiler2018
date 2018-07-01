@@ -104,10 +104,12 @@ class variable extends expression{
     type ty;
     //String father;
     String name;
+    expression globalExpression;
     public variable()
     {
         super();
         ty = new type();
+        globalExpression = new expression();
     }
     public void accept(IRBuilder visitor){
         visitor.visit(this);

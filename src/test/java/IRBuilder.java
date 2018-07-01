@@ -33,6 +33,7 @@ public class IRBuilder implements IRBasicBuilder {
     Map<String, staticSpace> classTable = new HashMap<>();
     List<String>className = new ArrayList<>();
     Map<String, String> classVariableTable = new HashMap<>();
+    List<variable> globalVariable = new ArrayList<>();
 
     boolean isClassFunction;
     virtualRegister classRegister;
@@ -68,6 +69,13 @@ public class IRBuilder implements IRBasicBuilder {
         }
         for (classDefinition item : node.classSons){
             visit(item);
+        }
+        for (variable item:node.variableSons){
+            /*virtualRegister register = new virtualRegister(item.name,registerNumber++);
+            registerMap.put(item.name,register);*/
+            item.accept(this);
+            item.registerValue.islabel = true;
+            globalVariable.add(item);
         }
         for (functionDefinition item : node.functionSons){
             visit(item);
@@ -137,6 +145,16 @@ public class IRBuilder implements IRBasicBuilder {
         }
         curBasicBlock = new basicBlock(curFunction, node.functionName);
         function.blockStart = curBasicBlock;
+        if (node.functionName.equals("main")) {
+            //globalVariable.forEach(x->x.accept(this));
+            for (variable item : globalVariable){
+                item.accept(this);
+                if (item.globalExpression.sons.get(0)!=null){
+                    item.globalExpression.accept(this);
+                    curBasicBlock.append(new Move(curBasicBlock,item.registerValue,item.globalExpression.registerValue));
+                }
+            }
+        }
         visit(node.blockSon);
         function.blockEnd = curBasicBlock;
         root.functions.add(function);
@@ -162,6 +180,7 @@ public class IRBuilder implements IRBasicBuilder {
             item.getParent().append(item);
         }
         root.basicBlocks = basicBlockList;
+        root.globalVariable = globalVariable;
     }
 
 //-----------------------------------------------------------------------------------------------------
@@ -843,6 +862,14 @@ public class IRBuilder implements IRBasicBuilder {
         //virtualRegister register = new virtualRegister(null, registerNumber++);
         if (registerMap.containsKey(node.name)){
             //return registerMap.get(node.name);
+            if (registerMap.get(node.name).islabel==true){
+                virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
+                reg.ifRenamed  =true;
+                reg.setNewName("_"+node.name);
+                Mem mem = new Mem(reg);
+                node.registerValue = mem;
+                return;
+            }
             node.registerValue = registerMap.get(node.name);
             if (classVariableTable.containsKey(node.name)){
                 classSpace = classTable.get(classVariableTable.get(node.name));
@@ -850,7 +877,8 @@ public class IRBuilder implements IRBasicBuilder {
             }
         }
         else{
-            virtualRegister register = new virtualRegister(null, registerNumber++);
+            virtualRegister register;
+            register = new virtualRegister(null, registerNumber++);
             if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
                 //staticSpace space = new staticSpace(node.ty.typeName);
                 //space.memberOffset =

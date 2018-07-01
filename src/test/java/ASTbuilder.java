@@ -26,6 +26,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
                 if (context.programItem(i).globalVariable().definitionStatement()!=null){
                     definitionStatement defi = visitDefinitionStatement(context.programItem(i).globalVariable().definitionStatement());
                     globalVariableNode = defi.variableSon;
+                    globalVariableNode.globalExpression = defi.exp;
                 }
                 else if (context.programItem(i).globalVariable().newStatement()!=null){
                     newStatement newSta = visitNewStatement(context.programItem(i).globalVariable().newStatement());

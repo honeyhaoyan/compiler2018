@@ -11,6 +11,7 @@ public abstract class IRNode {
 
 /*-------------------------------------value and register---------------------------------------*/
 abstract class Value extends IRNode{
+    boolean islabel = false;
     public abstract Value copy();
     //public abstract void print();
 }
@@ -585,6 +586,7 @@ class IRRoot extends IRNode{
     List<basicBlock>basicBlocks;
     List<Function>functions;
     List<Static>statics;
+    List<variable>globalVariable;
     public IRRoot(){
         basicBlocks = new ArrayList<basicBlock>();
         functions = new ArrayList<Function>();
