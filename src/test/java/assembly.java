@@ -113,6 +113,18 @@ class Sub extends Two{
 class Imul extends Two{
     public Imul(assembly left, assembly right){super(left,right);type = "imul";}
 }
+class Sal extends Two{
+    public Sal(assembly left, assembly right){
+        super(left,right);
+        type = "sal";
+    }
+}
+class Sar extends Two{
+    public Sar(assembly left, assembly right){
+        super(left,right);
+        type = "sar";
+    }
+}
 /*
 class one extends assembly{
     assembly item;
@@ -325,5 +337,22 @@ class Setl extends Set{
 class Setle extends Set{
     public Setle(assembly dest){
         super("setle",dest);
+    }
+}
+class Cqo extends assembly{
+    public Cqo(){}
+    public void print(PrintStream fout){
+        System.out.println("cqo");
+    }
+}
+class Idiv extends assembly{
+    assembly item;
+    public Idiv(assembly item){
+        this.item = item;
+    }
+    public void print(PrintStream fout){
+        System.out.print("idiv ");
+        item.print(fout);
+        System.out.println();
     }
 }

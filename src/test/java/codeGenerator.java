@@ -248,28 +248,35 @@ public class codeGenerator implements IRBasicVisitor {
             global.add(new Imul(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.DIV){
-
+            global.add(new Mov(new Phyregister("rax"),dest));
+            global.add(new Cqo());
+            global.add(new Idiv(right));
         }
         if (node.getOp() == binaryOperation.Op.AND){
-
+            global.add(new Add(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.LOR){
 
         }
         if (node.getOp() == binaryOperation.Op.XOR){
-
+            global.add(new Xor(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.MOD){
-
+            global.add(new Mov(new Phyregister("rax"),dest));
+            global.add(new Cqo());
+            global.add(new Idiv(right));
+            dest = new Phyregister("rdx");
         }
         if (node.getOp() == binaryOperation.Op.OR){
-
+            global.add(new Or(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.SHL){
-
+            global.add(new Mov(new Phyregister("rcx"),dest));
+            global.add(new Sal(left,new Phyregister("cl")));
         }
         if (node.getOp() == binaryOperation.Op.SHR){
-
+            global.add(new Mov(new Phyregister("rcx"),dest));
+            global.add(new Sar(left,new Phyregister("cl")));
         }
         global.add(new Mov(getMem(node.getDest()),dest));
     }
