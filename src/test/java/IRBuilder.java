@@ -726,18 +726,34 @@ public class IRBuilder implements IRBasicBuilder {
 
     boolean isString(Node node){
         //return false;
-        if (node.sons.get(0) instanceof variable){
-           if (((variable) node.sons.get(0)).ty.typeName.equals("String")) return true;
-           else return false;
+        if (node instanceof variable){
+            if (((variable) node).ty.typeName.equals("String")) return true;
+            else return false;
 
         }
-        if (node.sons.get(0) instanceof constant){
-            if(((constant) node.sons.get(0)).type.equals("String")) return true;
+        if (node instanceof constant){
+            if(((constant) node).type.equals("String")) return true;
             else return false;
         }
-        if (node.sons.get(0) instanceof callFunctionExpression){
-            if (((callFunctionExpression) node.sons.get(0)).va.ty.equals("String")) return true;
+        if (node instanceof callFunctionExpression){
+            if (((callFunctionExpression) node).va.ty.equals("String")) return true;
             else return false;
+        }
+        if (node.sons.get(0)!=null){
+
+            if (node.sons.get(0) instanceof variable){
+                if (((variable)node.sons.get(0)).ty.typeName==null)  return false;
+                if (((variable) node.sons.get(0)).ty.typeName.equals("String")) return true;
+                else return false;
+            }
+            if (node.sons.get(0) instanceof constant){
+                if(((constant) node.sons.get(0)).type.equals("String")) return true;
+                else return false;
+            }
+            if (node.sons.get(0) instanceof callFunctionExpression){
+                if (((callFunctionExpression) node.sons.get(0)).va.ty.equals("String")) return true;
+                else return false;
+            }
         }
         return false;
     }
