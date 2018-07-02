@@ -644,6 +644,7 @@ public class ASTvisitor {
             if (!ty2.typeName.equals(ty1.typeName)) {
                 if (ty2.typeName.equals("null")||ty2.typeName.equals("NullConstant")){}
                 else throw new Exception("== type error");
+                //sadstory
             }
             else {
                 if (ty1.arrExp.size()!=ty2.arrExp.size()) throw new Exception("== type error");
