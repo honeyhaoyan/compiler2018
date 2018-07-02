@@ -41,6 +41,8 @@ public class IRBuilder implements IRBasicBuilder {
 
     //boolean isBranch = false;
     boolean loop = false;
+    int stringNumber = 0;
+    List<String> stringList = new ArrayList<>();
 
     public IRRoot getIRRoot() {
         return root;
@@ -181,6 +183,7 @@ public class IRBuilder implements IRBasicBuilder {
         }
         root.basicBlocks = basicBlockList;
         root.globalVariable = globalVariable;
+        root.stringList = stringList;
     }
 
 //-----------------------------------------------------------------------------------------------------
@@ -723,16 +726,17 @@ public class IRBuilder implements IRBasicBuilder {
 
     boolean isString(Node node){
         //return false;
-        if (node instanceof variable){
-            if (((variable) node).ty.typeName.equals("String")) return true;
+        if (node.sons.get(0) instanceof variable){
+           if (((variable) node.sons.get(0)).ty.typeName.equals("String")) return true;
+           else return false;
+
+        }
+        if (node.sons.get(0) instanceof constant){
+            if(((constant) node.sons.get(0)).type.equals("String")) return true;
             else return false;
         }
-        if (node instanceof constant){
-            if(((constant) node).type.equals("String")) return true;
-            else return false;
-        }
-        if (node instanceof callFunctionExpression){
-            if (((callFunctionExpression) node).va.ty.equals("String")) return true;
+        if (node.sons.get(0) instanceof callFunctionExpression){
+            if (((callFunctionExpression) node.sons.get(0)).va.ty.equals("String")) return true;
             else return false;
         }
         return false;
@@ -750,31 +754,49 @@ public class IRBuilder implements IRBasicBuilder {
                 callFunction callAdd = new callFunction(curBasicBlock,new Function("_strADD"));
                 callAdd.addParam(regLe);
                 callAdd.addParam(regRi);
+                curBasicBlock.append(callAdd);
+                break;
             case "<":
                 callFunction callLt = new callFunction(curBasicBlock,new Function("_strLT"));
                 callLt.addParam(regLe);
                 callLt.addParam(regRi);
+                curBasicBlock.append(callLt);
+                break;
             case ">=":
                 callFunction callGt = new callFunction(curBasicBlock,new Function("_strGT"));
                 callGt.addParam(regLe);
                 callGt.addParam(regRi);
+                curBasicBlock.append(callGt);
+                break;
             case "<=":
                 callFunction callLe = new callFunction(curBasicBlock, new Function("_strLE"));
                 callLe.addParam(regLe);
                 callLe.addParam(regRi);
+                curBasicBlock.append(callLe);
+                break;
             case ">":
                 callFunction callGe = new callFunction(curBasicBlock, new Function("_strGE"));
                 callGe.addParam(regLe);
                 callGe.addParam(regRi);
+                curBasicBlock.append(callGe);
+                break;
             case "==":
                 callFunction callEq = new callFunction(curBasicBlock, new Function("_strEQ"));
                 callEq.addParam(regLe);
                 callEq.addParam(regRi);
+                curBasicBlock.append(callEq);
+                break;
             case "!=":
                 callFunction callNe = new callFunction(curBasicBlock, new Function("_strNE"));
                 callNe.addParam(regLe);
                 callNe.addParam(regRi);
+                curBasicBlock.append(callNe);
+                break;
         }
+        virtualRegister reg = new virtualRegister(null,registerNumber++);
+        reg.setNewName("rax");
+        node.registerValue = reg;
+        //curBasicBlock.append(new Move(curBasicBlock,reg,));
     }
 
     void expressionLogic(expression node){
@@ -885,6 +907,14 @@ public class IRBuilder implements IRBasicBuilder {
         else{
             virtualRegister register;
             register = new virtualRegister(null, registerNumber++);
+            /*if (node.ty.typeName.equals("String")){
+                virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
+                reg.ifRenamed  =true;
+                reg.setNewName("_"+node.name);
+                Mem mem = new Mem(reg);
+                node.registerValue = mem;
+                return;
+            }*/
             if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
                 //staticSpace space = new staticSpace(node.ty.typeName);
                 //space.memberOffset =
@@ -933,6 +963,17 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(constant node) {
+        if (node.type.equals("String")){
+            virtualRegister reg = new virtualRegister("_"+(stringNumber++),registerNumber++);
+            reg.ifRenamed  =true;
+            reg.setNewName("_"+(stringNumber-1));
+            //Mem mem = new Mem(reg);
+            //node.registerValue = mem;
+            node.registerValue = reg;
+            stringList.add(node.value);
+            return ;
+        }
+
         virtualRegister register = new virtualRegister(null, registerNumber++);
         Immediate imm = new Immediate(0);
         if (node.type.equals("Bool")) {

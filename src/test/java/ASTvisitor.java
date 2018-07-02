@@ -777,6 +777,7 @@ public class ASTvisitor {
                 if (scopeTmp.variable.containsKey(va.name)){
                     tmp = scopeTmp.variable.get(va.name).ty;
                     flag = true;
+                    if (tmp!=null && va.ty.typeName == null) va.ty = tmp;
                     return tmp;
 
                 }
@@ -794,6 +795,7 @@ public class ASTvisitor {
             }
         }
         //if (flag==false) throw new Exception("variable no definition");
+        if (tmp!=null && va.ty.typeName == null) va.ty = tmp;
         return tmp;
     }
 

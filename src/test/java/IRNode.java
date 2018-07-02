@@ -587,10 +587,13 @@ class IRRoot extends IRNode{
     List<Function>functions;
     List<Static>statics;
     List<variable>globalVariable;
+    List<String>stringList;
     public IRRoot(){
         basicBlocks = new ArrayList<basicBlock>();
         functions = new ArrayList<Function>();
         statics = new ArrayList<Static>();
+        globalVariable = new ArrayList<variable>();
+        stringList = new ArrayList<String>();
     }
     public void append(basicBlock B){
         basicBlocks.add(B);

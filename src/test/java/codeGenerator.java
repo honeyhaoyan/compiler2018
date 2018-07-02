@@ -8,6 +8,7 @@ public class codeGenerator implements IRBasicVisitor {
     BuildinPrinter builtinPrinter = new BuildinPrinter();
     BuildinPrinter2 builtinPrinter2 = new BuildinPrinter2();
     List<variable>globalVariable;
+    List<String>stringList;
     PrintStream fout;
     JJump br = null;
     boolean first = false;
@@ -52,6 +53,7 @@ public class codeGenerator implements IRBasicVisitor {
         node.statics.forEach(x->x.accept(this));
         node.functions.forEach(x->x.accept(this));
         globalVariable = node.globalVariable;
+        stringList = node.stringList;
         finalPrint();
 
     }
@@ -374,12 +376,35 @@ public class codeGenerator implements IRBasicVisitor {
         System.out.println("SECTION .bss");fout.println("SECTION .bss");
         //System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
         System.out.println("SECTION .data");fout.println("SECTION .data");
+        dealWithData();
+        /*for (variable item : globalVariable){
+            System.out.println("_"+item.name+":");
+            System.out.println("dq 0000000000000000H");
+        }*/
+        //System.out.println("SECTION .bss");fout.println("SECTION .bss");
+        builtinPrinter.printBuiltin("const_str");builtinPrinter2.printBuiltin("const_str",fout);
+    }
+
+    public void dealWithData(){
         for (variable item : globalVariable){
             System.out.println("_"+item.name+":");
             System.out.println("dq 0000000000000000H");
         }
-        //System.out.println("SECTION .bss");fout.println("SECTION .bss");
-        builtinPrinter.printBuiltin("const_str");builtinPrinter2.printBuiltin("const_str",fout);
+        int i = 0;
+        for (String item : stringList){
+            System.out.println("_"+i+":");
+            i++;
+            System.out.print("db ");
+            for (int j = 1; j < item.length()-1; j++) {
+                String result;
+                int ch = (int) item.charAt(j);
+                String s4 = Integer.toHexString(ch);
+                result = s4;
+                result = result+"H, ";
+                System.out.print(result);
+            }
+            System.out.println("00H");
+        }
     }
 
 }
