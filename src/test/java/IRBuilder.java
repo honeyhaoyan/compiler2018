@@ -526,6 +526,9 @@ public class IRBuilder implements IRBasicBuilder {
         variable va = new variable();
         va.ty = node.newType2;
         va.name = node.name;
+        if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
+            va.ty.arrExp.add(node.exp);
+        }
         visit(va);
     }
 
@@ -982,9 +985,9 @@ public class IRBuilder implements IRBasicBuilder {
                     if (item.registerValue!=null) flag = true;
                     space.nArray.add(item.registerValue);
                 }
-                if (flag==false) return;
+                if (flag==true){
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
-                curBasicBlock.append(allocateArray);
+                curBasicBlock.append(allocateArray);}
             }
             if (isClassFunction){
                 if (classSpace.memberOffset.containsKey(node.name)){
