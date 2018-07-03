@@ -526,10 +526,37 @@ public class IRBuilder implements IRBasicBuilder {
         variable va = new variable();
         va.ty = node.newType2;
         va.name = node.name;
+        virtualRegister register = new virtualRegister(va.name,registerNumber++);
+        if (className.contains(va.ty.typeName)&&va.ty.arrExp.size()==0){
+            //staticSpace space = new staticSpace(node.ty.typeName);
+            //space.memberOffset =
+            HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(va.ty.typeName));
+            curBasicBlock.append(allocate);
+            classVariableTable.put(node.name,va.ty.typeName);
+        }
+        if (va.ty.arrExp.size()!=0){
+            //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
+            staticSpace space = new staticSpace(node.name);
+            boolean flag= false;
+            for(expression item : va.ty.arrExp){
+                //if (item!=null) flag = true;
+                visit(item);
+                //virtualRegister tmpRegister = item.registerValue;
+                //curBasicBlock.append(new binaryOperation(curBasicBlock,tmpRegister, binaryOperation.Op.ADD,tmpRegister,new Immediate(8)));
+                if (item.registerValue!=null) flag = true;
+                space.nArray.add(item.registerValue);
+            }
+            if (flag==true){
+                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
+                curBasicBlock.append(allocateArray);}
+        }
+        node.registerValue = register;
+        va.registerValue = register;
+        registerMap.put(node.name,register);
         /*if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
             va.ty.arrExp.add(node.exp);
         }*/
-        visit(va);
+        //visit(va);
     }
 
     @Override
@@ -745,10 +772,13 @@ public class IRBuilder implements IRBasicBuilder {
             case "[":
                 visit(node.sons.get(2));
                 registerLe = node.sons.get(2).registerValue;
-                virtualRegister registerOffset = new virtualRegister(null,registerNumber++);
-                binaryOperation binary3 = new binaryOperation(curBasicBlock,registerOffset, binaryOperation.Op.MUL,registerLe,new Immediate(8));
-                binaryOperation binary4 = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,registerOffset,registerRi);
+                virtualRegister registerOffset1 = new virtualRegister(null,registerNumber++);
+                virtualRegister registerOffset2 = new virtualRegister(null,registerNumber++);
+                binaryOperation binary5 = new binaryOperation(curBasicBlock,registerOffset1,binaryOperation.Op.ADD,registerLe,new Immediate(1));
+                binaryOperation binary3 = new binaryOperation(curBasicBlock,registerOffset2, binaryOperation.Op.MUL,registerOffset1,new Immediate(8));
+                binaryOperation binary4 = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,registerOffset2,registerRi);
                 //binaryOperation binary4 = new binaryOperation(curBasicBlock,register, binaryOperation.Op.MUL,register,new Immediate(8));
+                curBasicBlock.append(binary5);
                 curBasicBlock.append(binary3);
                 curBasicBlock.append(binary4);
                 Mem mem = new Mem(register);
@@ -966,7 +996,7 @@ public class IRBuilder implements IRBasicBuilder {
                 node.registerValue = mem;
                 return;
             }*/
-            if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
+            /*if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
                 //staticSpace space = new staticSpace(node.ty.typeName);
                 //space.memberOffset =
                 HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(node.ty.typeName));
@@ -988,7 +1018,7 @@ public class IRBuilder implements IRBasicBuilder {
                 if (flag==true){
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
                 curBasicBlock.append(allocateArray);}
-            }
+            }*/
             if (isClassFunction){
                 if (classSpace.memberOffset.containsKey(node.name)){
                     /*register.content = true;

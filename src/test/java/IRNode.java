@@ -600,7 +600,10 @@ class IRRoot extends IRNode{
     }
     @Override
     public void print(){
-        basicBlocks.forEach(x -> x.print());
+        //basicBlocks.forEach(x -> x.print());
+        for (basicBlock item : basicBlocks){
+            item.print();
+        }
     }
     public void accept(IRBasicVisitor visitor)throws IOException {visitor.visit(this,null);}
 }
