@@ -526,9 +526,9 @@ public class IRBuilder implements IRBasicBuilder {
         variable va = new variable();
         va.ty = node.newType2;
         va.name = node.name;
-        if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
+        /*if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
             va.ty.arrExp.add(node.exp);
-        }
+        }*/
         visit(va);
     }
 
