@@ -652,10 +652,11 @@ public class IRBuilder implements IRBasicBuilder {
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
 
         if (op!=null) if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
+        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))) {StringOperation(node);return;}
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
-        if (isString(node.sons.get(1))) {StringOperation(node);return;}
+        //if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))) {StringOperation(node);return;}
         switch (op){
             case "." :
                 if (node.sons.get(2).sons.get(0) instanceof variable){
@@ -800,7 +801,7 @@ public class IRBuilder implements IRBasicBuilder {
             else return false;
         }
         if (node instanceof callFunctionExpression){
-            if (((callFunctionExpression) node).va.ty.equals("String")) return true;
+            if (((callFunctionExpression) node).va.ty.typeName.equals("String")) return true;
             else return false;
         }
         if (node.sons.get(0)!=null){
@@ -815,7 +816,7 @@ public class IRBuilder implements IRBasicBuilder {
                 else return false;
             }
             if (node.sons.get(0) instanceof callFunctionExpression){
-                if (((callFunctionExpression) node.sons.get(0)).va.ty.equals("String")) return true;
+                if (((callFunctionExpression) node.sons.get(0)).va.ty.typeName.equals("String")) return true;
                 else return false;
             }
         }
@@ -825,58 +826,63 @@ public class IRBuilder implements IRBasicBuilder {
     void StringOperation(expression node){
         String op = null;
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
-        visit(node.sons.get(1));
-        virtualRegister regLe = node.sons.get(1).registerValue;
         visit(node.sons.get(2));
         virtualRegister regRi = node.sons.get(2).registerValue;
+        visit(node.sons.get(1));
+        virtualRegister regLe = node.sons.get(1).registerValue;
+        //visit(node.sons.get(2));
+        //virtualRegister regRi = node.sons.get(2).registerValue;
         switch (op){
             case "+":
                 callFunction callAdd = new callFunction(curBasicBlock,new Function("_strADD"));
-                callAdd.addParam(regLe);
                 callAdd.addParam(regRi);
+                callAdd.addParam(regLe);
                 curBasicBlock.append(callAdd);
                 break;
             case "<":
                 callFunction callLt = new callFunction(curBasicBlock,new Function("_strLT"));
-                callLt.addParam(regLe);
                 callLt.addParam(regRi);
+                callLt.addParam(regLe);
                 curBasicBlock.append(callLt);
                 break;
             case ">=":
                 callFunction callGt = new callFunction(curBasicBlock,new Function("_strGT"));
-                callGt.addParam(regLe);
                 callGt.addParam(regRi);
+                callGt.addParam(regLe);
                 curBasicBlock.append(callGt);
                 break;
             case "<=":
                 callFunction callLe = new callFunction(curBasicBlock, new Function("_strLE"));
-                callLe.addParam(regLe);
                 callLe.addParam(regRi);
+                callLe.addParam(regLe);
                 curBasicBlock.append(callLe);
                 break;
             case ">":
                 callFunction callGe = new callFunction(curBasicBlock, new Function("_strGE"));
-                callGe.addParam(regLe);
                 callGe.addParam(regRi);
+                callGe.addParam(regLe);
                 curBasicBlock.append(callGe);
                 break;
             case "==":
                 callFunction callEq = new callFunction(curBasicBlock, new Function("_strEQ"));
-                callEq.addParam(regLe);
                 callEq.addParam(regRi);
+                callEq.addParam(regLe);
                 curBasicBlock.append(callEq);
                 break;
             case "!=":
                 callFunction callNe = new callFunction(curBasicBlock, new Function("_strNE"));
-                callNe.addParam(regLe);
                 callNe.addParam(regRi);
+                callNe.addParam(regLe);
                 curBasicBlock.append(callNe);
                 break;
         }
         virtualRegister reg = new virtualRegister(null,registerNumber++);
         reg.setNewName("rax");
-        node.registerValue = reg;
+        //node.registerValue = reg;
         //curBasicBlock.append(new Move(curBasicBlock,reg,));
+        virtualRegister reg2 = new virtualRegister(null,registerNumber++);
+        curBasicBlock.append(new Move(curBasicBlock,reg2,reg));
+        node.registerValue = reg2;
     }
 
     void expressionLogic(expression node){

@@ -1077,6 +1077,7 @@ public class ASTvisitor {
         func = findFunction(exp.functionName,scope);
         if (func.scopeFather.scopleType.equals("top")) checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
+        exp.va.ty = tmp;
         return tmp;
     }
 
