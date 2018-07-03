@@ -262,6 +262,7 @@ public class IRBuilder implements IRBasicBuilder {
             //isBranch = true;
             loop = true;
             logicOperation(node.ifcondition,ifBlock,elseBlock);
+            loop = false;
             //}
             //else visit(node.ifcondition);
         }
@@ -269,6 +270,7 @@ public class IRBuilder implements IRBasicBuilder {
             //isBranch = true;
             loop = true;
             visit(node.ifcondition);
+            loop = false;
             if (node.ifcondition.sons.size() == 1){
                 //visit(node.ifcondition);
                 Comparison comp = new Comparison(curBasicBlock,node.ifcondition.registerValue,Comparison.Condition.EQ,node.ifcondition.registerValue,new Immediate(1));
@@ -341,10 +343,18 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
-        //visit(node.operateVariable);
-        //isBranch = true;
+        basicBlock forBlock = new basicBlock(curFunction,"for");
+
         loop = true;
         visit(node.variableCondition);
+        loop = false;
+
+        /*if (node.variableCondition.sons.size()==3&&(((Op)node.variableCondition.sons.get(0)).op.equals("&&")||((Op)node.variableCondition.sons.get(0)).op.equals("||"))) {
+            loop = true;
+            logicOperation(node.variableCondition,forBlock,tmpInfor);
+            loop = false;
+        }*/
+
         virtualRegister register = node.variableCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
@@ -352,11 +362,13 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
 
+
         //start a new block for statements after for
         basicBlock newBlock = new basicBlock(curFunction, "afterFor");
 
         //start a new block for loop content
-        curBasicBlock = new basicBlock(curFunction,"for");
+        //curBasicBlock = new basicBlock(curFunction,"for");
+        curBasicBlock = forBlock;
         basicBlock tmpfor = curBasicBlock;
         branch.addThen(tmpfor);
         visit(node.forBlock);
@@ -392,26 +404,44 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "whileInformation");
+        basicBlock whileBlock = new basicBlock(curFunction,"while");
+        basicBlock newBlock = new basicBlock(curFunction, "afterFor");
         //isBranch = true;
-        loop = true;
+        tmpInfor = curBasicBlock;
+
+        /*loop = true;
         visit(node.whileCondition);
+        loop = false;*/
+        if (node.whileCondition.sons.size()==3&&(((Op)node.whileCondition.sons.get(0)).op.equals("&&")||((Op)node.whileCondition.sons.get(0)).op.equals("||"))) {
+            loop = true;
+            logicOperation(node.whileCondition,whileBlock,newBlock);
+            loop = false;
+        }
+        else{
+            loop = true;
+            visit(node.whileCondition);
+            loop = false;
+        }
+
         virtualRegister register = node.whileCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
-        tmpInfor = curBasicBlock;
-        basicBlockList.add(tmpInfor);
+        //tmpInfor = curBasicBlock;
+        if (!basicBlockList.contains(tmpInfor)) basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
 
         //start a new block for statements after for
-        basicBlock newBlock = new basicBlock(curFunction, "afterFor");
+        //basicBlock newBlock = new basicBlock(curFunction, "afterFor");
 
         //start a new block for loop content
-        curBasicBlock = new basicBlock(curFunction,"while");
+        //curBasicBlock = new basicBlock(curFunction,"while");
+        curBasicBlock = whileBlock;
         visit(node.whileBlock);
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
         branch.addThen(tmpLoop);
+        //basicBlockList.add(whileBlock);
 
         //basicBlockList.add(tmpInfor);
 
@@ -665,9 +695,10 @@ public class IRBuilder implements IRBasicBuilder {
                 Comparison com = new Comparison(curBasicBlock,register,newop2,registerRi,registerLe);
                 //if (isBranch) {com.isBranch = true;isBranch = false;}
                 curBasicBlock.append(com);
-                //return register;
+
                 if (!loop) expressionLogic(node);
-                else loop = false;
+                //expressionLogic(node);
+
                 node.registerValue = register;
                 break;
 
@@ -832,8 +863,9 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlockList.add(resultTrue);
         basicBlockList.add(resultFalse);
         curBasicBlock = new basicBlock(curFunction,"afterLogic");
-        resultTrue.end(new Jump(resultTrue,curBasicBlock));
-        resultFalse.end(new Jump(resultFalse,curBasicBlock));
+        basicBlock tmpBlock = curBasicBlock;
+        resultTrue.end(new Jump(resultTrue,tmpBlock));
+        resultFalse.end(new Jump(resultFalse,tmpBlock));
        // curBasicBlock = new basicBlock(curFunction,"afterLogic");
     }
 
@@ -875,8 +907,8 @@ public class IRBuilder implements IRBasicBuilder {
         virtualRegister register1 = node.sons.get(2).registerValue;
         Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);
         curBasicBlock.end(branch1);
-        //basicBlock tmp1 = curBasicBlock;
-        //basicBlockList.add(tmp1);
+        basicBlock tmp1 = curBasicBlock;
+        basicBlockList.add(tmp1);
         //curBasicBlock =
     }
 
@@ -1028,7 +1060,11 @@ public class IRBuilder implements IRBasicBuilder {
         virtualRegister reg = new virtualRegister(null,registerNumber++);
         reg.setNewName("rax");
         //return reg;
-        node.registerValue = reg;
+        //curBasicBlock.append(new Move(curBasicBlock,reg,new virtualRegister("rax",registerNumber++)));
+        //node.registerValue = reg;
+        virtualRegister reg2 = new virtualRegister(null,registerNumber++);
+        curBasicBlock.append(new Move(curBasicBlock,reg2,reg));
+        node.registerValue = reg2;
     }
 }
 

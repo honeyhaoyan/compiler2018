@@ -31,8 +31,7 @@ public class Main {
             throw exp;
         }
         //System.out.println("===================================================================================================");
-        IRBuilder irBuilder = new IRBuilder();
-        irBuilder.visit(root);
+        IRBuilder irBuilder = new IRBuilder();irBuilder.visit(root);
         IRRoot irRoot = irBuilder.getIRRoot();
         //irRoot.print();
         PrintStream ps = null ;
