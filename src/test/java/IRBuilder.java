@@ -172,7 +172,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         node.statementSons.forEach(x -> x.accept(this));
         basicBlock tmp = curBasicBlock;
-        basicBlockList.add(tmp);
+        if (!basicBlockList.contains(tmp)) basicBlockList.add(tmp);
     }
 
     public void dealBlockList(){
@@ -282,7 +282,7 @@ public class IRBuilder implements IRBasicBuilder {
         }
 
         tmpEnd = curBasicBlock;
-        basicBlockList.add(tmpEnd);
+        if (!basicBlockList.contains(tmpEnd)) basicBlockList.add(tmpEnd);
 
         //start a new block for the statements after ifblock in advance
         basicBlock newBlock = new basicBlock(curFunction, "afterIf");
@@ -339,7 +339,7 @@ public class IRBuilder implements IRBasicBuilder {
         Jump jump = new Jump(curBasicBlock, null);
         if (!curBasicBlock.isEnded())curBasicBlock.end(jump);
         tmpEnd = curBasicBlock;
-        basicBlockList.add(tmpEnd);
+        if (!basicBlockList.contains(tmpEnd)) basicBlockList.add(tmpEnd);
 
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
@@ -359,7 +359,7 @@ public class IRBuilder implements IRBasicBuilder {
         Branch branch = new Branch(curBasicBlock, register, null, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
-        basicBlockList.add(tmpInfor);
+        if (!basicBlockList.contains(tmpInfor)) basicBlockList.add(tmpInfor);
         jump.setJumpTo(tmpInfor);
 
 
@@ -396,7 +396,7 @@ public class IRBuilder implements IRBasicBuilder {
         Jump jump = new Jump(curBasicBlock, null);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jump);
         tmpEnd = curBasicBlock;
-        basicBlockList.add(tmpEnd);
+        if (!basicBlockList.contains(tmpEnd)) basicBlockList.add(tmpEnd);
 
         //visit(node.whileCondition);
         //virtualRegister register = node.whileCondition.registerValue;
@@ -468,7 +468,7 @@ public class IRBuilder implements IRBasicBuilder {
 
     public void endCurBasicBlock() {
         basicBlock tmp = curBasicBlock;
-        basicBlockList.add(tmp);
+        if (!basicBlockList.contains(tmp)) basicBlockList.add(tmp);
     }
 
     @Override
@@ -859,9 +859,9 @@ public class IRBuilder implements IRBasicBuilder {
 
         }
         basicBlock tmp = curBasicBlock;
-        basicBlockList.add(tmp);
-        basicBlockList.add(resultTrue);
-        basicBlockList.add(resultFalse);
+        if (!basicBlockList.contains(tmp)) basicBlockList.add(tmp);
+        if (!basicBlockList.contains(resultTrue)) basicBlockList.add(resultTrue);
+        if (!basicBlockList.contains(resultFalse)) basicBlockList.add(resultFalse);
         curBasicBlock = new basicBlock(curFunction,"afterLogic");
         basicBlock tmpBlock = curBasicBlock;
         resultTrue.end(new Jump(resultTrue,tmpBlock));
@@ -899,7 +899,7 @@ public class IRBuilder implements IRBasicBuilder {
             Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);*/
         }
         basicBlock tmp = curBasicBlock;
-        basicBlockList.add(tmp);
+        if (!basicBlockList.contains(tmp)) basicBlockList.add(tmp);
         //curBasicBlock.end(branch);
         //basicBlock currentBlock = new basicBlock(curFunction,"logicBlock");
         curBasicBlock = currentBlock;
@@ -908,7 +908,7 @@ public class IRBuilder implements IRBasicBuilder {
         Branch branch1 = new Branch(curBasicBlock,register1,resultTrue,resultFalse);
         curBasicBlock.end(branch1);
         basicBlock tmp1 = curBasicBlock;
-        basicBlockList.add(tmp1);
+        if (!basicBlockList.contains(tmp1)) basicBlockList.add(tmp1);
         //curBasicBlock =
     }
 
