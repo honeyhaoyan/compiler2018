@@ -78,6 +78,7 @@ public class IRBuilder implements IRBasicBuilder {
             //item.accept(this);
             //item.registerValue.islabel = true;
             globalVariable.add(item);
+
         }
         for (functionDefinition item : node.functionSons){
             visit(item);
@@ -151,7 +152,8 @@ public class IRBuilder implements IRBasicBuilder {
             //globalVariable.forEach(x->x.accept(this));
 
             for (variable item : globalVariable){
-                item.accept(this);
+                //item.accept(this);
+                newGlobal(item);
                 item.registerValue.islabel = true;
                 if (item.globalExpression.sons.size()!=0){
                     item.globalExpression.accept(this);
@@ -974,9 +976,9 @@ public class IRBuilder implements IRBasicBuilder {
         node.registerValue = register;
     }
 
-    public boolean newGlobal (variable node){
-        if ((!((node.ty.arrExp.size()!=0)))&&(!(className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0))) return false;
-        virtualRegister register = new virtualRegister(null, registerNumber++);
+    public void newGlobal (variable node){
+        //if ((!((node.ty.arrExp.size()!=0)))&&(!(className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0))) return false;
+        virtualRegister register = new virtualRegister("_"+node.name, registerNumber++);
         if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
             //staticSpace space = new staticSpace(node.ty.typeName);
             //space.memberOffset =
@@ -1004,18 +1006,19 @@ public class IRBuilder implements IRBasicBuilder {
         }
         //if (registerMap.get(node.name).islabel==true){
             //virtualRegister register = new virtualRegister(null, registerNumber++);
-            virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
-            reg.ifRenamed  =true;
-            reg.setNewName("_"+node.name);
-            Mem mem = new Mem(reg);
-            curBasicBlock.append(new Move(curBasicBlock,mem,register));
+            //virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
+            register.ifRenamed  =true;
+            register.setNewName("_"+node.name);
+            Mem mem = new Mem(register);
+
+            //curBasicBlock.append(new Move(curBasicBlock,mem,register));
             //node.registerValue = mem;
             //return;
        // }
-        register.setName(node.name);
-        registerMap.put(node.name,register);
-        node.registerValue = register;
-        return true;
+        //register.setName(node.name);
+        registerMap.put(node.name,mem);
+        node.registerValue = mem;
+        //return true;
         //else return;
     }
     @Override
@@ -1038,7 +1041,7 @@ public class IRBuilder implements IRBasicBuilder {
             }
         }
         else{
-            if(newGlobal(node)) return;
+            //if(newGlobal(node)) return;
             virtualRegister register;
             register = new virtualRegister(null, registerNumber++);
             /*if (node.ty.typeName.equals("String")){
