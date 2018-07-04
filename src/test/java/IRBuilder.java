@@ -657,7 +657,7 @@ public class IRBuilder implements IRBasicBuilder {
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
 
         if (op!=null) if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
-        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))) {StringOperation(node);return;}
+        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))||node.ty.typeName.equals("String")) {StringOperation(node);return;}
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
@@ -825,6 +825,7 @@ public class IRBuilder implements IRBasicBuilder {
                 if (((callFunctionExpression) node.sons.get(0)).va.ty.typeName!=null && ((callFunctionExpression)node.sons.get(0)).va.ty.typeName.equals("String")) return true;
                 else return false;
             }
+
         }
         return false;
     }
@@ -832,10 +833,12 @@ public class IRBuilder implements IRBasicBuilder {
     void StringOperation(expression node){
         String op = null;
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
-        visit(node.sons.get(2));
-        virtualRegister regRi = node.sons.get(2).registerValue;
+        virtualRegister regRi = null;
+        virtualRegister regLe = null;
+        if (!op.equals(".")){visit(node.sons.get(2));
+        regRi = node.sons.get(2).registerValue;
         visit(node.sons.get(1));
-        virtualRegister regLe = node.sons.get(1).registerValue;
+        regLe = node.sons.get(1).registerValue;}
         //visit(node.sons.get(2));
         //virtualRegister regRi = node.sons.get(2).registerValue;
         switch (op){
@@ -881,6 +884,20 @@ public class IRBuilder implements IRBasicBuilder {
                 callNe.addParam(regLe);
                 curBasicBlock.append(callNe);
                 break;
+            case ".":
+                callFunctionExpression fun = (callFunctionExpression) node.sons.get(2).sons.get(0);
+                visit((expression) node.sons.get(1));
+                virtualRegister registerRi = node.sons.get(1).registerValue;
+                callFunction call = new callFunction(curBasicBlock,new Function(fun.functionName));
+                call.addParam(registerRi);
+                for (expression item : fun.expressionSons){
+                    visit(item);
+                    call.addParam(item.registerValue);
+                }
+                curBasicBlock.append(call);
+                virtualRegister reg = new virtualRegister(null,registerNumber++);
+                reg.setNewName("rax");
+                node.registerValue = reg;
         }
         virtualRegister reg = new virtualRegister(null,registerNumber++);
         reg.setNewName("rax");

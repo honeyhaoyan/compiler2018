@@ -279,6 +279,7 @@ class emptyStatement extends statement{
 
 class expression extends Node {
     //virtualRegister registerValue;
+    type ty;
     public expression(){
         super();
     }

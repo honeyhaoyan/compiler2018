@@ -681,6 +681,7 @@ public class ASTvisitor {
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
                     checkEqual(type1,type2);
                     globalType.typeName = "Bool";
+                    node.ty = globalType;
                     return globalType;
                 }
                 if (((Op) item).op.equals("!")){
@@ -700,6 +701,7 @@ public class ASTvisitor {
                     }
                     else type2 = visitExpression((expression)node.sons.get(2),scope);
                     globalType = type2;
+                    node.ty = globalType;
                     return globalType;
                 }
                 if (((Op) item).op.equals("[")){
@@ -716,6 +718,7 @@ public class ASTvisitor {
                             globalType.arrExp.add(it);i=i+1;
                         }
                     }
+                    node.ty = globalType;
                     return globalType;
                 }
                 op.op = ((Op) item).op;
@@ -753,6 +756,7 @@ public class ASTvisitor {
                 if (globalType.typeName!=null) if (!globalType.typeName.equals("String")&&!globalType.typeName.equals("Int")) throw new Exception("Expression type conflicts.");
             }
         }
+        node.ty = globalType;
         return globalType;
     }
 
