@@ -732,7 +732,7 @@ public class IRBuilder implements IRBasicBuilder {
                 //if (isBranch) {com.isBranch = true;isBranch = false;}
                 curBasicBlock.append(com);
 
-                if (!loop) expressionLogic(node);
+                if (!loop) {expressionLogic(node);return;}
                 //expressionLogic(node);
 
                 node.registerValue = register;
