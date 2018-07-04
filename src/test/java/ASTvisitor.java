@@ -283,7 +283,9 @@ public class ASTvisitor {
         while (!scopeTmp.scopleType.equals("top")){
             if (scopeTmp.scopleType .equals( "Function")) throw new Exception("In function, illegal continue");
             else {
-                if (scopeTmp.scopleType .equals( "While")||blockType.equals("For")) break;
+                if (scopeTmp.scopleType .equals( "While")||scopeTmp.scopleType.equals("For")) {
+                    return;
+                }
             }
             scopeTmp=scopeTmp.scopeFather;
         }
@@ -381,7 +383,11 @@ public class ASTvisitor {
         if (node.circleVariable instanceof assignmentStatement) visitAssignmentStatement((assignmentStatement) node.circleVariable,scope);
         if (node.circleVariable instanceof definitionStatement) visitDefinitionStatement((definitionStatement)node.circleVariable,scope);
 
-        if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool")) throw new Exception("For condition is not bool.");
+        if (node.ifEmptyCon==false) if (!visitExpression(node.variableCondition,scope).typeName.equals("Bool"))
+        {
+            //throw new Exception("For condition is not bool.");
+        }
+        //visitExpression(node.variableCondition,scope)
         Scope forScope = new Scope();
         forScope.scopleType = "For";
         forScope.scopeFather = scope;

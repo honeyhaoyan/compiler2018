@@ -239,7 +239,7 @@ class basicBlock extends IRNode{
         System.out.print("<label>");
         System.out.print(label);
         System.out.println();
-        irInstructions.forEach(x -> x.print());
+        if(irInstructions.size()!=0) irInstructions.forEach(x -> x.print());
         System.out.println();
     }
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}

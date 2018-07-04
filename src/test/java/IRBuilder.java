@@ -369,6 +369,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         //start a new block for statements after for
         basicBlock newBlock = new basicBlock(curFunction, "afterFor");
+        branch.addOtherWise(newBlock);
 
         //start a new block for loop content
         //curBasicBlock = new basicBlock(curFunction,"for");
@@ -386,7 +387,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         curBasicBlock = newBlock;
         otherwise.push(newBlock);
-        branch.addOtherWise(otherwise.peek());
+        //branch.addOtherWise(otherwise.peek());
     }
 
     @Override
@@ -591,10 +592,10 @@ public class IRBuilder implements IRBasicBuilder {
         if (op.equals("%")) newop = binaryOperation.Op.MOD;
         if (op.equals("<<")) newop = binaryOperation.Op.SHL;
         if (op.equals(">>")) newop = binaryOperation.Op.SHR;
-        if (op.equals("&&")) newop = binaryOperation.Op.AND;
+        if (op.equals("&")) newop = binaryOperation.Op.AND;
         if (op.equals("|")) newop = binaryOperation.Op.OR;
         if (op.equals("^")) newop = binaryOperation.Op.XOR;
-        if (op.equals("||")) newop = binaryOperation.Op.LOR;
+        //if (op.equals("||")) newop = binaryOperation.Op.LOR;
         return newop;
     }
 
@@ -756,6 +757,7 @@ public class IRBuilder implements IRBasicBuilder {
             case "/":
             case "<<":
             case ">>":
+            case "&":
                 binaryOperation.Op newop4;
                 newop4 = visitBinaryOp(op);
                 if (node.sons.size()==3) visit((expression)node.sons.get(2));
