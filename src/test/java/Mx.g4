@@ -40,7 +40,8 @@ functionDefinition
         ;
 
 globalVariable
-    :(definitionStatement|assignStatement|newStatement)
+    //:(definitionStatement|assignStatement|newStatement)
+    :(newStatement|assignStatement|definitionStatement)
     ;
 
 //-----------------the third floor----------------------------
@@ -78,9 +79,7 @@ statement
         :Semi
         ;
 
-    definitionStatement
-        :definitionExpression Semi
-        ;
+
 
     newStatement
         :(variableTypeExpression)? Identifier Assign New variableTypeExpression Semi
@@ -88,6 +87,10 @@ statement
         //|dotVariableExpression Assign New variableTypeExpression Semi
         |valuebleSingleExpression  Assign New variableTypeExpression Semi
         ;
+
+    definitionStatement
+            :definitionExpression Semi
+            ;
 
     assignStatement
         :assignExpression Semi

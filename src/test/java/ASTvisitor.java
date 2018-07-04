@@ -23,7 +23,6 @@ public class ASTvisitor {
         }
         if (flag==false) throw new Exception("no main.");
         for (Node item : node.sequenceSons){
-            //visit global variable
             if (item instanceof variable) {visitVariable((variable)item,top);}
             //visit statements in global function
             if (item instanceof functionDefinition) {

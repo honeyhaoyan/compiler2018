@@ -147,16 +147,6 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitEmptyStatement(MxParser.EmptyStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link MxParser#definitionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterDefinitionStatement(MxParser.DefinitionStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxParser#definitionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitDefinitionStatement(MxParser.DefinitionStatementContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link MxParser#newStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -166,6 +156,16 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNewStatement(MxParser.NewStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxParser#definitionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDefinitionStatement(MxParser.DefinitionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#definitionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDefinitionStatement(MxParser.DefinitionStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxParser#assignStatement}.
 	 * @param ctx the parse tree

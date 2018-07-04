@@ -94,17 +94,17 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyStatement(MxParser.EmptyStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link MxParser#definitionStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDefinitionStatement(MxParser.DefinitionStatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link MxParser#newStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitNewStatement(MxParser.NewStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxParser#definitionStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDefinitionStatement(MxParser.DefinitionStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxParser#assignStatement}.
 	 * @param ctx the parse tree

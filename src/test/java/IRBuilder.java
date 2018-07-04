@@ -75,8 +75,8 @@ public class IRBuilder implements IRBasicBuilder {
         for (variable item:node.variableSons){
             /*virtualRegister register = new virtualRegister(item.name,registerNumber++);
             registerMap.put(item.name,register);*/
-            item.accept(this);
-            item.registerValue.islabel = true;
+            //item.accept(this);
+            //item.registerValue.islabel = true;
             globalVariable.add(item);
         }
         for (functionDefinition item : node.functionSons){
@@ -149,8 +149,10 @@ public class IRBuilder implements IRBasicBuilder {
         function.blockStart = curBasicBlock;
         if (node.functionName.equals("main")) {
             //globalVariable.forEach(x->x.accept(this));
+
             for (variable item : globalVariable){
                 item.accept(this);
+                item.registerValue.islabel = true;
                 if (item.globalExpression.sons.size()!=0){
                     item.globalExpression.accept(this);
                     curBasicBlock.append(new Move(curBasicBlock,item.registerValue,item.globalExpression.registerValue));
@@ -816,7 +818,7 @@ public class IRBuilder implements IRBasicBuilder {
                 else return false;
             }
             if (node.sons.get(0) instanceof callFunctionExpression){
-                if (((callFunctionExpression) node.sons.get(0)).va.ty.typeName.equals("String")) return true;
+                if (((callFunctionExpression) node.sons.get(0)).va.ty.typeName!=null && ((callFunctionExpression)node.sons.get(0)).va.ty.typeName.equals("String")) return true;
                 else return false;
             }
         }
@@ -972,6 +974,50 @@ public class IRBuilder implements IRBasicBuilder {
         node.registerValue = register;
     }
 
+    public boolean newGlobal (variable node){
+        if ((!((node.ty.arrExp.size()!=0)))&&(!(className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0))) return false;
+        virtualRegister register = new virtualRegister(null, registerNumber++);
+        if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
+            //staticSpace space = new staticSpace(node.ty.typeName);
+            //space.memberOffset =
+            HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(node.ty.typeName));
+            curBasicBlock.append(allocate);
+            classVariableTable.put(node.name,node.ty.typeName);
+        }
+       // if ((!((node.ty.arrExp.size()!=0)))&&(!(registerMap.get(node.name).islabel==true))) return;
+        if (node.ty.arrExp.size()!=0){
+            //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
+            //virtualRegister register = new virtualRegister(null, registerNumber++);
+            staticSpace space = new staticSpace(node.name);
+            boolean flag= false;
+            for(expression item : node.ty.arrExp){
+                //if (item!=null) flag = true;
+                visit(item);
+                //virtualRegister tmpRegister = item.registerValue;
+                //curBasicBlock.append(new binaryOperation(curBasicBlock,tmpRegister, binaryOperation.Op.ADD,tmpRegister,new Immediate(8)));
+                if (item.registerValue!=null) flag = true;
+                space.nArray.add(item.registerValue);
+            }
+            if (flag==true){
+                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
+                curBasicBlock.append(allocateArray);}
+        }
+        //if (registerMap.get(node.name).islabel==true){
+            //virtualRegister register = new virtualRegister(null, registerNumber++);
+            virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
+            reg.ifRenamed  =true;
+            reg.setNewName("_"+node.name);
+            Mem mem = new Mem(reg);
+            curBasicBlock.append(new Move(curBasicBlock,mem,register));
+            //node.registerValue = mem;
+            //return;
+       // }
+        register.setName(node.name);
+        registerMap.put(node.name,register);
+        node.registerValue = register;
+        return true;
+        //else return;
+    }
     @Override
     public void visit(variable node) {
         //virtualRegister register = new virtualRegister(null, registerNumber++);
@@ -992,6 +1038,7 @@ public class IRBuilder implements IRBasicBuilder {
             }
         }
         else{
+            if(newGlobal(node)) return;
             virtualRegister register;
             register = new virtualRegister(null, registerNumber++);
             /*if (node.ty.typeName.equals("String")){

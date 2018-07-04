@@ -273,9 +273,10 @@ public class codeGenerator implements IRBasicVisitor {
             global.add(new Imul(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.DIV){
-            global.add(new Mov(new Phyregister("rax"),dest));
+            global.add(new Mov(new Phyregister("rax"),right));
             global.add(new Cqo());
-            global.add(new Idiv(right));
+            global.add(new Idiv(dest));
+            dest = new Phyregister("rax");
         }
         if (node.getOp() == binaryOperation.Op.AND){
             global.add(new Add(dest,right));
@@ -399,6 +400,10 @@ public class codeGenerator implements IRBasicVisitor {
         builtinPrinter.printBuiltin("method");builtinPrinter2.printBuiltin("method",fout);
         //builtinPrinter.printBuiltin("extern");
         System.out.println("SECTION .bss");fout.println("SECTION .bss");
+        for (variable item : globalVariable){
+            System.out.println("_"+item.name+":");
+            System.out.println("resq 1");
+        }
         //System.out.println("stringbuffer: \n");fout.println("stringbuffer: \n");
         System.out.println("SECTION .data");fout.println("SECTION .data");
         dealWithData();
@@ -411,10 +416,10 @@ public class codeGenerator implements IRBasicVisitor {
     }
 
     public void dealWithData(){
-        for (variable item : globalVariable){
+        /*for (variable item : globalVariable){
             System.out.println("_"+item.name+":");
             //System.out.println("dq 0000000000000000H");
-        }
+        }*/
         int i = 0;
         for (String item : stringList){
             System.out.println("_"+i+":");
