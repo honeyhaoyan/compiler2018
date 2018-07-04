@@ -979,10 +979,14 @@ public class IRBuilder implements IRBasicBuilder {
     public void newGlobal (variable node){
         //if ((!((node.ty.arrExp.size()!=0)))&&(!(className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0))) return false;
         virtualRegister register = new virtualRegister("_"+node.name, registerNumber++);
+        //Mem register = new Mem(register1);
+        register.ifRenamed  =true;
+        register.setNewName("_"+node.name);
+        Mem mem = new Mem(register);
         if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
             //staticSpace space = new staticSpace(node.ty.typeName);
             //space.memberOffset =
-            HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(node.ty.typeName));
+            HeapAllocate allocate = new HeapAllocate(curBasicBlock,mem,classTable.get(node.ty.typeName));
             curBasicBlock.append(allocate);
             classVariableTable.put(node.name,node.ty.typeName);
         }
@@ -1001,15 +1005,15 @@ public class IRBuilder implements IRBasicBuilder {
                 space.nArray.add(item.registerValue);
             }
             if (flag==true){
-                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
+                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,mem,space);
                 curBasicBlock.append(allocateArray);}
         }
         //if (registerMap.get(node.name).islabel==true){
             //virtualRegister register = new virtualRegister(null, registerNumber++);
             //virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
-            register.ifRenamed  =true;
-            register.setNewName("_"+node.name);
-            Mem mem = new Mem(register);
+            //register.ifRenamed  =true;
+            //register.setNewName("_"+node.name);
+            //Mem mem = new Mem(register);
 
             //curBasicBlock.append(new Move(curBasicBlock,mem,register));
             //node.registerValue = mem;
