@@ -431,7 +431,7 @@ public class codeGenerator implements IRBasicVisitor {
                     ++j;
                     if (item.charAt(j) == 'n') {
                         //str.append("  10,");
-                        result = "10";
+                        result = "0a";
                     }
                     if (item.charAt(j) == '\"') {
                         //str.append("  34,");
