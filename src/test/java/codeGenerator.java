@@ -426,10 +426,27 @@ public class codeGenerator implements IRBasicVisitor {
             i++;
             System.out.print("db ");
             for (int j = 1; j < item.length()-1; j++) {
-                String result;
-                int ch = (int) item.charAt(j);
-                String s4 = Integer.toHexString(ch);
-                result = s4;
+                String result = null;
+                if (item.charAt(j)=='\\'){
+                    ++j;
+                    if (item.charAt(j) == 'n') {
+                        //str.append("  10,");
+                        result = "10";
+                    }
+                    if (item.charAt(j) == '\"') {
+                        //str.append("  34,");
+                        result = "22";
+                    }
+                    if (item.charAt(j) == '\\') {
+                        //str.append("  92,");
+                        result = "5c";
+                    }
+                }
+                else{
+                    int ch = (int) item.charAt(j);
+                    String s4 = Integer.toHexString(ch);
+                    result = s4;
+                }
                 result = result+"H, ";
                 System.out.print(result);
             }
@@ -438,3 +455,29 @@ public class codeGenerator implements IRBasicVisitor {
     }
 
 }
+/*
+private String toInt(String value){
+        StringBuffer str = new StringBuffer();
+        int n = value.length();
+        for (int j = 0; j < n; j++) {
+            if (value.charAt(j) == '\\') {
+                ++j;
+                ++cntLen;
+                if (value.charAt(j) == 'n') {
+                    str.append("  10,");
+                }
+                if (value.charAt(j) == '\"') {
+                    str.append("  34,");
+                }
+                if (value.charAt(j) == '\\') {
+                    str.append("  92,");
+                }
+            } else {
+                ++cntLen;
+                str.append(String.format(" %3s,", (int) value.charAt(j)));
+            }
+        }
+        str.append("   0\n");
+        return str.toString();
+    }
+    */
