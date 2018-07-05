@@ -81,7 +81,10 @@ public class IRBuilder implements IRBasicBuilder {
 
         }
         for (functionDefinition item : node.functionSons){
-            visit(item);
+            if (item.functionName.equals("main")) visit(item);
+        }
+        for (functionDefinition item : node.functionSons){
+            if (!item.functionName.equals("main")) visit(item);
         }
         dealBlockList();
     }
@@ -657,7 +660,7 @@ public class IRBuilder implements IRBasicBuilder {
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
 
         if (op!=null) if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
-        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))||(node.ty!=null && node.ty.typeName.equals("String"))) {StringOperation(node);return;}
+        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))||(node.ty!=null && node.ty.typeName!=null &&node.ty.typeName.equals("String"))) {StringOperation(node);return;}
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
@@ -742,10 +745,16 @@ public class IRBuilder implements IRBasicBuilder {
             case "--":
                 Immediate imm = new Immediate(1);
                 binaryOperation.Op newop3 = null;
-                if (op.equals("++")) newop3 = visitBinaryOp("+");
-                if (op.equals("--")) newop3 = visitBinaryOp("-");
-                binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop3,registerRi,imm);
-                curBasicBlock.append(binary);
+                if (op.equals("++")) {
+                    newop3 = visitBinaryOp("+");
+                    binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop3,registerRi,imm);
+                    curBasicBlock.append(binary);
+                }
+                if (op.equals("--")) {newop3 = visitBinaryOp("-");
+                binaryOperation binary = new binaryOperation(curBasicBlock,registerRi,newop3,imm,registerRi);
+                    curBasicBlock.append(binary);
+                }
+                //curBasicBlock.append(binary);
                 //return registerRi;
                 node.registerValue = registerRi;
                 break;
