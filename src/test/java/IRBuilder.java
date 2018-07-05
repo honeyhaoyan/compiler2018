@@ -758,6 +758,8 @@ public class IRBuilder implements IRBasicBuilder {
             case "<<":
             case ">>":
             case "&":
+            case "|":
+            case "^":
                 binaryOperation.Op newop4;
                 newop4 = visitBinaryOp(op);
                 if (node.sons.size()==3) visit((expression)node.sons.get(2));

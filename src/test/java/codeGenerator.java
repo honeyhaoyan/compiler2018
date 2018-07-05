@@ -279,7 +279,7 @@ public class codeGenerator implements IRBasicVisitor {
             dest = new Phyregister("rax");
         }
         if (node.getOp() == binaryOperation.Op.AND){
-            global.add(new Add(dest,right));
+            global.add(new And(dest,right));
         }
         if (node.getOp() == binaryOperation.Op.LOR){
 
