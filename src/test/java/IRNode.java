@@ -377,7 +377,7 @@ class Return extends branchInstruction{
     }
     public void print(){
         System.out.print("Ret ");
-        returnValue.print();
+        if (returnValue!=null) returnValue.print();
         System.out.println();
     }
     public virtualRegister getRegister(){return returnValue;}

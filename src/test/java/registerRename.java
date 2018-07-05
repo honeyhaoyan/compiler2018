@@ -88,8 +88,8 @@ public class registerRename implements IRBasicVisitor{
 
     }
     public void visit(Return node){
-        node.getRegister().setName("eax");
-        visit(node.getRegister());
+        if (node.getRegister()!=null) {node.getRegister().setName("eax");
+        visit(node.getRegister());}
     }
     public void visit(Move node){
         visit(node.getDest());

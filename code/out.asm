@@ -1,4 +1,4 @@
-global tak
+global foo
 global main
 default rel
 
@@ -31,88 +31,88 @@ extern puts
 extern printf
 
 SECTION .text
-tak:
+foo:
 push rbp
 mov rbp , rsp
-sub rsp , 128
+sub rsp , 192
 mov qword[rbp-8] , rdx
 mov qword[rbp-16] , rsi
 mov qword[rbp-24] , rdi
-mov r11 , qword[rbp-8]
-cmp qword[rbp-16] , r11
-b1:
-mov qword[rbp-40] , 1
-mov qword[rbp-48] , 1
-mov r11 , qword[rbp-8]
-sub r11 , qword[rbp-48]
+mov qword[rbp-32] , 1000
+mov r11 , qword[rbp-32]
+imul r11 , qword[rbp-8]
+mov qword[rbp-40] , r11
+mov qword[rbp-48] , 10
+mov r11 , qword[rbp-48]
+imul r11 , qword[rbp-16]
 mov qword[rbp-56] , r11
-mov rdx , qword[rbp-56]
-mov rsi , qword[rbp-16]
-mov rdi , qword[rbp-24]
-call tak
-mov qword[rbp-64] , rax
-mov qword[rbp-72] , 1
-mov r11 , qword[rbp-16]
-sub r11 , qword[rbp-72]
-mov qword[rbp-80] , r11
-mov rdx , qword[rbp-80]
-mov rsi , qword[rbp-24]
-mov rdi , qword[rbp-8]
-call tak
+mov r11 , qword[rbp-56]
+add r11 , qword[rbp-40]
+mov qword[rbp-64] , r11
+mov r11 , qword[rbp-24]
+add r11 , qword[rbp-64]
+mov qword[rbp-72] , r11
+mov rdi , qword[rbp-72]
+call toString
+mov qword[rbp-80] , rax
+mov rdi , qword[rbp-80]
+call println
 mov qword[rbp-88] , rax
 mov qword[rbp-96] , 1
-mov r11 , qword[rbp-24]
-sub r11 , qword[rbp-96]
-mov qword[rbp-104] , r11
-mov rdx , qword[rbp-104]
-mov rsi , qword[rbp-8]
-mov rdi , qword[rbp-16]
-call tak
-mov qword[rbp-112] , rax
-mov rdx , qword[rbp-64]
-mov rsi , qword[rbp-88]
-mov rdi , qword[rbp-112]
-call tak
-mov qword[rbp-120] , rax
-mov r11 , qword[rbp-120]
-add r11 , qword[rbp-40]
-mov qword[rbp-128] , r11
-mov rax , qword[rbp-128]
+mov r11 , qword[rbp-96]
+cmp qword[rbp-8] , r11
+b1:
 b2:
-mov rax , qword[rbp-24]
 b3:
+mov r11 , qword[rbp-16]
+mov qword[rbp-112] , r11
+mov r11 , qword[rbp-24]
+mov qword[rbp-16] , r11
+mov r11 , qword[rbp-112]
+mov qword[rbp-24] , r11
+mov qword[rbp-120] , 1
+mov rdx , qword[rbp-120]
+mov rsi , qword[rbp-16]
+mov rdi , qword[rbp-24]
+call foo
+mov qword[rbp-128] , rax
+mov qword[rbp-136] , 1000
+mov r11 , qword[rbp-136]
+imul r11 , qword[rbp-8]
+mov qword[rbp-144] , r11
+mov qword[rbp-152] , 10
+mov r11 , qword[rbp-152]
+imul r11 , qword[rbp-16]
+mov qword[rbp-160] , r11
+mov r11 , qword[rbp-160]
+add r11 , qword[rbp-144]
+mov qword[rbp-168] , r11
+mov r11 , qword[rbp-24]
+add r11 , qword[rbp-168]
+mov qword[rbp-176] , r11
+mov rdi , qword[rbp-176]
+call toString
+mov qword[rbp-184] , rax
+mov rdi , qword[rbp-184]
+call println
+mov qword[rbp-192] , rax
 r0:
 leave
 ret
 main:
 push rbp
 mov rbp , rsp
-sub rsp , 80
-call getInt
-mov qword[rbp-8] , rax
-mov r11 , qword[rbp-8]
-mov qword[rbp-16] , r11
-call getInt
-mov qword[rbp-24] , rax
-mov r11 , qword[rbp-24]
-mov qword[rbp-32] , r11
-call getInt
-mov qword[rbp-40] , rax
-mov r11 , qword[rbp-40]
-mov qword[rbp-48] , r11
-mov rdx , qword[rbp-16]
-mov rsi , qword[rbp-32]
-mov rdi , qword[rbp-48]
-call tak
-mov qword[rbp-56] , rax
-mov rdi , qword[rbp-56]
-call toString
-mov qword[rbp-64] , rax
-mov rdi , qword[rbp-64]
-call println
-mov qword[rbp-72] , rax
-mov qword[rbp-80] , 0
-mov rax , qword[rbp-80]
+sub rsp , 40
+mov qword[rbp-8] , 7
+mov qword[rbp-16] , 5
+mov qword[rbp-24] , 3
+mov rdx , qword[rbp-8]
+mov rsi , qword[rbp-16]
+mov rdi , qword[rbp-24]
+call foo
+mov qword[rbp-32] , rax
+mov qword[rbp-40] , 0
+mov rax , qword[rbp-40]
 r1:
 leave
 ret
