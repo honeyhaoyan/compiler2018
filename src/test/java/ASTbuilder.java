@@ -413,8 +413,20 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         if (context.Inc()!=null||context.Dec()!=null||context.Not()!=null||context.Lnot()!=null){
             //System.out.println("visit op");
             Op op = new Op();
-            if (context.Inc()!=null) op.op=context.Inc().toString();
-            if (context.Dec()!=null) op.op=context.Dec().toString();
+            if (context.Inc()!=null) {
+                op.op=context.Inc().toString();
+                if (context.children.get(1) == context.Inc()){
+                    op.left = true;
+                }
+                else op.left = false;
+            }
+            if (context.Dec()!=null) {
+                op.op=context.Dec().toString();
+                if (context.children.get(1) == context.Dec()){
+                    op.left = true;
+                }
+                else op.left = false;
+            }
             if (context.Not()!=null) op.op=context.Not().toString();
             if (context.Lnot()!=null) op.op=context.Lnot().toString();
             tmp.addSon(op);

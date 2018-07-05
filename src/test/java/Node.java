@@ -290,6 +290,7 @@ class expression extends Node {
 
 class Op extends Node{
     String op;
+    boolean left = false;
     Op(){
         super();
     }
