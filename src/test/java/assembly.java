@@ -16,25 +16,25 @@ class Address extends assembly{
     }
     @Override
     public void print(PrintStream fout){
-        System.out.print("qword[");fout.print("qword[");
+        System.out.print("qword[");fout.print("qword[");System.err.print("qword[");
         reg.print(fout);
-        System.out.print(op);fout.print(op);
-        System.out.print(offset);fout.print(offset);
-        System.out.print("]");fout.print("]");
+        System.out.print(op);fout.print(op);System.err.print(op);
+        System.out.print(offset);fout.print(offset);System.err.print(offset);
+        System.out.print("]");fout.print("]");System.err.print("]");
     }
 }
 class Imm extends assembly{
     int data;
     public Imm(int data){this.data = data;}
     public void print(PrintStream fout){
-        System.out.print(data);fout.print(data);
+        System.out.print(data);fout.print(data);System.err.print(data);
     }
 }
 class Label extends assembly{
     String la;
     public Label(String la){this.la = la;}
     public void print(PrintStream fout){
-        System.out.print(la+":"+'\n');fout.print(la+":"+'\n');
+        System.out.print(la+":"+'\n');fout.print(la+":"+'\n');System.err.print(la+":"+'\n');
     }
 }
 class Phyregister extends assembly{
@@ -63,7 +63,7 @@ class Phyregister extends assembly{
         this.registername = na;
     }
     @Override public void print(PrintStream fout){
-        System.out.print(registername);fout.print(registername);
+        System.out.print(registername);fout.print(registername);System.err.print(registername);
     }
 }
 class Two extends assembly{
@@ -75,11 +75,11 @@ class Two extends assembly{
         this.right = right;
     }
     public void print(PrintStream fout){
-        System.out.print(type+" ");fout.print(type+" ");
+        System.out.print(type+" ");fout.print(type+" ");System.err.print(type+" ");
         left.print(fout);
-        System.out.print(" , ");fout.print(" , ");
+        System.out.print(" , ");fout.print(" , ");System.err.print(" , ");
         right.print(fout);
-        System.out.print('\n');fout.print('\n');
+        System.out.print('\n');fout.print('\n');System.err.print('\n');
     }
 }
 class Mov extends Two{
@@ -157,18 +157,18 @@ class Not extends assembly{
         this.node = node;
     }
     public void print(PrintStream fout){
-        System.out.print("not ");
+        System.out.print("not ");System.err.print("not ");
         node.print(fout);
-        System.out.println();
+        System.out.println();System.err.println();
     }
 }
 class Neg extends assembly{
     assembly node;
     public Neg(assembly node){this.node = node;}
     public void print(PrintStream fout){
-        System.out.print("neg ");
+        System.out.print("neg ");System.err.print("neg ");
         node.print(fout);
-        System.out.println();
+        System.out.println();System.err.println();
     }
 }
 class Cmp extends assembly{
@@ -180,11 +180,11 @@ class Cmp extends assembly{
         this.right = right;
     }
     public void print(PrintStream fout){
-        System.out.print("cmp ");fout.print("cmp ");
+        System.out.print("cmp ");fout.print("cmp ");System.err.print("cmp ");
         left.print(fout);
-        System.out.print(" , ");fout.print(" , ");
+        System.out.print(" , ");fout.print(" , ");System.err.print(" , ");
         right.print(fout);
-        System.out.print('\n');fout.print('\n');
+        System.out.print('\n');fout.print('\n');System.err.print('\n');
     }
 }
 class JJump extends assembly{
@@ -195,9 +195,9 @@ class JJump extends assembly{
     }
     @Override
     public void print(PrintStream ps){
-        System.out.print(type+" ");
-        System.out.print(label);
-        System.out.println();
+        System.out.print(type+" ");System.err.print(type+" ");
+        System.out.print(label);System.err.print(label);
+        System.out.println(); System.err.println();
     }
 
     public void setLabel(String label) {
@@ -251,9 +251,9 @@ class Push extends assembly{
         reg = name;
     }
     public void print(PrintStream fout){
-        System.out.print("push ");fout.print("push ");
+        System.out.print("push ");fout.print("push ");System.err.print("push ");
         reg.print(fout);
-        System.out.print("\n");fout.print("\n");
+        System.out.print("\n");fout.print("\n");System.err.print("\n");
     }
 }
 class Pop extends assembly{
@@ -262,9 +262,9 @@ class Pop extends assembly{
         reg = name;
     }
     public void print(PrintStream fout){
-        System.out.print("pop ");fout.print("pop ");
+        System.out.print("pop ");fout.print("pop ");System.err.print("pop ");
         reg.print(fout);
-        System.out.print("\n");fout.print("\n");
+        System.out.print("\n");fout.print("\n");System.err.print("\n");
     }
 }
 class Jmp extends JJump{
@@ -276,19 +276,19 @@ class CallF extends assembly{
     String fun;
     public CallF(String fun){this.fun =fun;}
     public void print(PrintStream fout){
-        System.out.println("call "+fun);fout.println("call "+fun);
+        System.out.println("call "+fun);fout.println("call "+fun);System.err.println("call "+fun);
     }
 }
 class Ret extends assembly{
     public Ret(){}
     public void print(PrintStream fout){
-        System.out.println("ret");fout.println("ret");
+        System.out.println("ret");fout.println("ret");System.err.println("ret");
     }
 }
 class Leave extends assembly{
     public Leave(){}
     public void print(PrintStream fout){
-        System.out.println("leave");fout.println("leave");
+        System.out.println("leave");fout.println("leave");System.err.println("leave");
     }
 }
 class Memory extends assembly{
@@ -297,11 +297,11 @@ class Memory extends assembly{
     String op;
     public Memory(Phyregister reg, String op,int offset){this.reg = reg; this.op = op;this.offset = offset;}
     public void print(PrintStream fout){
-        System.out.print("[");
+        System.out.print("[");System.err.print("[");
         reg.print(fout);
-        System.out.print(op);
-        System.out.print(offset);
-        System.out.print("]");
+        System.out.print(op);System.err.print(op);
+        System.out.print(offset); System.err.print(offset);
+        System.out.print("]");System.err.print("]");
         //System.out.println();
     }
 }
@@ -313,9 +313,9 @@ class Set extends assembly{
         this.dest = dest;
     }
     public void print(PrintStream fout){
-        System.out.print(type+" ");
+        System.out.print(type+" ");System.err.print(type+" ");
         dest.print(fout);
-        System.out.println();
+        System.out.println();System.err.println();
     }
 }
 class Sete extends Set{
@@ -351,7 +351,7 @@ class Setle extends Set{
 class Cqo extends assembly{
     public Cqo(){}
     public void print(PrintStream fout){
-        System.out.println("cqo");
+        System.out.println("cqo");System.err.println("cqo");
     }
 }
 class Idiv extends assembly{
@@ -360,8 +360,8 @@ class Idiv extends assembly{
         this.item = item;
     }
     public void print(PrintStream fout){
-        System.out.print("idiv ");
+        System.out.print("idiv ");System.err.print("idiv ");
         item.print(fout);
-        System.out.println();
+        System.out.println();System.err.println();
     }
 }
