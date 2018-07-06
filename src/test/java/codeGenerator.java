@@ -106,7 +106,7 @@ public class codeGenerator implements IRBasicVisitor {
                 global.add(new Mov(getMem(item.va),new Phyregister("rax")));
             }
             i++;
-
+            //j++;
         }
         //node.basicBlocks.forEach(x->x.accept(this));
         for (basicBlock item : node.basicBlocks){
@@ -205,6 +205,7 @@ public class codeGenerator implements IRBasicVisitor {
             }*/
             if (i<=6){global.add(new Mov(reg,getMem(item)));
             i++;
+            //j++;
             }
         }
         if (node.params.size()>6){

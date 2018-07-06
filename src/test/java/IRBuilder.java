@@ -858,10 +858,10 @@ public class IRBuilder implements IRBasicBuilder {
         for (Node item : node.sons) if (item instanceof Op) op =((Op) item).op;
         virtualRegister regRi = null;
         virtualRegister regLe = null;
-        if (!op.equals(".")){visit(node.sons.get(2));
-        regRi = node.sons.get(2).registerValue;
-        visit(node.sons.get(1));
-        regLe = node.sons.get(1).registerValue;}
+        if (!op.equals(".")){visit(node.sons.get(1));
+        regRi = node.sons.get(1).registerValue;
+        visit(node.sons.get(2));
+        regLe = node.sons.get(2).registerValue;}
         //visit(node.sons.get(2));
         //virtualRegister regRi = node.sons.get(2).registerValue;
         switch (op){
