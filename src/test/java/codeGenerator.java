@@ -92,7 +92,7 @@ public class codeGenerator implements IRBasicVisitor {
         int j=1;
         int num = node.params.size();
         for (stackSlot item : node.params){
-            i = num - j +1;
+            //i = num - j +1;
             if (i==1) global.add(new Mov(getMem(item.va),new Phyregister("rdi")));
             if (i==2) global.add(new Mov(getMem(item.va),new Phyregister("rsi")));
             if (i==3) global.add(new Mov(getMem(item.va),new Phyregister("rdx")));
@@ -101,8 +101,11 @@ public class codeGenerator implements IRBasicVisitor {
             if (i==6) global.add(new Mov(getMem(item.va),new Phyregister("r9")));
             if (i>6){
 
+                Address address = new Address("+",(i-5)*8,new Phyregister("rbp"));
+                global.add(new Mov(new Phyregister("rax"),address));
+                global.add(new Mov(getMem(item.va),new Phyregister("rax")));
             }
-            j++;
+            i++;
 
         }
         //node.basicBlocks.forEach(x->x.accept(this));
@@ -187,7 +190,7 @@ public class codeGenerator implements IRBasicVisitor {
         Phyregister reg = new Phyregister(null);
         int num = node.params.size();
         for (virtualRegister item : node.params){
-            i = num-j+1;
+            //i = num-j+1;
             //address addr = new address("-",item.offset,new register("rbp"));
             if (i==1) reg = new Phyregister("rdi");
             if (i==2) reg = new Phyregister("rsi");
@@ -195,13 +198,42 @@ public class codeGenerator implements IRBasicVisitor {
             if (i==4) reg = new Phyregister("rcx");
             if (i==5) reg = new Phyregister("r8");
             if (i==6) reg = new Phyregister("r9");
-            if (i>6){
-
+            /*if (i>6){
+                global.add(new Mov(new Phyregister("rax"),getMem(item)));
+                global.add(new Push(new Phyregister("rax")));
+                j++;continue;
+            }*/
+            if (i<=6){global.add(new Mov(reg,getMem(item)));
+            i++;
             }
-            global.add(new Mov(reg,getMem(item)));
-            j++;
+        }
+        if (node.params.size()>6){
+            int k = node.params.size();
+            k--;
+            while(k>5){
+                virtualRegister item = node.params.get(k);
+                global.add(new Mov(new Phyregister("rax"),getMem(item)));
+                global.add(new Push(new Phyregister("rax")));
+                //global.add(new Sub(new Phyregister("rsp"),new Imm(8)));
+                //global.add(new Mov(new Address("+",0,new Phyregister("rsp")),new Phyregister("rax")));
+                //global.add(new Sub(new Phyregister("rsp"),new Imm(8)));
+                k--;
+            }
         }
         global.add(new CallF(node.functionName()));
+        if (node.params.size()>6){
+            int k = node.params.size();
+            k--;
+            while(k>5){
+                //virtualRegister item = node.params.get(k);
+                //global.add(new Mov(new Phyregister("rax"),getMem(item)));
+                global.add(new Pop(new Phyregister("rdi")));
+                //global.add(new Sub(new Phyregister("rsp"),new Imm(8)));
+                //global.add(new Mov(new Address("+",0,new Phyregister("rsp")),new Phyregister("rax")));
+                //global.add(new Sub(new Phyregister("rsp"),new Imm(8)));
+                k--;
+            }
+        }
     }
     public void visit(SystemCall node){
 

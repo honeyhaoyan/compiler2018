@@ -398,7 +398,7 @@ public class IRBuilder implements IRBasicBuilder {
         basicBlock tmpEnd;
         basicBlock tmpInfor;
         basicBlock tmpLoop;
-        basicBlock tmpNew;
+        basicBlock tmpNew ;
 
         //end the current block with a jump: jump to the loop information
         Jump jump = new Jump(curBasicBlock, null);
@@ -432,7 +432,7 @@ public class IRBuilder implements IRBasicBuilder {
         }
 
         virtualRegister register = node.whileCondition.registerValue;
-        Branch branch = new Branch(curBasicBlock, register, null, null);
+        Branch branch = new Branch(curBasicBlock, register, null, newBlock);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         //tmpInfor = curBasicBlock;
         if (!basicBlockList.contains(tmpInfor)) basicBlockList.add(tmpInfor);
@@ -455,7 +455,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         curBasicBlock = newBlock;
         tmpNew = curBasicBlock;
-        branch.addOtherWise(tmpNew);
+        //branch.addOtherWise(tmpNew);
     }
 
     public basicBlock findContinueBlock() {
