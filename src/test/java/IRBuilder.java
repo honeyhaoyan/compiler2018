@@ -921,7 +921,7 @@ public class IRBuilder implements IRBasicBuilder {
                 curBasicBlock.append(callNe);
                 break;
             case ".":
-                if (node.sons.get(2) instanceof callFunctionExpression){
+                if (node.sons.get(2).sons.get(0) instanceof callFunctionExpression){
                 callFunctionExpression fun = (callFunctionExpression) node.sons.get(2).sons.get(0);
                 visit((expression) node.sons.get(1));
                 virtualRegister registerRi = node.sons.get(1).registerValue;
