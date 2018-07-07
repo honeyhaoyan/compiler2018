@@ -531,10 +531,21 @@ public class IRBuilder implements IRBasicBuilder {
         else{
 
         }*/
+        if (registerMap.containsKey(node.name)&&registerMap.get(node.name).islabel==true){
+            variable va = new variable();
+            va.name = node.name;
+            va.ty = node.newType2;
+            va.globalExpression = node.exp;
+            newGlobal(va);
+            node.registerValue = va.registerValue;
+            return;
+        }
         variable va = new variable();
         va.ty = node.newType2;
         va.name = node.name;
-        virtualRegister register = new virtualRegister(va.name,registerNumber++);
+        virtualRegister register = null;
+
+        register = new virtualRegister(va.name,registerNumber++);
         if (className.contains(va.ty.typeName)&&va.ty.arrExp.size()==0){
             //staticSpace space = new staticSpace(node.ty.typeName);
             //space.memberOffset =
@@ -558,9 +569,11 @@ public class IRBuilder implements IRBasicBuilder {
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
                 curBasicBlock.append(allocateArray);}
         }
+
         node.registerValue = register;
         va.registerValue = register;
         registerMap.put(node.name,register);
+
         /*if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
             va.ty.arrExp.add(node.exp);
         }*/
