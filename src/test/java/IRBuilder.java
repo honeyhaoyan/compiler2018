@@ -921,6 +921,7 @@ public class IRBuilder implements IRBasicBuilder {
                 curBasicBlock.append(callNe);
                 break;
             case ".":
+                if (node.sons.get(2) instanceof callFunctionExpression){
                 callFunctionExpression fun = (callFunctionExpression) node.sons.get(2).sons.get(0);
                 visit((expression) node.sons.get(1));
                 virtualRegister registerRi = node.sons.get(1).registerValue;
@@ -933,7 +934,18 @@ public class IRBuilder implements IRBasicBuilder {
                 curBasicBlock.append(call);
                 virtualRegister reg = new virtualRegister(null,registerNumber++);
                 reg.setNewName("rax");
-                node.registerValue = reg;
+                node.registerValue = reg;}
+                else{
+                    visit(node.sons.get(1));
+                    virtualRegister registerRi = node.sons.get(1).registerValue;
+                    classRegister = registerRi;
+                    isClassFunction = true;
+                    //classSpace = classTable.get(registerRi.getRegisterName());
+                    visit(node.sons.get(2));
+                    isClassFunction = false;
+                    node.registerValue = node.sons.get(2).registerValue;
+                    return;
+                }
         }
         virtualRegister reg = new virtualRegister(null,registerNumber++);
         reg.setNewName("rax");
