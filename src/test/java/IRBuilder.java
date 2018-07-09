@@ -59,6 +59,7 @@ public class IRBuilder implements IRBasicBuilder {
         if (node instanceof callFunctionExpression) {visit((callFunctionExpression)node);return;}
         if (node instanceof constant) {visit((constant)node);return;}
         if (node instanceof expression) {visit((expression)node);return;}
+        if (node instanceof assignmentStatement) {visit((assignmentStatement)node);return;}
         //if (node instanceof expression) visit((expression)node);
         //virtualRegister register = new virtualRegister(null,registerNumber++);
         //return register;
