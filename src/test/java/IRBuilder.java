@@ -26,6 +26,7 @@ public class IRBuilder implements IRBasicBuilder {
     boolean single = true;
     int registerNumber = 0;
     private Map<String,virtualRegister> registerMap = new HashMap<>();
+    private Map<String,virtualRegister> functionRegister;
     private Map<String,Function> functionMap = new HashMap<>();
     private Stack<basicBlock> otherwise = new Stack<>();
     Jump globalJump;
@@ -73,10 +74,7 @@ public class IRBuilder implements IRBasicBuilder {
             visit(item);
         }
         for (variable item:node.variableSons){
-            /*virtualRegister register = new virtualRegister(item.name,registerNumber++);
-            registerMap.put(item.name,register);*/
-            //item.accept(this);
-            //item.registerValue.islabel = true;
+
             globalVariable.add(item);
 
         }
@@ -140,11 +138,31 @@ public class IRBuilder implements IRBasicBuilder {
     @Override
     public void visit(functionDefinition node) {
         Function function = new Function(node.functionName);
+        functionRegister = new HashMap<>();
         curFunction = function;
         functionMap.put(node.functionName,function);
         //node.inputVariableSons.forEach(x->x.accept(this));
         for (variable item : node.inputVariableSons){
-            visit(item);
+            //visit(item);
+
+            virtualRegister register;
+            register = new virtualRegister(null, registerNumber++);
+            register.setName(item.name);
+            /*if ((item.ty.typeName.equals("String"))||(className.contains(item.ty.typeName)&&item.ty.arrExp.size()==0)||item.ty.arrExp.size()!=0){
+                Mem mem = new Mem(register);
+                item.registerValue = mem;
+                functionRegister.put(item.name,mem);
+            }
+            else {
+                item.registerValue = register;
+                functionRegister.put(item.name,register);
+            }*/
+            item.registerValue = register;
+            functionRegister.put(item.name,register);
+            /*if ((item.ty.typeName.equals("String"))||(className.contains(item.ty.typeName)&&item.ty.arrExp.size()==0)||item.ty.arrExp.size()!=0){
+                register.islabel = true;
+            }*/
+
             virtualRegister reg = item.registerValue;
             stackSlot tmp = new stackSlot(curFunction,reg);
             function.params.add(tmp);
@@ -213,13 +231,22 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(definitionStatement node) {
-        //virtualRegister register = visit(node.exp);
         virtualRegister registerVa;
-        //if ((node.variableSon.ty.arrExp.size()==0)) {
-            visit(node.variableSon);
+
+
+        //visit(node.variableSon);
+
+
+        virtualRegister register;
+        register = new virtualRegister(null, registerNumber++);
+        register.setName(node.variableSon.name);
+        functionRegister.put(node.variableSon.name,register);
+        node.variableSon.registerValue = register;
+
+
+
             registerVa = node.variableSon.registerValue;
-            //registerMap.put(registerVa.getRegisterName(),registerVa);
-            //int a = node.exp.sons.size();
+
             if (node.exp.sons.size() != 0) {
                 //virtualRegister registerExp = visit(node.exp);
                 visit(node.exp);
@@ -505,33 +532,9 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(newStatement node) {
-        /*virtualRegister register;
-        if (node.name == null) register = visit(node.exp);
-        else {
-            register = visit(node.newType2);
-            register.setName(node.name);
-            registerMap.put(node.name,register);
-        }*/
-        //Immediate imm = getSize();
-        //HeapAllocate allocate = new HeapAllocate(curBasicBlock, register, imm);
-        //curBasicBlock.append(allocate);
-        /*if (node.newType2.arrExp.size()>0){
-            visit(node.newType2.arrExp.get(0));
-            virtualRegister size = node.newType2.arrExp.get(0).registerValue;
-            //virtualRegister size = new virtualRegister(null,registerNumber++);
-            virtualRegister head = new virtualRegister(node.name,registerNumber++);
 
-            //binaryOperation bi = new binaryOperation(curBasicBlock,head,binaryOperation.Op.ADD,head,new Immediate(8));
-            //binaryOperation bi2 = new binaryOperation(curBasicBlock, size, binaryOperation.Op.ADD,size,new Immediate(1));
-            //binaryOperation bi3 = new binaryOperation(curBasicBlock,size,binaryOperation.Op.MUL,size,new Immediate(8));
-
-            HeapAllocate allo = new HeapAllocate(curBasicBlock,head,size);
-            curBasicBlock.append(allo);
-        }
-        else{
-
-        }*/
-        if (registerMap.containsKey(node.name)&&registerMap.get(node.name).islabel==true){
+        //if (registerMap.containsKey(node.name)&&registerMap.get(node.name).islabel==true){
+         if (findRegister(node.name)&&getRegister(node.name).islabel == true){
             variable va = new variable();
             va.name = node.name;
             va.ty = node.newType2;
@@ -540,24 +543,38 @@ public class IRBuilder implements IRBasicBuilder {
             node.registerValue = va.registerValue;
             return;
         }
-        variable va = new variable();
-        va.ty = node.newType2;
-        va.name = node.name;
-        virtualRegister register = null;
 
-        register = new virtualRegister(va.name,registerNumber++);
-        if (className.contains(va.ty.typeName)&&va.ty.arrExp.size()==0){
+
+        if (node.name!=null){
+        /*variable va = new variable();
+        va.ty = node.newType2;
+        va.name = node.name;*/
+            virtualRegister register = new virtualRegister(node.name,registerNumber++);
+            newArrayClass(register,node.newType2,node.name);
+            node.registerValue = register;
+            functionRegister.put(node.name,register);
+         }
+        else{
+            visit(node.exp);
+            newArrayClass(node.exp.registerValue,node.newType2,null);
+        }
+
+        //virtualRegister register = null;
+        //register = new virtualRegister(va.name,registerNumber++);
+
+
+        /*if (className.contains(va.ty.typeName)&&va.ty.arrExp.size()==0){
             //staticSpace space = new staticSpace(node.ty.typeName);
             //space.memberOffset =
             HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(va.ty.typeName));
             curBasicBlock.append(allocate);
             classVariableTable.put(node.name,va.ty.typeName);
         }
-        if (va.ty.arrExp.size()!=0){
+        if (node.newType2.arrExp.size()!=0){
             //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
             staticSpace space = new staticSpace(node.name);
             boolean flag= false;
-            for(expression item : va.ty.arrExp){
+            for(expression item : node.newType2.arrExp){
                 //if (item!=null) flag = true;
                 visit(item);
                 //virtualRegister tmpRegister = item.registerValue;
@@ -568,11 +585,13 @@ public class IRBuilder implements IRBasicBuilder {
             if (flag==true){
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
                 curBasicBlock.append(allocateArray);}
-        }
+        }*/
 
-        node.registerValue = register;
-        va.registerValue = register;
-        registerMap.put(node.name,register);
+
+        //node.registerValue = register;
+        //va.registerValue = register;
+        //registerMap.put(node.name,register);
+        //functionRegister.put(node.name,register);
 
         /*if(va.ty.arrExp.size()==0&&node.exp.sons.size()!=0){
             va.ty.arrExp.add(node.exp);
@@ -580,6 +599,28 @@ public class IRBuilder implements IRBasicBuilder {
         //visit(va);
     }
 
+    private void newArrayClass(virtualRegister register, type ty,String name){
+        if (className.contains(ty.typeName)&&ty.arrExp.size()==0){
+            //staticSpace space = new staticSpace(node.ty.typeName);
+            //space.memberOffset =
+            HeapAllocate allocate = new HeapAllocate(curBasicBlock,register,classTable.get(ty.typeName));
+            curBasicBlock.append(allocate);
+            if (name!=null) classVariableTable.put(name,ty.typeName);
+        }
+        if (ty.arrExp.size()!=0){
+            //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
+            staticSpace space = new staticSpace(name);
+            boolean flag= false;
+            for(expression item : ty.arrExp){
+                visit(item);
+                if (item.registerValue!=null) flag = true;
+                space.nArray.add(item.registerValue);
+            }
+            if (flag==true){
+                HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,register,space);
+                curBasicBlock.append(allocateArray);}
+        }
+    }
     @Override
     public void visit(valuebleSingleStatement node) {
         visit(node.exp);
@@ -1050,14 +1091,14 @@ public class IRBuilder implements IRBasicBuilder {
         register.ifRenamed  =true;
         register.setNewName("_"+node.name);
         Mem mem = new Mem(register);
-        if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
+        /*if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
             //staticSpace space = new staticSpace(node.ty.typeName);
             //space.memberOffset =
             HeapAllocate allocate = new HeapAllocate(curBasicBlock,mem,classTable.get(node.ty.typeName));
             curBasicBlock.append(allocate);
             classVariableTable.put(node.name,node.ty.typeName);
         }
-       // if ((!((node.ty.arrExp.size()!=0)))&&(!(registerMap.get(node.name).islabel==true))) return;
+
         if (node.ty.arrExp.size()!=0){
             //virtualRegister tmpRegister = new virtualRegister(null,registerNumber++);
             //virtualRegister register = new virtualRegister(null, registerNumber++);
@@ -1074,19 +1115,9 @@ public class IRBuilder implements IRBasicBuilder {
             if (flag==true){
                 HeapAllocate allocateArray = new HeapAllocate(curBasicBlock,mem,space);
                 curBasicBlock.append(allocateArray);}
-        }
-        //if (registerMap.get(node.name).islabel==true){
-            //virtualRegister register = new virtualRegister(null, registerNumber++);
-            //virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
-            //register.ifRenamed  =true;
-            //register.setNewName("_"+node.name);
-            //Mem mem = new Mem(register);
+        }*/
+        newArrayClass(mem,node.ty,node.name);
 
-            //curBasicBlock.append(new Move(curBasicBlock,mem,register));
-            //node.registerValue = mem;
-            //return;
-       // }
-        //register.setName(node.name);
         registerMap.put(node.name,mem);
         node.registerValue = mem;
         //return true;
@@ -1094,10 +1125,11 @@ public class IRBuilder implements IRBasicBuilder {
     }
     @Override
     public void visit(variable node) {
-        //virtualRegister register = new virtualRegister(null, registerNumber++);
-        if (registerMap.containsKey(node.name)){
-            //return registerMap.get(node.name);
-            if (registerMap.get(node.name).islabel==true){
+
+        //if (registerMap.containsKey(node.name)){
+         if (findRegister(node.name)){
+            //if (registerMap.get(node.name).islabel==true){
+             if (getRegister(node.name).islabel == true){
                 virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
                 reg.ifRenamed  =true;
                 reg.setNewName("_"+node.name);
@@ -1105,10 +1137,12 @@ public class IRBuilder implements IRBasicBuilder {
                 node.registerValue = mem;
                 return;
             }
-            node.registerValue = registerMap.get(node.name);
+            //node.registerValue = registerMap.get(node.name);
+             node.registerValue = getRegister(node.name);
             if (classVariableTable.containsKey(node.name)){
                 classSpace = classTable.get(classVariableTable.get(node.name));
-                classRegister = registerMap.get(node.name);
+                //classRegister = registerMap.get(node.name);
+                classRegister = getRegister(node.name);
             }
         }
         else{
@@ -1162,7 +1196,8 @@ public class IRBuilder implements IRBasicBuilder {
                 }
             }
             register.setName(node.name);
-            registerMap.put(node.name,register);
+           // registerMap.put(node.name,register);
+             functionRegister.put(node.name,register);
             node.registerValue = register;
         }
         //node.registerValue = register;
@@ -1225,6 +1260,23 @@ public class IRBuilder implements IRBasicBuilder {
         virtualRegister reg2 = new virtualRegister(null,registerNumber++);
         curBasicBlock.append(new Move(curBasicBlock,reg2,reg));
         node.registerValue = reg2;
+    }
+
+    private boolean findRegister(String name){
+        virtualRegister register = getRegister(name);
+        if (register==null) return false;
+        else return true;
+    }
+    private virtualRegister getRegister(String name){
+        if (functionRegister.containsKey(name)){
+            return functionRegister.get(name);
+        }
+        else{
+            if (registerMap.containsKey(name)){
+                return registerMap.get(name);
+            }
+            else return null;
+        }
     }
 }
 
