@@ -1043,6 +1043,7 @@ public class IRBuilder implements IRBasicBuilder {
             visit(node.sons.get(1));
             virtualRegister register = node.sons.get(1).registerValue;*/
             Branch branch = new Branch(curBasicBlock,register,resultTrue,currentBlock);
+            branch.or = true;
             curBasicBlock.end(branch);
             /*curBasicBlock.end(branch);
             curBasicBlock = currentBlock;

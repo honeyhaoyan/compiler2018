@@ -334,6 +334,7 @@ class Branch extends branchInstruction {
     public Value cond;
     private basicBlock then;
     private basicBlock otherwise;
+    boolean or = false;
     public Branch (basicBlock B, Value cond, basicBlock then, basicBlock otherwise){
         super(B);
         this.cond = cond;

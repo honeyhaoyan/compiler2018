@@ -125,15 +125,40 @@ public class codeGenerator implements IRBasicVisitor {
         //visit(node)
         if (br==null) {
             if (node.cond!=null){
-                global.add(new Cmp(getMem(node.cond),new Imm(0)));
-                global.add(new Je("b"+Integer.toString(node.findOtherwise().label)));
+                if (node.or == false){global.add(new Cmp(getMem(node.cond),new Imm(0)));
+                global.add(new Je("b"+Integer.toString(node.findOtherwise().label)));}
+                else{
+                    global.add(new Cmp(getMem(node.cond),new Imm(1)));
+                    global.add(new Je("b"+Integer.toString(node.findThen().label)));
+                }
             }
             if (node.cond == null){
                 global.add(new Jmp("b"+Integer.toString(node.findThen().label)));
             }
         }
         else {
-            br.label = "b"+Integer.toString(node.findOtherwise().label);
+            if (node.or == false) br.label = "b"+Integer.toString(node.findOtherwise().label);
+            else {
+                if (br instanceof Je){
+                    br = new Jne(null);
+                }
+                if (br instanceof Jne){
+                    br = new Je(null);
+                }
+                if (br instanceof Jl){
+                    br = new Jnl(null);
+                }
+                if (br instanceof Jnl){
+                    br = new Jl(null);
+                }
+                if (br instanceof Jg){
+                    br = new Jng(null);
+                }
+                if (br instanceof Jng){
+                    br = new Jg(null);
+                }
+                br.label = "b"+Integer.toString(node.findThen().label);
+            }
             global.add(br);
             br = null;
         }
