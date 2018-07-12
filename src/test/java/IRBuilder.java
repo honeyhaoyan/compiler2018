@@ -379,10 +379,32 @@ public class IRBuilder implements IRBasicBuilder {
         //start a new block for loop information
         curBasicBlock = new basicBlock(curFunction, "forInformation");
         basicBlock forBlock = new basicBlock(curFunction,"for");
-
-        loop = true;
+        basicBlock newBlock = new basicBlock(curFunction, "afterFor");
+        /*loop = true;
         visit(node.variableCondition);
-        loop = false;
+        loop = false;*/
+        boolean flag = true;
+        basicBlock tmp = null;
+        if (!node.variableCondition.ty.typeName.equals("Bool")&&node.operateVariable.sons.size() == 0){
+            flag = false;
+            tmp = curBasicBlock;
+            curBasicBlock = new basicBlock(curFunction,"null");
+            visit(node.variableCondition);
+            basicBlock ttmp = curBasicBlock;
+            curBasicBlock = tmp;
+            tmp = ttmp;
+        }
+        if (node.variableCondition.sons.size()==3&&(((Op)node.variableCondition.sons.get(0)).op.equals("&&")||((Op)node.variableCondition.sons.get(0)).op.equals("||"))) {
+            loop = true;
+            logicOperation(node.variableCondition,forBlock,newBlock);
+            loop = false;
+        }
+        else{
+            loop = true;
+            if (flag==true) visit(node.variableCondition);
+            loop = false;
+        }
+
 
         /*if (node.variableCondition.sons.size()==3&&(((Op)node.variableCondition.sons.get(0)).op.equals("&&")||((Op)node.variableCondition.sons.get(0)).op.equals("||"))) {
             loop = true;
@@ -399,7 +421,7 @@ public class IRBuilder implements IRBasicBuilder {
 
 
         //start a new block for statements after for
-        basicBlock newBlock = new basicBlock(curFunction, "afterFor");
+        //basicBlock newBlock = new basicBlock(curFunction, "afterFor");
         branch.addOtherWise(newBlock);
 
         //start a new block for loop content
@@ -407,9 +429,15 @@ public class IRBuilder implements IRBasicBuilder {
         curBasicBlock = forBlock;
         basicBlock tmpfor = curBasicBlock;
         branch.addThen(tmpfor);
+        //if (flag == false) visit(node.variableCondition);
         visit(node.forBlock);
 
         visit(node.operateVariable);
+        if (flag == false) {
+            for (IRInstruction item : tmp.irInstructions){
+                curBasicBlock.append(item);
+            }
+        }
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
