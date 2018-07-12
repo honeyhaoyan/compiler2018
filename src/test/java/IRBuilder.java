@@ -385,7 +385,7 @@ public class IRBuilder implements IRBasicBuilder {
         loop = false;*/
         boolean flag = true;
         basicBlock tmp = null;
-        if (!node.variableCondition.ty.typeName.equals("Bool")&&node.operateVariable.sons.size() == 0){
+        if (node.variableCondition!=null&&node.variableCondition.ty!=null&&!node.variableCondition.ty.typeName.equals("Bool")&&node.operateVariable.sons.size()==0){
             flag = false;
             tmp = curBasicBlock;
             curBasicBlock = new basicBlock(curFunction,"null");
