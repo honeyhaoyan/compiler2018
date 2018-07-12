@@ -1158,6 +1158,23 @@ public class IRBuilder implements IRBasicBuilder {
 
         //if (registerMap.containsKey(node.name)){
          if (findRegister(node.name)){
+             if (isClassFunction){
+                 if (classSpace.memberOffset.containsKey(node.name)){
+                    /*register.content = true;
+                    register.base = classRegister;
+                    register.memberoffset = new Immediate(classSpace.memberOffset.get(node.name));*/
+                     //virtualRegister reg = new virtualRegister(node.name,registerNumber++);
+                     virtualRegister register;
+                     register = new virtualRegister(null, registerNumber++);
+                     binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister,new Immediate(classSpace.memberOffset.get(node.name)+8));
+                     curBasicBlock.append(binary);
+                     Mem mem = new Mem(register);
+                     node.registerValue = mem;
+                     return;
+                     //register.content = true;
+
+                 }
+             }
             //if (registerMap.get(node.name).islabel==true){
              if (getRegister(node.name).islabel == true){
                 virtualRegister reg = new virtualRegister("_"+node.name,registerNumber++);
