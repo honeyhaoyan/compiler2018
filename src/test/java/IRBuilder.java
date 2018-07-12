@@ -45,6 +45,8 @@ public class IRBuilder implements IRBasicBuilder {
     int stringNumber = 0;
     List<String> stringList = new ArrayList<>();
 
+    Stack<Branch> Branchs = new Stack<>();
+
     public IRRoot getIRRoot() {
         return root;
     }
@@ -414,6 +416,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         virtualRegister register = node.variableCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, null);
+        Branchs.push(branch);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         tmpInfor = curBasicBlock;
         if (!basicBlockList.contains(tmpInfor)) basicBlockList.add(tmpInfor);
@@ -447,6 +450,7 @@ public class IRBuilder implements IRBasicBuilder {
         curBasicBlock = newBlock;
         otherwise.push(newBlock);
         //branch.addOtherWise(otherwise.peek());
+        Branchs.pop();
     }
 
     @Override
@@ -489,6 +493,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         virtualRegister register = node.whileCondition.registerValue;
         Branch branch = new Branch(curBasicBlock, register, null, newBlock);
+        Branchs.push(branch);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(branch);
         //tmpInfor = curBasicBlock;
         if (!basicBlockList.contains(tmpInfor)) basicBlockList.add(tmpInfor);
@@ -512,6 +517,7 @@ public class IRBuilder implements IRBasicBuilder {
         curBasicBlock = newBlock;
         tmpNew = curBasicBlock;
         //branch.addOtherWise(tmpNew);
+        Branchs.pop();
     }
 
     public basicBlock findContinueBlock() {
@@ -522,12 +528,13 @@ public class IRBuilder implements IRBasicBuilder {
     }
 
     public basicBlock findBreakBlock() {
-        int size = basicBlockList.size();
+        /*int size = basicBlockList.size();
         while (!basicBlockList.get(size - 1).getName().equals("forInformation") && !basicBlockList.get(size - 1).getName().equals("whileInformation"))
             size--;
         basicBlock tmp = basicBlockList.get(size - 1);
         Branch branch = (Branch) tmp.getTail();
-        return branch.findOtherwise();
+        return branch.findOtherwise();*/
+        return ((Branch)Branchs.peek()).findOtherwise();
     }
 
     public void endCurBasicBlock() {

@@ -109,8 +109,14 @@ public class codeGenerator implements IRBasicVisitor {
             //j++;
         }
         //node.basicBlocks.forEach(x->x.accept(this));
+        int k = 0;
         for (basicBlock item : node.basicBlocks){
             item.accept(this);
+            if (item.irInstructions.size()==0&&k==node.basicBlocks.size()-1){
+                //item.append(new Jump(item,node.basicBlocks.get(k+1)));
+                global.add(new Jmp("RE"+Integer.toString(returnNum)));
+            }
+            k++;
         }
         //node.basicBlocks.get(0).accept(this);
         //global.add(new Pop(new Phyregister("rbp")));
