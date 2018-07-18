@@ -446,6 +446,7 @@ class callFunction extends IRInstruction{
     private Function func;
     List<virtualRegister>params;
     int off;
+    boolean isClassFunction = false;
     //virtualRegister reg;
     public callFunction(basicBlock B, Function func){
         super(B);

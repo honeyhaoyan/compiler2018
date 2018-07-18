@@ -37,7 +37,8 @@ public class IRBuilder implements IRBasicBuilder {
     List<variable> globalVariable = new ArrayList<>();
 
     boolean isClassFunction;
-    virtualRegister classRegister;
+    //virtualRegister classRegister;
+    Stack<virtualRegister> classRegister = new Stack<>();
     staticSpace classSpace;
 
     //boolean isBranch = false;
@@ -62,6 +63,7 @@ public class IRBuilder implements IRBasicBuilder {
         if (node instanceof constant) {visit((constant)node);return;}
         if (node instanceof expression) {visit((expression)node);return;}
         if (node instanceof assignmentStatement) {visit((assignmentStatement)node);return;}
+        if (node instanceof This){node.registerValue = classRegister.peek();return;}
         //if (node instanceof expression) visit((expression)node);
         //virtualRegister register = new virtualRegister(null,registerNumber++);
         //return register;
@@ -109,12 +111,18 @@ public class IRBuilder implements IRBasicBuilder {
         else {
             isClassFunction = true;
             for (functionDefinition fun : node.functionSons){
-                Function function = new Function(fun.functionName);
+                String name =fun.functionName;
+                if (name.equals("tostring")){
+                    int y = 1;
+                }
+                Function function = new Function(name);
+                functionRegister = new HashMap<>();
                 curFunction = function;
-                functionMap.put(fun.functionName,function);
+                functionMap.put(name,function);
                 //node.inputVariableSons.forEach(x->x.accept(this));
-                classRegister = new virtualRegister("rdi",registerNumber++);
-                function.params.add(new stackSlot(function,classRegister));
+                //classRegister = new virtualRegister("rdi",registerNumber++);
+                classRegister.push(new virtualRegister("rdi",registerNumber++));
+                function.params.add(new stackSlot(function,classRegister.peek()));
                 for (variable item : fun.inputVariableSons){
                     visit(item);
                     virtualRegister reg = item.registerValue;
@@ -125,7 +133,7 @@ public class IRBuilder implements IRBasicBuilder {
                 //function.params.add()
                 function.isClassFunction = true;
                 function.classSpace = classTable.get(node.selfName);
-                curBasicBlock = new basicBlock(curFunction, fun.functionName);
+                curBasicBlock = new basicBlock(curFunction, name);
                 function.blockStart = curBasicBlock;
 
 
@@ -586,6 +594,19 @@ public class IRBuilder implements IRBasicBuilder {
         va.ty = node.newType2;
         va.name = node.name;*/
             virtualRegister register = new virtualRegister(node.name,registerNumber++);
+            if (isClassFunction){
+                if (classSpace.memberOffset.containsKey(node.name)){
+                    virtualRegister register1 = new virtualRegister(null,registerNumber++);
+                    binaryOperation binary = new binaryOperation(curBasicBlock,register1, binaryOperation.Op.ADD,classRegister.peek(),new Immediate(classSpace.memberOffset.get(node.name)+8));
+                    Mem mem = new Mem(register1);
+                    curBasicBlock.append(binary);
+                    newArrayClass(register,node.newType2,node.name);
+                    curBasicBlock.append(new Move(curBasicBlock,mem,register));
+                    node.registerValue = mem;
+                    return;
+                }
+            }
+            //else register = new virtualRegister(node.name,registerNumber++);
             newArrayClass(register,node.newType2,node.name);
             node.registerValue = register;
             functionRegister.put(node.name,register);
@@ -744,7 +765,7 @@ public class IRBuilder implements IRBasicBuilder {
 
         virtualRegister register = new virtualRegister(null, registerNumber++);
 
-        virtualRegister registerLe,registerRi;
+        virtualRegister registerLe = null,registerRi;
         String op = null;
 
         Op expressionOp = null;
@@ -759,11 +780,21 @@ public class IRBuilder implements IRBasicBuilder {
         switch (op){
             case "." :
                 if (node.sons.get(2).sons.get(0) instanceof variable){
-                    classRegister = registerRi;
-                    isClassFunction = true;
+                    boolean flag = false;
+                    if (node.sons.get(1).sons.get(0) instanceof This){
+                        //classRegister = curFunction.params.get(0).va;
+                        isClassFunction = true;
+                    }
+                    else {
+                        //classRegister = registerRi;
+                        classRegister.push(registerRi);
+                        if (isClassFunction==false){isClassFunction = true;
+                        flag = true;}
+                    }
                     //classSpace = classTable.get(registerRi.getRegisterName());
                     visit(node.sons.get(2));
-                    isClassFunction = false;
+                    if ((!(node.sons.get(1).sons.get(0) instanceof This)&&flag == true)||!classRegister.peek().getRegisterName().equals("rdi")) classRegister.pop();
+                    if (flag==true) isClassFunction = false;
                     node.registerValue = node.sons.get(2).registerValue;
                 }
                 else{
@@ -789,7 +820,10 @@ public class IRBuilder implements IRBasicBuilder {
                     curBasicBlock.append(call);
                     virtualRegister reg = new virtualRegister(null,registerNumber++);
                     reg.setNewName("rax");
-                    node.registerValue = reg;
+                    virtualRegister reg2 = new virtualRegister(null,registerNumber++);
+                    curBasicBlock.append(new Move(curBasicBlock,reg2,reg));
+                    node.registerValue = reg2;
+                   // node.registerValue = reg2;
                 }
                 break;
 
@@ -891,6 +925,11 @@ public class IRBuilder implements IRBasicBuilder {
                 break;*/
             case "[":
                 visit(node.sons.get(2));
+                //virtualRegister registerTmp = node.sons.get(2).registerValue;
+                //curBasicBlock.append(new Move(curBasicBlock,registerLe,registerTmp));
+                /*virtualRegister register1 = node.sons.get(2).registerValue;
+                registerLe = new virtualRegister(null,registerNumber++);
+                curBasicBlock.append(new Move(curBasicBlock,registerLe,register1));*/
                 registerLe = node.sons.get(2).registerValue;
                 virtualRegister registerOffset1 = new virtualRegister(null,registerNumber++);
                 virtualRegister registerOffset2 = new virtualRegister(null,registerNumber++);
@@ -1015,10 +1054,12 @@ public class IRBuilder implements IRBasicBuilder {
                 else{
                     visit(node.sons.get(1));
                     virtualRegister registerRi = node.sons.get(1).registerValue;
-                    classRegister = registerRi;
+                    //classRegister = registerRi;
+                    classRegister.push(registerRi);
                     isClassFunction = true;
                     //classSpace = classTable.get(registerRi.getRegisterName());
                     visit(node.sons.get(2));
+                    classRegister.pop();
                     isClassFunction = false;
                     node.registerValue = node.sons.get(2).registerValue;
                     return;
@@ -1173,7 +1214,7 @@ public class IRBuilder implements IRBasicBuilder {
                      //virtualRegister reg = new virtualRegister(node.name,registerNumber++);
                      virtualRegister register;
                      register = new virtualRegister(null, registerNumber++);
-                     binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister,new Immediate(classSpace.memberOffset.get(node.name)+8));
+                     binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister.peek(),new Immediate(classSpace.memberOffset.get(node.name)+8));
                      curBasicBlock.append(binary);
                      Mem mem = new Mem(register);
                      node.registerValue = mem;
@@ -1195,8 +1236,8 @@ public class IRBuilder implements IRBasicBuilder {
              node.registerValue = getRegister(node.name);
             if (classVariableTable.containsKey(node.name)){
                 classSpace = classTable.get(classVariableTable.get(node.name));
-                //classRegister = registerMap.get(node.name);
-                classRegister = getRegister(node.name);
+                //??????????????????????????????????*****************************************************
+                //classRegister.push(getRegister(node.name));
             }
         }
         else{
@@ -1240,7 +1281,7 @@ public class IRBuilder implements IRBasicBuilder {
                     register.base = classRegister;
                     register.memberoffset = new Immediate(classSpace.memberOffset.get(node.name));*/
                     //virtualRegister reg = new virtualRegister(node.name,registerNumber++);
-                    binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister,new Immediate(classSpace.memberOffset.get(node.name)+8));
+                    binaryOperation binary = new binaryOperation(curBasicBlock,register, binaryOperation.Op.ADD,classRegister.peek(),new Immediate(classSpace.memberOffset.get(node.name)+8));
                     curBasicBlock.append(binary);
                     Mem mem = new Mem(register);
                     node.registerValue = mem;
@@ -1297,9 +1338,26 @@ public class IRBuilder implements IRBasicBuilder {
     public void visit(callFunctionExpression node) {
         //virtualRegister register = new virtualRegister("eax", registerNumber++);
         callFunction call;
-        if(functionMap.containsKey(node.functionName)) call = new callFunction(curBasicBlock,functionMap.get(node.functionName));
-        else call = new callFunction(curBasicBlock,new Function(node.functionName));
+        String name = node.functionName;
+        /*if (isClassFunction&&node.isClassFunction==true){
+            if (!ifInlineFunction(node.functionName)) {
+                name = "__"+name;
+            }
+        }*/
+        if(functionMap.containsKey(node.functionName)) call = new callFunction(curBasicBlock,functionMap.get(name));
+        else call = new callFunction(curBasicBlock,new Function(name));
         //node.expressionSons.forEach(x->call.addParam(visit(x)));
+       /* if (node.functionName.equals("getDim")){
+            int what = 0;
+        }*/
+       /*if (curFunction.functionName.equals("add")&&node.functionName.equals("getDim")){
+           int t = 1;
+       }*/
+        if (isClassFunction&&node.isClassFunction==true){
+            if (!ifInlineFunction(node.functionName)) {
+                call.addParam(classRegister.peek());
+            }
+        }
         for (expression item : node.expressionSons){
             visit(item);
             call.addParam(item.registerValue);
@@ -1315,7 +1373,33 @@ public class IRBuilder implements IRBasicBuilder {
         curBasicBlock.append(new Move(curBasicBlock,reg2,reg));
         node.registerValue = reg2;
     }
-
+    public boolean ifInlineFunction(String name){
+        switch (name) {
+            case("print"):
+            case("println"):
+            case("getString"):
+            case("getInt"):
+            case("toString"):
+            case("length"):
+            case("substring"):
+            case("parseInt"):
+            case("ord"):
+            case("address"):
+            case("_malloc"):
+            case("_newArray"):
+            case("newArray"):
+            case("size"):
+            case("_strADD"):
+            case("_strLT"):
+            case("_strGT"):
+            case("_strLE"):
+            case("_strGE"):
+            case("_strEQ"):
+            case("_strNE"):
+                return true;
+        }
+        return false;
+    }
     private boolean findRegister(String name){
         virtualRegister register = getRegister(name);
         if (register==null) return false;

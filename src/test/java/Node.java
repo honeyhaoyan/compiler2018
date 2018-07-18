@@ -52,6 +52,7 @@ class functionDefinition extends Node{
     public List<variable>inputVariableSons;
     public blockDefinition blockSon;
     public String functionName;
+    public boolean isClassFunction = false;
     public functionDefinition(){
         super();
         inputVariableSons = new ArrayList<variable>();
@@ -314,6 +315,7 @@ class callFunctionExpression extends expression{
     public String functionName;
     public List<expression>expressionSons;
     //virtualRegister registerValue;
+    boolean isClassFunction = false;
     callFunctionExpression(){
         super();
         expressionSons = new ArrayList<expression>();

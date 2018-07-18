@@ -52,6 +52,7 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         for (ParseTree item : context.classBody().functionDefinition()){
             functionDefinition functionNode = (functionDefinition) visit(item);
+            functionNode.isClassFunction = true;
             tmp.functionSons.add(functionNode);
         }
         for (ParseTree item : context.classBody().constructionDefinition()){
@@ -65,7 +66,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         //System.out.println("visit functionDefinition");
         functionDefinition tmp = new functionDefinition();
         String functionName;
-        functionName = context.functionName().getText();
+        String name = context.functionName().getText();
+        if (!ifInlineFunction(name)&&(!name.equals("main"))) functionName =name;
+        else functionName = name;
         tmp.functionName=functionName;
         tmp.returnType=(type) visit(context.variableTypeExpression());
         if (context.definitionExpression()!=null){
@@ -518,8 +521,10 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
     @Override public callFunctionExpression visitCallFunctionExpression(MxParser.CallFunctionExpressionContext context) {
         //System.out.println("visitCallFunctionExpression");
         callFunctionExpression tmp = new callFunctionExpression();
+        String name = context.Identifier().toString();
         //System.out.println(context.toStringTree());
-        tmp.functionName = context.Identifier().toString();
+        if (!ifInlineFunction(name)) tmp.functionName = name;
+        else tmp.functionName = name;
         int i=0;
         if (context.valuebleListExpression()!=null){
         for (ParseTree item : context.valuebleListExpression().valuebleSingleExpression()){
@@ -687,7 +692,8 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         functionDefinition tmp = new functionDefinition();
         String functionName;
         functionName = context.className().Identifier().toString();
-        tmp.functionName=functionName;
+        if (!ifInlineFunction(functionName)) tmp.functionName=functionName;
+        else tmp.functionName=functionName;
         tmp.returnType.typeName = context.className().Identifier().toString();
         if (context.definitionExpression()!=null){
             int i=0;
@@ -701,6 +707,34 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         }
         tmp.blockSon=(blockDefinition)visit(context.blockStatement());
         return tmp;
+    }
+
+    public boolean ifInlineFunction(String name){
+        switch (name) {
+            case("print"):
+            case("println"):
+            case("getString"):
+            case("getInt"):
+            case("toString"):
+            case("length"):
+            case("substring"):
+            case("parseInt"):
+            case("ord"):
+            case("address"):
+            case("_malloc"):
+            case("_newArray"):
+            case("newArray"):
+            case("size"):
+            case("_strADD"):
+            case("_strLT"):
+            case("_strGT"):
+            case("_strLE"):
+            case("_strGE"):
+            case("_strEQ"):
+            case("_strNE"):
+                return true;
+        }
+        return false;
     }
 
 

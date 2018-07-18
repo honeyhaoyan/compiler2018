@@ -54,6 +54,9 @@ public class ASTvisitor {
         if (scope.name.contains(functionName)) throw new Exception("FunctionName conflicts with names that have already existed.");
         else {
             functionScope tmp = new functionScope();
+            if (node.isClassFunction==true){
+                tmp.isClassFunction = true;
+            }
             tmp.scopeFather = scope;
             //System.out.println(tmp.scopeFather.scopleType);
             tmp.functionName = functionName;
@@ -302,7 +305,7 @@ public class ASTvisitor {
         System.out.println(ty1.arrExp.size());
         System.out.println(ty2.arrExp.size());
         System.out.println("-----------------------------------------------------------------------");*/
-
+        for (expression exp:ty2.arrExp) visitExpression(exp,scope);
         if (ty2.typeName.equals("Void")) throw new Exception("new void");
         if (ty1.typeName==null){
             //System.out.println("find for ty1");
@@ -567,7 +570,10 @@ public class ASTvisitor {
         }
         //System.out.println(tmp.scopleType);
         if (flag == false){
-            if (tmp.function.containsKey(functionName)){func = tmp.function.get(functionName);flag=true;}
+            if (tmp.function.containsKey(functionName)){
+                func = tmp.function.get(functionName);
+                flag=true;
+            }
         }
         //System.out.println(tmp.function.keySet());
         //System.out.println(functionName);
@@ -707,6 +713,9 @@ public class ASTvisitor {
                 if (((Op) item).op.equals("[")){
                     type type1 = visitExpression((expression) node.sons.get(1),scope);
                     type type2 = visitExpression((expression)node.sons.get(2),scope);
+                    if (node.sons.get(2) instanceof callFunctionExpression){
+                        int t = 1;
+                    }
                     //System.out.println(type1.typeName);
                     if (type1.typeName!=null) if (type1.arrExp.size()==0) throw new Exception("subscript error");
                     if (!type2.typeName.equals("Int")) throw new Exception("index error");
@@ -1084,6 +1093,9 @@ public class ASTvisitor {
         type tmp = new type();
         functionScope func = new functionScope();
         func = findFunction(exp.functionName,scope);
+        if (func.isClassFunction == true){
+            exp.isClassFunction = true;
+        }
         if (func.scopeFather.scopleType.equals("top")) checkInputVariable(exp.expressionSons,func,scope);
         tmp = func.returnType;
         exp.va.ty = tmp;

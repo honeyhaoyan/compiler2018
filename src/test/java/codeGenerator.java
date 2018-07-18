@@ -145,23 +145,25 @@ public class codeGenerator implements IRBasicVisitor {
         else {
             if (node.or == false) br.label = "b"+Integer.toString(node.findOtherwise().label);
             else {
-                if (br instanceof Je){
+                boolean flag = false;
+                if (br instanceof Je&&flag==false){
                     br = new Jne(null);
+                    flag = true;
                 }
-                if (br instanceof Jne){
-                    br = new Je(null);
+                if (br instanceof Jne&&flag==false){
+                    br = new Je(null);flag = true;
                 }
-                if (br instanceof Jl){
-                    br = new Jnl(null);
+                if (br instanceof Jl&&flag==false){
+                    br = new Jnl(null);flag = true;
                 }
-                if (br instanceof Jnl){
-                    br = new Jl(null);
+                if (br instanceof Jnl&&flag==false){
+                    br = new Jl(null);flag = true;
                 }
-                if (br instanceof Jg){
-                    br = new Jng(null);
+                if (br instanceof Jg&&flag==false){
+                    br = new Jng(null);flag = true;
                 }
-                if (br instanceof Jng){
-                    br = new Jg(null);
+                if (br instanceof Jng&&flag==false){
+                    br = new Jg(null);flag = true;
                 }
                 br.label = "b"+Integer.toString(node.findThen().label);
             }
@@ -218,13 +220,16 @@ public class codeGenerator implements IRBasicVisitor {
     }*/
     public void visit(callFunction node){
         /* rdi     rsi     rdx     rcx     r8      r9*/
-        if (node.functionName().equals("size")){
+        /*if (node.functionName().equals("size")){
             //global.add(new Mov(new ))
-        }
+        }*/
         int i=1;
         int j=1;
         Phyregister reg = new Phyregister(null);
         int num = node.params.size();
+        if (num == 0){
+            int k = 10;
+        }
         for (virtualRegister item : node.params){
             //i = num-j+1;
             //address addr = new address("-",item.offset,new register("rbp"));

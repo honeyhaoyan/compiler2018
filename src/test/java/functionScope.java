@@ -8,6 +8,7 @@ class functionScope extends Scope{
     //List<variable>inputVariable;
     //Map<int,variabl>inputVariable;
     List<type>inputVariable;
+    boolean isClassFunction = false;
     functionScope(){
         super();
         returnType = new type();
