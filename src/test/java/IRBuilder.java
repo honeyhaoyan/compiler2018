@@ -772,7 +772,9 @@ public class IRBuilder implements IRBasicBuilder {
         for (Node item : node.sons) if (item instanceof Op) {op =((Op) item).op;expressionOp = (Op)item;}
 
         if (op!=null) if (op.equals("&&")||op.equals("||")) {expressionLogic(node);return;}
-        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))||(node.ty!=null && node.ty.typeName!=null &&node.ty.typeName.equals("String"))) {StringOperation(node);return;}
+        if (isString(node.sons.get(1))||(node.sons.size()==3&&isString(node.sons.get(2)))||(node.ty!=null && node.ty.typeName!=null &&node.ty.typeName.equals("String"))) {
+            if (!op.equals("[")) {StringOperation(node);return;}
+        }
         visit((expression) node.sons.get(1));
         registerRi = node.sons.get(1).registerValue;
 
