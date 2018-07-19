@@ -3,6 +3,7 @@ import com.sun.org.apache.bcel.internal.generic.BranchInstruction;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Set;
 public abstract class IRNode {
     public abstract void print();
 
@@ -285,6 +286,9 @@ abstract class IRInstruction extends IRNode{
     private IRInstruction next;
     boolean removed;
     protected List<virtualRegister> registers = new ArrayList<virtualRegister>();
+    public Set<virtualRegister> liveIn = null;
+    public Set<virtualRegister> liveOut = null;
+    virtualRegister registerValue;
     /* remain to be done */
     public IRInstruction(basicBlock B, IRInstruction prev, IRInstruction next){
         this.prev = prev;

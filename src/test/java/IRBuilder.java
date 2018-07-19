@@ -834,9 +834,9 @@ public class IRBuilder implements IRBasicBuilder {
                 //registerLe = new virtualRegister(null,registerNumber++);
                 unaryOperation.Op newop;
                 newop = visitUnaryOp(op);
-                unaryOperation unary = new unaryOperation(curBasicBlock,registerRi,newop,registerRi);
+                unaryOperation unary = new unaryOperation(curBasicBlock,register,newop,registerRi);
                 curBasicBlock.append(unary);
-                register = registerRi;
+                //register = registerRi;
                 node.registerValue = register;
                 break;
             //case "!":
@@ -911,9 +911,9 @@ public class IRBuilder implements IRBasicBuilder {
                 newop4 = visitBinaryOp(op);
                 if (node.sons.size()==3) visit((expression)node.sons.get(2));
                 else{
-                    unaryOperation unaryNeg = new unaryOperation(curBasicBlock,registerRi,unaryOperation.Op.NEG,registerRi);
+                    unaryOperation unaryNeg = new unaryOperation(curBasicBlock,register,unaryOperation.Op.NEG,registerRi);
                     curBasicBlock.append(unaryNeg);
-                    node.registerValue = registerRi;
+                    node.registerValue = register;
                     break;
                 }
                 registerLe = node.sons.get(2).registerValue;

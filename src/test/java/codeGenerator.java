@@ -283,7 +283,9 @@ public class codeGenerator implements IRBasicVisitor {
     public void visit(unaryOperation node){
         if (node.op == unaryOperation.Op.NEG){
             //global.add(new Mov(new Phyregister("rax"),getMem(node.getDest())));
-            global.add(new Neg(getMem(node.getDest())));
+            global.add(new Mov(new Phyregister("r9"),getMem(node.getInitialValue())));
+            global.add(new Neg(new Phyregister("r9")));
+            global.add(new Mov(getMem(node.getDest()),new Phyregister("r9")));
             //global.add(new Mov(getMem(node.getDest()),new Phyregister("rax")));
 
             //global.add(new Imul(getMem(node.getDest()),new Imm(-1)));
