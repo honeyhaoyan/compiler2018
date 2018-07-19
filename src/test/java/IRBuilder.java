@@ -834,9 +834,9 @@ public class IRBuilder implements IRBasicBuilder {
                 //registerLe = new virtualRegister(null,registerNumber++);
                 unaryOperation.Op newop;
                 newop = visitUnaryOp(op);
-                unaryOperation unary = new unaryOperation(curBasicBlock,register,newop,registerRi);
+                unaryOperation unary = new unaryOperation(curBasicBlock,registerRi,newop,registerRi);
                 curBasicBlock.append(unary);
-                //register = registerRi;
+                register = registerRi;
                 node.registerValue = register;
                 break;
             //case "!":
