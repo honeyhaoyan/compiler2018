@@ -372,16 +372,18 @@ public class codeGenerator implements IRBasicVisitor {
         }
         if (node.getOp() == binaryOperation.Op.SHL){
             global.add(new Mov(new Phyregister("rcx"),dest));
-            global.add(new Sal(right,new Phyregister("cl")));
-            //global.add(new Mov(getMem(node.getDest()),right));return;
             global.add(new Mov(new Phyregister("rsi"),right));
+            global.add(new Sal(new Phyregister("rsi"),new Phyregister("cl")));
+            //global.add(new Mov(getMem(node.getDest()),right));return;
+            //global.add(new Mov(new Phyregister("rsi"),right));
             dest = new Phyregister("rsi");
         }
         if (node.getOp() == binaryOperation.Op.SHR){
             global.add(new Mov(new Phyregister("rcx"),dest));
-            global.add(new Sar(right,new Phyregister("cl")));
-            //global.add(new Mov(getMem(node.getDest()),right));return;
             global.add(new Mov(new Phyregister("rsi"),right));
+            global.add(new Sar(new Phyregister("rsi"),new Phyregister("cl")));
+            //global.add(new Mov(getMem(node.getDest()),right));return;
+            //global.add(new Mov(new Phyregister("rsi"),right));
             dest = new Phyregister("rsi");
         }
         global.add(new Mov(getMem(node.getDest()),dest));

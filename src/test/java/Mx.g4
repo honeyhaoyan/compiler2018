@@ -145,9 +145,9 @@ valuebleSingleExpression
     |(Inc | Dec) valuebleSingleExpression
     |valuebleSingleExpression (Inc|Dec)
     |(Not | Lnot) valuebleSingleExpression
-    |valuebleSingleExpression (Mul|Div) valuebleSingleExpression
+    |valuebleSingleExpression (Mul|Div|Mod) valuebleSingleExpression
     |Sub valuebleSingleExpression
-    |valuebleSingleExpression (Add|Sub|Mod) valuebleSingleExpression
+    |valuebleSingleExpression (Add|Sub) valuebleSingleExpression
     |valuebleSingleExpression (Lshift | Rshift) valuebleSingleExpression
     |valuebleSingleExpression (Le | Ge | Lt | Gt) valuebleSingleExpression
     |valuebleSingleExpression (Equal | Notequal) valuebleSingleExpression

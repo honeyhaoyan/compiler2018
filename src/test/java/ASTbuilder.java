@@ -120,6 +120,9 @@ public class ASTbuilder extends MxBaseVisitor<Node> {
         else {
             t = visitVariableArrayTypeExpression(context.definitionExpression().definitionArrayExpression().variableArrayTypeExpression());
             na = context.definitionExpression().definitionArrayExpression().Identifier().toString();
+            if (context.definitionExpression().definitionArrayExpression().valuebleSingleExpression()!=null){
+                tmp.exp = visitValuebleSingleExpression(context.definitionExpression().definitionArrayExpression().valuebleSingleExpression());
+            }
         }
         tmp.variableSon.ty.typeName=t.typeName;
         for(expression p : t.arrExp){
