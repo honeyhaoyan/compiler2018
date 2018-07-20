@@ -126,13 +126,15 @@ class Imul extends Two{
 class Sal extends Two{
     public Sal(assembly left, assembly right){
         super(left,right);
-        type = "sal";
+        //type = "sal";
+        type = "shl";
     }
 }
 class Sar extends Two{
     public Sar(assembly left, assembly right){
         super(left,right);
-        type = "sar";
+        //type = "sar";
+        type = "shr";
     }
 }
 /*

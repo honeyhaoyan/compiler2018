@@ -68,6 +68,60 @@ public class LivenessAnalysis {
     public LivenessAnalysis(IRRoot ir) {
         this.ir = ir;
     }
+
+    private void addRegister(IRInstruction instr, Value value){
+        if (value instanceof virtualRegister){
+            instr.registers.add((virtualRegister) value);
+        }
+    }
+
+    private void setRegisters(){
+        for (basicBlock block : ir.basicBlocks){
+            for (IRInstruction inst : block.irInstructions){
+                /*if (inst instanceof Branch){
+
+                }
+                if (inst instanceof Jump){
+
+                }
+                if (inst instanceof Return){
+
+                }*/
+                if (inst instanceof Move){
+                    inst.registers.add(((Move) inst).getDest());
+                    addRegister(inst,((Move) inst).getSource());
+                }
+                if (inst instanceof callFunction){
+                    for (virtualRegister reg : ((callFunction) inst).params){
+                        inst.registers.add(reg);
+                    }
+                }
+                if (inst instanceof unaryOperation){
+                    inst.registers.add(((unaryOperation) inst).getDest());
+                    addRegister(inst,((unaryOperation) inst).getInitialValue());
+                }
+                if (inst instanceof binaryOperation){
+                    addRegister(inst,((binaryOperation) inst).getLhs());
+                    addRegister(inst,((binaryOperation) inst).getRhs());
+                    inst.registers.add(((binaryOperation) inst).getDest());
+                }
+                if (inst instanceof Comparison){
+                    addRegister(inst,((Comparison) inst).getRhs());
+                    addRegister(inst,((Comparison) inst).getLhs());
+                    inst.registers.add(((Comparison) inst).getDest());
+                }
+                if (inst instanceof HeapAllocate){
+                    inst.registers.add(((HeapAllocate) inst).dest);
+                    for (Value value:((HeapAllocate)inst).space.nArray){
+                        addRegister(inst,value);
+                    }
+                }
+                for (virtualRegister register:inst.registers){
+                    register.ifRenamed = true;
+                }
+            }
+        }
+    }
     private void initBlock(basicBlock BB) {
         for (IRInstruction inst = BB.getHead(); inst != null; inst = inst.getNext())
             if (inst.liveOut == null) {
@@ -121,9 +175,9 @@ public class LivenessAnalysis {
                     }
                     in.addAll(out);
                     virtualRegister defined = inst.registerValue;
-                    //if (defined instanceof VirtualRegister)
-                    /*if (defined!=null)
-                        in.remove(defined);
+                    if (defined instanceof virtualRegister)
+                    if (defined!=null)
+                        in.remove(defined);/*
                     inst.registerValue.stream()
                             .filter(x -> x instanceof VirtualRegister)
                             .forEach(x -> in.add((VirtualRegister) x));*/
@@ -147,6 +201,11 @@ public class LivenessAnalysis {
                 }
             }
         }
+    }
+
+    public void run(){
+        this.setRegisters();
+        for (Function function:ir.functions) processFunction(function);
     }
 
 }

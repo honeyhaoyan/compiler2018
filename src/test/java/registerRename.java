@@ -65,7 +65,7 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(Function node){
         currentFunction = node;
-        offset = 0;
+        offset = 8;
         //int i = 1;
         /*if (node.isClassFunction){
             i = 0;
@@ -110,6 +110,7 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(unaryOperation node){
         if (node.getDest().getRegisterName()!=null) visit(node.getDest());
+        if (node.getDest() instanceof virtualRegister) visit(node.getDest());
         if (node.getInitialValue() instanceof virtualRegister) visit((virtualRegister)node.getInitialValue());
     }
     public void visit(binaryOperation node){

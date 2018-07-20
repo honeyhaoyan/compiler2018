@@ -292,8 +292,9 @@ public class codeGenerator implements IRBasicVisitor {
         }
         if (node.op == unaryOperation.Op.NOT){
             global.add(new Mov(new Phyregister("r11"),getMem(node.getInitialValue())));
-            //global.add(new Not(new Phyregister("r11")));
-            global.add(new Xor(new Phyregister("r11"),new Imm(1)));
+            global.add(new Not(new Phyregister("r11")));
+            //global.add(new Xor(new Phyregister("r11"),new Imm(1)));
+
             global.add(new Mov(getMem(node.getDest()),new Phyregister("r11")));
         }
     }
@@ -374,11 +375,12 @@ public class codeGenerator implements IRBasicVisitor {
         }
         if (node.getOp() == binaryOperation.Op.SHL){
             global.add(new Mov(new Phyregister("rcx"),dest));
-            global.add(new Mov(new Phyregister("rsi"),right));
-            global.add(new Sal(new Phyregister("rsi"),new Phyregister("cl")));
-            //global.add(new Mov(getMem(node.getDest()),right));return;
             //global.add(new Mov(new Phyregister("rsi"),right));
-            dest = new Phyregister("rsi");
+            //global.add(new Sal(new Phyregister("rsi"),new Phyregister("cl")));
+            //dest = new Phyregister("rsi");
+            global.add(new Mov(new Phyregister("r10"),right));
+            global.add(new Sal(new Phyregister("r10"),new Phyregister("cl")));
+            dest = new Phyregister("r10");
         }
         if (node.getOp() == binaryOperation.Op.SHR){
             global.add(new Mov(new Phyregister("rcx"),dest));

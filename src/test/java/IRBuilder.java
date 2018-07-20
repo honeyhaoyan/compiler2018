@@ -46,6 +46,8 @@ public class IRBuilder implements IRBasicBuilder {
     int stringNumber = 0;
     List<String> stringList = new ArrayList<>();
 
+    List<virtualRegister> registerList = new ArrayList<>();
+
     Stack<Branch> Branchs = new Stack<>();
 
     public IRRoot getIRRoot() {
@@ -207,6 +209,7 @@ public class IRBuilder implements IRBasicBuilder {
         //ifJump = false;
 
         node.statementSons.forEach(x -> x.accept(this));
+
         basicBlock tmp = curBasicBlock;
         if (!basicBlockList.contains(tmp)) basicBlockList.add(tmp);
     }
@@ -227,17 +230,17 @@ public class IRBuilder implements IRBasicBuilder {
 
     @Override
     public void visit(statement node) {
-        if (node instanceof definitionStatement) visit((definitionStatement )node);
-        if (node instanceof assignmentStatement) visit((assignmentStatement) node);
-        if (node instanceof ifStatement) visit((ifStatement) node);
-        if (node instanceof forStatement) visit((forStatement) node);
-        if (node instanceof whileStatement) visit((whileStatement) node);
-        if (node instanceof breakStatement) visit((breakStatement) node);
-        if (node instanceof returnStatement) visit((returnStatement) node);
-        if (node instanceof continueStatement)visit((continueStatement) node);
-        if (node instanceof newStatement) visit((newStatement) node);
-        if (node instanceof valuebleSingleStatement) visit((valuebleSingleStatement) node);
-
+        //registerList.clear();
+        if (node instanceof definitionStatement) {visit((definitionStatement )node);}
+        if (node instanceof assignmentStatement) {visit((assignmentStatement) node);}
+        if (node instanceof ifStatement) {visit((ifStatement) node);}
+        if (node instanceof forStatement) {visit((forStatement) node);}
+        if (node instanceof whileStatement) {visit((whileStatement) node);}
+        if (node instanceof breakStatement) {visit((breakStatement) node);}
+        if (node instanceof returnStatement) {visit((returnStatement) node);}
+        if (node instanceof continueStatement) {visit((continueStatement) node);}
+        if (node instanceof newStatement) {visit((newStatement) node);}
+        if (node instanceof valuebleSingleStatement) {visit((valuebleSingleStatement) node);}
     }
 
     @Override
@@ -692,8 +695,8 @@ public class IRBuilder implements IRBasicBuilder {
 
     public unaryOperation.Op visitUnaryOp(String op){
         unaryOperation.Op newop;
-        if (op.equals("~")) newop = unaryOperation.Op.NEG;
-        else newop = unaryOperation.Op.NOT;
+        if (op.equals("~")) newop = unaryOperation.Op.NOT;
+        else newop = null;
         return newop;
     }
 
@@ -834,9 +837,13 @@ public class IRBuilder implements IRBasicBuilder {
                 //registerLe = new virtualRegister(null,registerNumber++);
                 unaryOperation.Op newop;
                 newop = visitUnaryOp(op);
-                unaryOperation unary = new unaryOperation(curBasicBlock,register,newop,registerRi);
+                if (newop!=null){unaryOperation unary = new unaryOperation(curBasicBlock,register,newop,registerRi);
                 curBasicBlock.append(unary);
-                //register = registerRi;
+                }
+                else{
+                    binaryOperation binaryNot = new binaryOperation(curBasicBlock,register,binaryOperation.Op.XOR,registerRi,new Immediate(1));
+                    curBasicBlock.append(binaryNot);
+                }
                 node.registerValue = register;
                 break;
             //case "!":
