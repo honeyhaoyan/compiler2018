@@ -176,10 +176,16 @@ public class LivenessAnalysis {
                     if (!registerIntegerMap.containsKey(register)) registerIntegerMap.put(register,global++);
                 }*/
                 //inst.live.addAll()
-                    for (virtualRegister define:inst.defined) registerIntegerMap.put(define,global++);
+                    for (virtualRegister define:inst.defined) {
+                        if (!registerIntegerMap.containsKey(define)) registerIntegerMap.put(define,global++);
+                    //System.out.println("global"+global);
+                    //System.out.println("size"+registerIntegerMap.size());
+                    }
                 }
             }
         }
+
+        //global--;
 
         registerNumber = new int[global];
         registerValue = new double[global];
@@ -248,6 +254,9 @@ public class LivenessAnalysis {
             //System.out.println(registerNumber[j]+" "+edge[j]);
             if (edge[j] == 0) registerValue[j] = registerNumber[j];
             else registerValue[j] = (double) registerNumber[j]/(double) edge[j];
+            /*if (registerList[j]==null){
+                int t=0;
+            }*/
             registerList[j].registerValue = registerValue[j];
             //System.out.println("---------"+registerValue[j]);
             //if (j!=global) registerList[j].registerValue = registerValue[j];
