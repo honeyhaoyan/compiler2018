@@ -66,7 +66,11 @@ class virtualRegister extends Value{
     public String getRegisterName (){return name;}
     @Override public virtualRegister copy(){return new virtualRegister(name,id);}
     public void print(){
-        if (content==false) {System.out.print("%"+Integer.toString(id));}
+
+        if (content==false) {
+            if (ifRenamed==false) System.out.print("%"+Integer.toString(id));
+            else System.out.print(newName);
+        }
     }
 
     public void setName(String name) {
@@ -291,7 +295,7 @@ abstract class IRInstruction extends IRNode{
     private basicBlock block;
     private IRInstruction prev;
     private IRInstruction next;
-    virtualRegister defined;
+    List<virtualRegister> defined = new ArrayList<>();
     boolean removed;
     protected List<virtualRegister> registers = new ArrayList<virtualRegister>();
     public Set<virtualRegister> liveIn = new HashSet<virtualRegister>();

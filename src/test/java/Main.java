@@ -34,7 +34,7 @@ public class Main {
         IRBuilder irBuilder = new IRBuilder();
         irBuilder.visit(root);
         IRRoot irRoot = irBuilder.getIRRoot();
-        //irRoot.print();
+        irRoot.print();
 
         /*LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
         registerAllocate.run();*/

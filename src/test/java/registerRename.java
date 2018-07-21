@@ -36,7 +36,7 @@ public class registerRename implements IRBasicVisitor{
                 offset = offset+8;
                 node.offset = offset;
                 currentFunction.registers.add(node);
-                irInstruction.defined = node;
+                irInstruction.defined.add(node);
             }
             //irInstruction.defined = node;
         }

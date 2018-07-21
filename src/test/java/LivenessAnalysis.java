@@ -108,21 +108,20 @@ public class LivenessAnalysis {
 
                     if (inst instanceof Branch) {
                         out.addAll(((Branch) inst).findThen().getHead().liveIn);
-                        out.addAll(((Branch) inst).findOtherwise().getHead().liveIn);
+                        if (((Branch) inst).findOtherwise().getHead()!=null) out.addAll(((Branch) inst).findOtherwise().getHead().liveIn);
                     } else if (inst instanceof Jump) {
-                        out.addAll(((Jump) inst).getJumpTo().getHead().liveIn);
+                        if (((Jump) inst).getJumpTo().getHead()!=null) out.addAll(((Jump) inst).getJumpTo().getHead().liveIn);
                     } else if (!(inst instanceof Return)) {
                         if (inst.getNext()!=null) // inst is not a branch, thus inst.getNext() not null
                         out.addAll(inst.getNext().liveIn);
                     }
                     in.addAll(out);
-                    virtualRegister defined = inst.defined;
-                    if (defined instanceof virtualRegister)
-                    if (defined!=null)
-                        in.remove(defined);/*
-                    inst.registerValue.stream()
-                            .filter(x -> x instanceof VirtualRegister)
-                            .forEach(x -> in.add((VirtualRegister) x));*/
+                    for (virtualRegister define : inst.defined) {
+                        //virtualRegister defined = inst.defined;
+                        if (define instanceof virtualRegister)
+                            if (define != null)
+                                in.remove(define);
+                    }
                     List<virtualRegister> usedRegisterList = inst.registers;
                     if (usedRegisterList != null) {
                         in.addAll(usedRegisterList);
@@ -177,7 +176,7 @@ public class LivenessAnalysis {
                     if (!registerIntegerMap.containsKey(register)) registerIntegerMap.put(register,global++);
                 }*/
                 //inst.live.addAll()
-                    if (inst.defined!=null) registerIntegerMap.put(inst.defined,global++);
+                    for (virtualRegister define:inst.defined) registerIntegerMap.put(define,global++);
                 }
             }
         }
@@ -220,11 +219,15 @@ public class LivenessAnalysis {
         for (Function function:ir.functions){
             for (basicBlock block:function.basicBlocks){
                 for (IRInstruction inst : block.irInstructions){
-                    if (inst.defined!=null) {int number = registerIntegerMap.get(inst.defined);
+                    for (virtualRegister define:inst.defined) {int number = registerIntegerMap.get(define);
                     registerNumber[number]++;
                     //System.out.println(registerNumber[number]);
                     for (virtualRegister register2:inst.liveOut){
-                        if (register2.ifRenamed==false){int number2 = registerIntegerMap.get(register2);
+                        if (!registerIntegerMap.containsKey(register2)){
+                            int h = 1;
+                        }
+                        if (register2.ifRenamed==false){
+                            int number2 = registerIntegerMap.get(register2);
                         registerNumber[number2]++;
                         if (number!=number2){
                             if(graph[number][number2]==false){

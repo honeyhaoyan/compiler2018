@@ -1176,7 +1176,7 @@ public class IRBuilder implements IRBasicBuilder {
         //if ((!((node.ty.arrExp.size()!=0)))&&(!(className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0))) return false;
         virtualRegister register = new virtualRegister("_"+node.name, registerNumber++);
         //Mem register = new Mem(register1);
-        register.ifRenamed  =true;
+        register.ifRenamed = true;
         register.setNewName("_"+node.name);
         Mem mem = new Mem(register);
         /*if (className.contains(node.ty.typeName)&&node.ty.arrExp.size()==0){
