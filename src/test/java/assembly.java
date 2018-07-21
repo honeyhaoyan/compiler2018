@@ -302,7 +302,15 @@ class CallF extends assembly{
     String fun;
     public CallF(String fun){this.fun =fun;}
     public void print(PrintStream fout){
+        System.out.println("push R12");
+        System.out.println("push R13");
+        System.out.println("push R14");
+        System.out.println("push R15");
         System.out.println("call "+fun);fout.println("call "+fun);
+        System.out.println("pop R15");
+        System.out.println("pop R14");
+        System.out.println("pop R13");
+        System.out.println("pop R12");
         //123456.println("call "+fun);
     }
 }

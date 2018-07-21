@@ -1,9 +1,13 @@
 import com.sun.org.apache.bcel.internal.generic.BranchInstruction;
+import javafx.beans.property.SimpleSetProperty;
 //import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class IRNode {
     public abstract void print();
 
@@ -45,6 +49,7 @@ class virtualRegister extends Value{
     boolean ifRenamed = false;
     private String newName;
     public int offset;
+    double registerValue;
 
     boolean content;
     //***********
@@ -74,6 +79,8 @@ class virtualRegister extends Value{
 
     //public void setContent(){content = true;}
     public void accept(IRBasicVisitor visitor){visitor.visit(this);}
+
+
 }
 
 class Mem extends virtualRegister{
@@ -184,6 +191,7 @@ class basicBlock extends IRNode{
     private Function parent;
     private String name;
     List<IRInstruction>irInstructions;
+    Set<virtualRegister>live = new HashSet<>();
     int label;
 
     public basicBlock(Function parent, String name){
@@ -284,10 +292,12 @@ abstract class IRInstruction extends IRNode{
     private basicBlock block;
     private IRInstruction prev;
     private IRInstruction next;
+    virtualRegister defined;
     boolean removed;
     protected List<virtualRegister> registers = new ArrayList<virtualRegister>();
-    public Set<virtualRegister> liveIn = null;
-    public Set<virtualRegister> liveOut = null;
+    public Set<virtualRegister> liveIn = new HashSet<virtualRegister>();
+    public Set<virtualRegister> liveOut = new HashSet<virtualRegister>();
+    public Set<virtualRegister> live = new HashSet<virtualRegister>();
     virtualRegister registerValue;
     /* remain to be done */
     public IRInstruction(basicBlock B, IRInstruction prev, IRInstruction next){
@@ -460,7 +470,9 @@ class callFunction extends IRInstruction{
     }
     @Override
     public void print(){
+
         System.out.println("call " + func.functionName);
+
     }
     public void addParam(virtualRegister param){
         params.add(param);

@@ -35,9 +35,17 @@ public class Main {
         irBuilder.visit(root);
         IRRoot irRoot = irBuilder.getIRRoot();
         //irRoot.print();
+
+        /*LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
+        registerAllocate.run();*/
+
         PrintStream ps = null ;
         registerRename rename = new registerRename();
         rename.visit(irRoot,ps);
+
+        LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
+        registerAllocate.run();
+
 
         //PrintStream ps = null ;
         ps = new PrintStream("code/out.asm");

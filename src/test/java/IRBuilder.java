@@ -266,6 +266,7 @@ public class IRBuilder implements IRBasicBuilder {
                 visit(node.exp);
                 virtualRegister registerExp = node.exp.registerValue;
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
+                //move.defined = registerVa;
                 curBasicBlock.append(move);
             }
         //}
