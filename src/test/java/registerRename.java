@@ -30,8 +30,13 @@ public class registerRename implements IRBasicVisitor{
     public void visit(Immediate node){
 
     }
+    public void visit(Value value){
+        if (value instanceof virtualRegister) visit((virtualRegister) value);
+        if (value instanceof Mem) visit(((Mem) value).reg);
+    }
     public void visit(virtualRegister node){
-        //irInstruction.registers.add(node);
+        if (node instanceof Mem) node = ((Mem) node).reg;
+        irInstruction.registers.add(node);
         if (!currentFunction.registers.contains(node)){
             if (node.ifRenamed == false) {
                 offset = offset+8;
@@ -42,7 +47,7 @@ public class registerRename implements IRBasicVisitor{
 
             //irInstruction.defined = node;
         }
-        else irInstruction.registers.add(node);
+        //else irInstruction.registers.add(node);
     }
 
     public void visit(Static node){
@@ -98,7 +103,9 @@ public class registerRename implements IRBasicVisitor{
     public void visit(Move node){
         irInstruction = node;
         visit(node.getDest());
-        if (node.getSource() instanceof virtualRegister) visit((virtualRegister)node.getSource());
+        //if (node.getSource() instanceof virtualRegister) visit((virtualRegister)node.getSource());
+        //if (node.getSource() instanceof Mem) visit(((Mem)(node.getSource())).reg);
+        visit(node.getSource());
     }
     public void visit(Store node){
 
@@ -116,21 +123,32 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(unaryOperation node){
         irInstruction = node;
-        if (node.getDest().getRegisterName()!=null) visit(node.getDest());
+        /*if (node.getDest().getRegisterName()!=null) visit(node.getDest());
         if (node.getDest() instanceof virtualRegister) visit(node.getDest());
         if (node.getInitialValue() instanceof virtualRegister) visit((virtualRegister)node.getInitialValue());
+        if (node.getInitialValue() instanceof Mem) visit(((Mem)(node.getInitialValue())).reg);*/
+        visit(node.getDest());
+        visit(node.getInitialValue());
     }
     public void visit(binaryOperation node){
         irInstruction = node;
         visit(node.getDest());
-        if (node.getLhs() instanceof virtualRegister) visit((virtualRegister) node.getLhs());
+        /*if (node.getLhs() instanceof virtualRegister) visit((virtualRegister) node.getLhs());
+        if (node.getLhs() instanceof Mem) visit(((Mem)(node.getLhs())).reg);
         if (node.getRhs() instanceof virtualRegister) visit((virtualRegister)node.getRhs());
+        if (node.getRhs() instanceof Mem) visit(((Mem)(node.getRhs())).reg);*/
+        visit(node.getLhs());
+        visit(node.getRhs());
     }
     public void visit(Comparison node){
         irInstruction = node;
         visit(node.getDest());
-        if (node.getLhs() instanceof virtualRegister) visit((virtualRegister) node.getLhs());
+        /*if (node.getLhs() instanceof virtualRegister) visit((virtualRegister) node.getLhs());
+        if (node.getLhs() instanceof Mem) visit(((Mem)(node.getLhs())).reg);
         if (node.getRhs() instanceof virtualRegister) visit((virtualRegister)node.getRhs());
+        if (node.getRhs() instanceof Mem) visit(((Mem)(node.getRhs())).reg);*/
+        visit(node.getLhs());
+        visit(node.getRhs());
     }
     public void visit(HeapAllocate node){
         irInstruction = node;

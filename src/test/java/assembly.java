@@ -302,15 +302,15 @@ class CallF extends assembly{
     String fun;
     public CallF(String fun){this.fun =fun;}
     public void print(PrintStream fout){
-        if (!fun.equals("println")&&!fun.equals("print")&&!fun.equals("_malloc")){System.out.println("push R12");
+        /*if (!fun.equals("println")&&!fun.equals("print")&&!fun.equals("_malloc")){System.out.println("push R12");
         System.out.println("push R13");
         System.out.println("push R14");
-        System.out.println("push R15");}
+        System.out.println("push R15");}*/
         System.out.println("call "+fun);fout.println("call "+fun);
-        if(!fun.equals("println")&&!fun.equals("print")&&!fun.equals("_malloc")){System.out.println("pop R15");
+        /*if(!fun.equals("println")&&!fun.equals("print")&&!fun.equals("_malloc")){System.out.println("pop R15");
         System.out.println("pop R14");
         System.out.println("pop R13");
-        System.out.println("pop R12");}
+        System.out.println("pop R12");}*/
         //123456.println("call "+fun);
     }
 }

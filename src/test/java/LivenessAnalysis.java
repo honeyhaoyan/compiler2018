@@ -237,7 +237,13 @@ public class LivenessAnalysis {
         for (Function function:ir.functions){
             for (basicBlock block:function.basicBlocks){
                 for (IRInstruction inst : block.irInstructions){
-                    for (virtualRegister define:inst.defined) {int number = registerIntegerMap.get(define);
+                    for (virtualRegister define:inst.defined) {
+                        int number = registerIntegerMap.get(define);
+                        for (virtualRegister define2:inst.defined){
+                            int number3 = registerIntegerMap.get(define2);
+                            graph[number][number3] = true;
+                            graph[number3][number] = true;
+                        }
                     registerNumber[number]++;
                     //System.out.println(registerNumber[number]);
                     for (virtualRegister register2:inst.liveOut){
