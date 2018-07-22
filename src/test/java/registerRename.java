@@ -31,6 +31,7 @@ public class registerRename implements IRBasicVisitor{
 
     }
     public void visit(virtualRegister node){
+        //irInstruction.registers.add(node);
         if (!currentFunction.registers.contains(node)){
             if (node.ifRenamed == false) {
                 offset = offset+8;
@@ -38,8 +39,10 @@ public class registerRename implements IRBasicVisitor{
                 currentFunction.registers.add(node);
                 irInstruction.defined.add(node);
             }
+
             //irInstruction.defined = node;
         }
+        else irInstruction.registers.add(node);
     }
 
     public void visit(Static node){

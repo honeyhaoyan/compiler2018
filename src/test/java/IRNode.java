@@ -294,7 +294,7 @@ class Function extends IRNode{
 abstract class IRInstruction extends IRNode{
     private basicBlock block;
     private IRInstruction prev;
-    private IRInstruction next;
+    IRInstruction next;
     List<virtualRegister> defined = new ArrayList<>();
     boolean removed;
     protected List<virtualRegister> registers = new ArrayList<virtualRegister>();

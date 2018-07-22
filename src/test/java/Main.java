@@ -45,7 +45,7 @@ public class Main {
 
         LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
         registerAllocate.run();
-
+        //irRoot.print();
 
         //PrintStream ps = null ;
         ps = new PrintStream("code/out.asm");

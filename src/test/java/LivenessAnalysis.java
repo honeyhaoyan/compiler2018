@@ -11,59 +11,56 @@ public class LivenessAnalysis {
         this.ir = ir;
     }
 
+    /*
     private void addRegister(IRInstruction instr, Value value){
-        if (value instanceof virtualRegister){
+        if (value instanceof virtualRegister&&((virtualRegister) value).ifRenamed==false){
             instr.registers.add((virtualRegister) value);
         }
-    }
-
+    }*/
+    /*
     private void setRegisters(){
         for (basicBlock block : ir.basicBlocks){
             for (IRInstruction inst : block.irInstructions){
-                /*if (inst instanceof Branch){
 
-                }
-                if (inst instanceof Jump){
-
-                }
-                if (inst instanceof Return){
-
-                }*/
                 if (inst instanceof Move){
-                    inst.registers.add(((Move) inst).getDest());
+                    //inst.registers.add(((Move) inst).getDest());
+                    addRegister(inst,((Move) inst).getDest());
                     addRegister(inst,((Move) inst).getSource());
                 }
                 if (inst instanceof callFunction){
                     for (virtualRegister reg : ((callFunction) inst).params){
-                        inst.registers.add(reg);
+                        //inst.registers.add(reg);
+                        addRegister(inst,reg);
                     }
                 }
                 if (inst instanceof unaryOperation){
-                    inst.registers.add(((unaryOperation) inst).getDest());
+                    //inst.registers.add(((unaryOperation) inst).getDest());
+                    addRegister(inst,((unaryOperation) inst).getDest());
                     addRegister(inst,((unaryOperation) inst).getInitialValue());
                 }
                 if (inst instanceof binaryOperation){
                     addRegister(inst,((binaryOperation) inst).getLhs());
                     addRegister(inst,((binaryOperation) inst).getRhs());
-                    inst.registers.add(((binaryOperation) inst).getDest());
+                    //inst.registers.add(((binaryOperation) inst).getDest());
+                    addRegister(inst,((binaryOperation) inst).getDest());
                 }
                 if (inst instanceof Comparison){
                     addRegister(inst,((Comparison) inst).getRhs());
                     addRegister(inst,((Comparison) inst).getLhs());
-                    inst.registers.add(((Comparison) inst).getDest());
+                    //inst.registers.add(((Comparison) inst).getDest());
+                    addRegister(inst,((Comparison) inst).getDest());
                 }
                 if (inst instanceof HeapAllocate){
-                    inst.registers.add(((HeapAllocate) inst).dest);
+                    //inst.registers.add(((HeapAllocate) inst).dest);
+                    addRegister(inst,((HeapAllocate) inst).dest);
                     for (Value value:((HeapAllocate)inst).space.nArray){
                         addRegister(inst,value);
                     }
                 }
-                /*for (virtualRegister register:inst.registers){
-                    register.ifRenamed = true;
-                }*/
+
             }
         }
-    }
+    }*/
     private void initBlock(basicBlock BB) {
         for (IRInstruction inst = BB.getHead(); inst != null; inst = inst.getNext())
             if (inst.liveOut == null) {
@@ -97,6 +94,13 @@ public class LivenessAnalysis {
         Set<virtualRegister> in = new HashSet<>();
         boolean changed = true;
 
+        for (basicBlock BB:func.basicBlocks){
+           int p = 0;
+           for (p=0;p<BB.irInstructions.size()-1;++p){
+               BB.irInstructions.get(p).next = BB.irInstructions.get(p+1);
+           }
+        }
+
         while(changed){
             changed = false;
             for (basicBlock B : Block){
@@ -107,7 +111,7 @@ public class LivenessAnalysis {
                     out.clear();
 
                     if (inst instanceof Branch) {
-                        out.addAll(((Branch) inst).findThen().getHead().liveIn);
+                        if (((Branch) inst).findThen().getHead()!=null) out.addAll(((Branch) inst).findThen().getHead().liveIn);
                         if (((Branch) inst).findOtherwise().getHead()!=null) out.addAll(((Branch) inst).findOtherwise().getHead().liveIn);
                     } else if (inst instanceof Jump) {
                         if (((Jump) inst).getJumpTo().getHead()!=null) out.addAll(((Jump) inst).getJumpTo().getHead().liveIn);
@@ -126,6 +130,14 @@ public class LivenessAnalysis {
                     if (usedRegisterList != null) {
                         in.addAll(usedRegisterList);
                     }
+                    for (virtualRegister define : inst.defined) {
+                        //virtualRegister defined = inst.defined;
+                        if (define instanceof virtualRegister)
+                            if (define != null)
+                                in.remove(define);
+                    }
+                   // System.out.println("in: "+in.size());
+                   // System.out.println("out: "+out.size());
                     /*if (inst.getLiveInSet() == null) {
                         throw new RuntimeException();
                     }*/
@@ -234,15 +246,15 @@ public class LivenessAnalysis {
                         }
                         if (register2.ifRenamed==false){
                             int number2 = registerIntegerMap.get(register2);
-                        registerNumber[number2]++;
-                        if (number!=number2){
-                            if(graph[number][number2]==false){
-                                edge[number]++;
-                                edge[number2]++;
+                            registerNumber[number2]++;
+                            if (number!=number2){
+                                if(graph[number][number2]==false){
+                                    edge[number]++;
+                                    edge[number2]++;
+                                }
+                                graph[number][number2] = true;
+                                graph[number2][number] = true;
                             }
-                            graph[number][number2] = true;
-                            graph[number2][number] = true;
-                        }
                         }
                     }
                     }
@@ -262,16 +274,76 @@ public class LivenessAnalysis {
             //if (j!=global) registerList[j].registerValue = registerValue[j];
         }
 
-        int k = 0;
-        for (k = 0 ;k<global;++k){
-            if (visit[k] == false){
-                List<virtualRegister> list = dfs(registerList[k]);
-                graphColor(list);
+        double max = -1;
+        virtualRegister registerMax = null;
+        boolean[] visited = new boolean[global];
+        virtualRegister [] registerList2 = new virtualRegister[global];
+        for (int l = 0;l<global;++l) visited[l] = false;
+        for (int k = 0;k<global;++k){
+            max = -1;
+            for (int j = 0;j<global;++j){
+                //max = -1;
+                if (registerList[j].registerValue>max&&visited[j]==false){
+                    max = registerList[j].registerValue;
+                    registerMax = registerList[j];
+                }
+            }
+            registerList2[k] = registerMax;
+            visited[registerIntegerMap.get(registerMax)] = true;
+            //System.out.println(list2[k].registerValue);
+        }
+
+        //R12,R13,R14,R15
+        boolean [] color = new boolean[4];
+        for (virtualRegister register : registerList2){
+            int number = registerIntegerMap.get(register);
+            int y =1;
+            for (int i = 0;i<4;++i){
+                color[i] = true;
+            }
+            for (int p = 0;p<global;++p){
+                if (graph[number][p]==true){
+                    if(registerList[p].ifRenamed==true){
+                        switch (registerList[p].getNewName()){
+                            case "R12":
+                                color[0] = false;
+                                break;
+                            case "R13":
+                                color[1] = false;
+                                break;
+                            case "R14":
+                                color[2] = false;
+                                break;
+                            case "R15":
+                                color[3] = false;
+                                break;
+                        }
+                    }
+                }
+            }
+            for (int i = 0;i<4;++i){
+                if (color[i]==true){
+                    switch (i){
+                        case 0:
+                            register.setNewName("R12");
+                            break;
+                        case 1:
+                            register.setNewName("R13");
+                            break;
+                        case 2:
+                            register.setNewName("R14");
+                            break;
+                        case 3:
+                            register.setNewName("R15");
+                            break;
+                    }
+                    break;
+                }
             }
         }
     }
 
-    public List<virtualRegister> dfs(virtualRegister register){
+   /* public List<virtualRegister> dfs(virtualRegister register){
         int num = registerIntegerMap.get(register);
         List<virtualRegister> list = new ArrayList<>();
         list.add(register);
@@ -287,7 +359,7 @@ public class LivenessAnalysis {
             }
         }
         return list;
-    }
+    }*/
 
     public void graphColor(List<virtualRegister> list){
         /*for(virtualRegister register:list){
@@ -319,9 +391,10 @@ public class LivenessAnalysis {
         visited[k] = true;
         //System.out.println(list2[k].registerValue);
         }
-        for (int i = 0;i<registers.size()&&i<list.size();++i){
+        /*for (int i = 0;i<registers.size()&&i<list.size();++i){
             list2[i].setNewName(registers.get(i));
-        }
+        }*/
+
     }
 
     private void physicalRegister(){
@@ -333,7 +406,7 @@ public class LivenessAnalysis {
     }
 
     public void run(){
-        this.setRegisters();
+        //this.setRegisters();
         for (Function function:ir.functions) processFunction(function);
         physicalRegister();
         graphBuild();
