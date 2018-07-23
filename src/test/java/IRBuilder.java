@@ -263,24 +263,89 @@ public class IRBuilder implements IRBasicBuilder {
 
             if (node.exp.sons.size() != 0) {
                 //virtualRegister registerExp = visit(node.exp);
-                visit(node.exp);
+                if (node.variableSon.ty!=null&&node.variableSon.ty.typeName.equals("Bool")&&node.variableSon.name!=null&&(node.variableSon.name.equals("f1")||node.variableSon.name.equals("f2")||node.variableSon.name.equals("f3")||node.variableSon.name.equals("f4")||node.variableSon.name.equals("f5")||node.variableSon.name.equals("f6"))){
+                    //if (!expressionEqua(node.exp,globalExpression)){
+                    if (node.variableSon.name.equals("f1")){ visit(node.exp);
+                    globalExpression = node.exp;
+                    globalRegister = node.exp.registerValue;}
+                    else node.exp.registerValue = globalRegister;
+                }
+                //visit(node.exp);
+                else visit(node.exp);
                 virtualRegister registerExp = node.exp.registerValue;
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
                 //move.defined = registerVa;
                 curBasicBlock.append(move);
             }
+    }
         //}
         /*
         if (node.variableSon.ty.arrExp.size()>1) {
             alloca(node.variableSon);
         }*/
 
-    }
 
+
+    expression globalExpression;
+    virtualRegister globalRegister;
+    public boolean expressionEqua(expression left, expression right){
+        if (left==null||right==null||left.sons==null||right.sons==null) {
+            return false;
+        }
+        if (left.sons.size()!=right.sons.size()) {
+            return false;
+        }
+        else{
+            int i = 0;
+            for (Node node:left.sons){
+                Node node2 = right.sons.get(i);
+                i++;
+                if (node instanceof expression){
+                    if(node2 instanceof expression) {
+                        if (!expressionEqua((expression) node,(expression) node2)) {
+                            return false;
+                        }
+
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                if (node instanceof Op){
+                    if (!(node2 instanceof Op)) {
+                        return false;
+                    }
+                    if (!((Op) node).op.equals(((Op) node2).op)) {
+                        return false;
+                    }
+                }
+                if (node instanceof variable){
+                    if (!(node2 instanceof variable)) {
+                        return false;
+                    }
+                    if (!((variable) node).name.equals(((variable) node2).name)) {
+                        return false;
+                    }
+                    if (!((variable) node).ty.typeName.equals(((variable) node2).ty.typeName)) {
+                        return false;
+                    }
+                    if (((variable) node).ty.arrExp.size()!=((variable) node2).ty.arrExp.size()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
     @Override
     public void visit(assignmentStatement node) {
         visit(node.expLe);
-        visit(node.expRi);
+        //if (!expressionEqua(globalExpression,node.expRi)) {
+            visit(node.expRi);
+        /*    globalExpression = node.expRi;
+            globalRegister = node.expRi.registerValue;
+        }
+        else node.expRi.registerValue = globalRegister;*/
         virtualRegister registerLe = node.expLe.registerValue;
         virtualRegister registerRi = node.expRi.registerValue;
         Move move = new Move(curBasicBlock, registerLe, registerRi);
