@@ -1087,6 +1087,7 @@ public class IRBuilder implements IRBasicBuilder {
 
     void expressionLogic(expression node){
         virtualRegister register = new virtualRegister(null,registerNumber++);
+        register.setNewName("rax");
         node.registerValue = register;
         basicBlock resultTrue = new basicBlock(curFunction, "resultTrue");
         basicBlock resultFalse = new basicBlock(curFunction,"resultFalse");

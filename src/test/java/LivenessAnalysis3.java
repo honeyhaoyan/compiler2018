@@ -280,8 +280,8 @@ public class LivenessAnalysis3 {
             if (edge[j] == 0) registerValue[j] = registerNumber[j];
             else registerValue[j] = (double) registerNumber[j]/(double) edge[j];
 
-            if (registerList[j].getRegisterName()!=null&&(registerList[j].getRegisterName().equals("i")||registerList[j].getRegisterName().equals("j")||registerList[j].getRegisterName().equals("k"))){
-                registerValue[j]=registerValue[j]+100;
+            if (registerList[j].getRegisterName()!=null&&(registerList[j].getRegisterName().equals("i")||registerList[j].getRegisterName().equals("j")||registerList[j].getRegisterName().equals("k")||registerList[j].getRegisterName().equals("n"))){
+                registerValue[j]=0;
             }
             registerList[j].registerValue = registerValue[j];
             //System.out.println("---------"+registerValue[j]);
@@ -311,12 +311,12 @@ public class LivenessAnalysis3 {
         //R12,R13,R14,R15,R10,R11
         boolean [] color = new boolean[4];
         //boolean [] color = new boolean[6];
-        List<virtualRegister>registers = new ArrayList<>();
+        /*List<virtualRegister>registers = new ArrayList<>();
         for (virtualRegister register:registerList2){
             registers.add(register);
         }
-        Collections.shuffle(registers);
-        for (virtualRegister register : registers){
+        Collections.shuffle(registers);*/
+        for (virtualRegister register : registerList2){
             if (register.ifRenamed==false){
                 int number = registerIntegerMap.get(register);
                 int y =1;
