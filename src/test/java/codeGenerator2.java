@@ -254,6 +254,9 @@ public class codeGenerator2 implements IRBasicVisitor {
         global.add(new Push(new Phyregister("r13")));
         global.add(new Push(new Phyregister("r14")));
         global.add(new Push(new Phyregister("r15")));
+        global.add(new Push(new Phyregister("r5")));
+        global.add(new Push(new Phyregister("r6")));
+        global.add(new Push(new Phyregister("r7")));
         if (node.params.size()>6){
             int k = node.params.size();
             k--;
@@ -281,10 +284,14 @@ public class codeGenerator2 implements IRBasicVisitor {
                 k--;
             }
         }
+        global.add(new Pop(new Phyregister("r7")));
+        global.add(new Pop(new Phyregister("r6")));
+        global.add(new Pop(new Phyregister("r5")));
         global.add(new Pop(new Phyregister("r15")));
         global.add(new Pop(new Phyregister("r14")));
         global.add(new Pop(new Phyregister("r13")));
         global.add(new Pop(new Phyregister("r12")));
+
     }
     public void visit(SystemCall node){
 

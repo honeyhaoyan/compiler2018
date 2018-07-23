@@ -44,14 +44,15 @@ public class Main {
         registerRename rename = new registerRename();
         rename.visit(irRoot,ps);
 
-        LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
+        //LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
+        LivenessAnalysis2 registerAllocate = new LivenessAnalysis2(irRoot);
         registerAllocate.run();
         //irRoot.print();
 
         //PrintStream ps = null ;
         ps = new PrintStream("code/out.asm");
-        codeGenerator generator = new codeGenerator();
-        //Generator generator = new Generator();
+        //codeGenerator generator = new codeGenerator();
+        codeGenerator2 generator = new codeGenerator2();
         generator.visit(irRoot,ps);
         //IRPrinter irPrinter = new IRPrinter();
         //irPrinter.print(irRoot);
