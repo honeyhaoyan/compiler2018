@@ -1,10 +1,14 @@
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Set;
+import java.util.HashSet;
 
 public class registerRename implements IRBasicVisitor{
     Function currentFunction;
     int offset;
     IRInstruction irInstruction;
+    Set <virtualRegister> registerSet = new HashSet<>();
+    Set<virtualRegister> definedSet = new HashSet<>();
     /*boolean isClassFunction;
     virtualRegister classRegister;
     staticSpace classSpace;*/
@@ -36,13 +40,29 @@ public class registerRename implements IRBasicVisitor{
     }
     public void visit(virtualRegister node){
         if (node instanceof Mem) node = ((Mem) node).reg;
-        irInstruction.registers.add(node);
+        if (irInstruction!=null) {
+            if(registerSet.size()!=0) {
+                irInstruction.registers.addAll(registerSet);
+                registerSet.clear();
+            }
+            irInstruction.registers.add(node);
+        }
+        else registerSet.add(node);
+
         if (!currentFunction.registers.contains(node)){
             if (node.ifRenamed == false) {
                 offset = offset+8;
                 node.offset = offset;
                 currentFunction.registers.add(node);
-                irInstruction.defined.add(node);
+                //irInstruction.defined.add(node);
+                if (irInstruction!=null) {
+                    if(definedSet.size()!=0) {
+                        irInstruction.defined.addAll(definedSet);
+                        definedSet.clear();
+                    }
+                    irInstruction.defined.add(node);
+                }
+                else definedSet.add(node);
             }
 
             //irInstruction.defined = node;
