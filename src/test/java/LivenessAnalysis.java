@@ -240,6 +240,9 @@ public class LivenessAnalysis {
         for (Function function:ir.functions){
             for (basicBlock block:function.basicBlocks){
                 for (IRInstruction inst : block.irInstructions){
+                    if (inst instanceof HeapAllocate){
+                        inst.liveOut.addAll(inst.liveIn);
+                    }
                     for (virtualRegister define:inst.defined) {
                         int number = registerIntegerMap.get(define);
                         for (virtualRegister define2:inst.defined){

@@ -77,7 +77,7 @@ public class registerRename implements IRBasicVisitor{
 
     }
     public void visit(staticSpace node){
-
+        for (Value value:node.nArray) visit(value);
     }
     public void visit(stackSlot node){
 
