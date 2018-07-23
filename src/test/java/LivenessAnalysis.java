@@ -111,13 +111,13 @@ public class LivenessAnalysis {
                     out.clear();
 
                     if (inst instanceof Branch) {
-                        if (((Branch) inst).findThen().irInstructions.get(0)!=null) out.addAll(((Branch) inst).findThen().irInstructions.get(0).liveIn);
-                        if (((Branch) inst).findOtherwise().irInstructions.get(0)!=null) {
+                        if (((Branch) inst).findThen()!=null&&((Branch) inst).findThen().irInstructions.size()!=0) out.addAll(((Branch) inst).findThen().irInstructions.get(0).liveIn);
+                        if (((Branch) inst).findOtherwise()!=null&&((Branch) inst).findOtherwise().irInstructions.size()!=0) {
                             Set<virtualRegister>list = ((Branch) inst).findOtherwise().irInstructions.get(0).liveIn;
                             out.addAll(((Branch) inst).findOtherwise().irInstructions.get(0).liveIn);
                         }
                     } else if (inst instanceof Jump) {
-                        if (((Jump) inst).getJumpTo().irInstructions.get(0)!=null) out.addAll(((Jump) inst).getJumpTo().irInstructions.get(0).liveIn);
+                        if (((Jump) inst).getJumpTo()!=null&&((Jump) inst).getJumpTo().irInstructions.size()!=0) out.addAll(((Jump) inst).getJumpTo().irInstructions.get(0).liveIn);
                     } else if (!(inst instanceof Return)) {
                         if (inst.getNext()!=null) // inst is not a branch, thus inst.getNext() not null
                         out.addAll(inst.getNext().liveIn);
