@@ -292,7 +292,7 @@ class Function extends IRNode{
 }
 /*----------------------------------------instructions----------------------------------------*/
 abstract class IRInstruction extends IRNode{
-    private basicBlock block;
+    basicBlock block;
     private IRInstruction prev;
     IRInstruction next;
     List<virtualRegister> defined = new ArrayList<>();

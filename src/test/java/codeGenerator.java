@@ -174,7 +174,7 @@ public class codeGenerator implements IRBasicVisitor {
         //global.add(new Jmp("b"+Integer.toString(node.findOtherwise().label)));
     }
     public void visit(Jump node){
-        global.add(new Jmp("b"+Integer.toString(node.getJumpTo().label)));
+        if (node.block.getLabel()!=node.getJumpTo().getLabel()-1) global.add(new Jmp("b"+Integer.toString(node.getJumpTo().label)));
     }
     public void visit(Return node){
         if (node.getRegister()!=null) global.add(new Mov(new Phyregister("rax"),getMem(node.getRegister())));
