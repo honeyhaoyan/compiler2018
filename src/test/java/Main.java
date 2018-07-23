@@ -44,9 +44,9 @@ public class Main {
         registerRename rename = new registerRename();
         rename.visit(irRoot,ps);
 
-        //LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
+        LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
         //LivenessAnalysis2 registerAllocate = new LivenessAnalysis2(irRoot);
-        LivenessAnalysis3 registerAllocate = new LivenessAnalysis3(irRoot);
+        //LivenessAnalysis3 registerAllocate = new LivenessAnalysis3(irRoot);
         registerAllocate.run();
         //irRoot.print();
 
