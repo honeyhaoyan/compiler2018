@@ -185,11 +185,11 @@ public class codeGenerator2 implements IRBasicVisitor {
         assembly left = getMem(node.getDest());
         assembly right = getMem(node.getSource());
         if (node.sourceAddress == true){
-            global.add(new Mov(new Phyregister("r8"),right));
+            global.add(new Mov(new Phyregister("r10"),right));
             //right = new Phyregister("r11");
-            Address rightTmp = new Address("+",0,new Phyregister("r8"));
-            global.add(new Mov(new Phyregister("r9"),rightTmp));
-            right = new Phyregister("r9");
+            Address rightTmp = new Address("+",0,new Phyregister("r10"));
+            global.add(new Mov(new Phyregister("r11"),rightTmp));
+            right = new Phyregister("r11");
         }
        /* if (node.getDest().content == true){
             global.add(new Mov(new Phyregister("r9"),getMem(node.getDest())));
@@ -205,8 +205,8 @@ public class codeGenerator2 implements IRBasicVisitor {
         }*/
         if (left instanceof Address && right instanceof Address){
             //global.add(new Load(new Phyregister("r11"),(Address)right));
-            global.add(new Mov(new Phyregister("r9"),(Address)right));
-            right = new Phyregister("r9");
+            global.add(new Mov(new Phyregister("r11"),(Address)right));
+            right = new Phyregister("r11");
         }
         /*if (node.sourceAddress == true){
             right = new Address("+",0,new Phyregister("r11"));
@@ -254,8 +254,6 @@ public class codeGenerator2 implements IRBasicVisitor {
         global.add(new Push(new Phyregister("r13")));
         global.add(new Push(new Phyregister("r14")));
         global.add(new Push(new Phyregister("r15")));
-        global.add(new Push(new Phyregister("r10")));
-        global.add(new Push(new Phyregister("r11")));
         if (node.params.size()>6){
             int k = node.params.size();
             k--;
@@ -283,8 +281,6 @@ public class codeGenerator2 implements IRBasicVisitor {
                 k--;
             }
         }
-        global.add(new Pop(new Phyregister("r11")));
-        global.add(new Pop(new Phyregister("r10")));
         global.add(new Pop(new Phyregister("r15")));
         global.add(new Pop(new Phyregister("r14")));
         global.add(new Pop(new Phyregister("r13")));
@@ -304,11 +300,11 @@ public class codeGenerator2 implements IRBasicVisitor {
             //global.add(new Imul(getMem(node.getDest()),new Imm(-1)));
         }
         if (node.op == unaryOperation.Op.NOT){
-            global.add(new Mov(new Phyregister("r8"),getMem(node.getInitialValue())));
-            global.add(new Not(new Phyregister("r8")));
+            global.add(new Mov(new Phyregister("r11"),getMem(node.getInitialValue())));
+            global.add(new Not(new Phyregister("r11")));
             //global.add(new Xor(new Phyregister("r11"),new Imm(1)));
 
-            global.add(new Mov(getMem(node.getDest()),new Phyregister("r8")));
+            global.add(new Mov(getMem(node.getDest()),new Phyregister("r11")));
         }
     }
     public void visit(binaryOperation node){
@@ -345,7 +341,7 @@ public class codeGenerator2 implements IRBasicVisitor {
             global.add(new Mov(new Phyregister("r11"),(Address)right));
             right = new Phyregister("r11");
         }*/
-        Phyregister dest = new Phyregister("r8");
+        Phyregister dest = new Phyregister("r11");
         global.add(new Mov(dest,left));
         //right = new Phyregister("r11");
         if (node.getOp() == binaryOperation.Op.ADD){
@@ -391,9 +387,9 @@ public class codeGenerator2 implements IRBasicVisitor {
             //global.add(new Mov(new Phyregister("rsi"),right));
             //global.add(new Sal(new Phyregister("rsi"),new Phyregister("cl")));
             //dest = new Phyregister("rsi");
-            global.add(new Mov(new Phyregister("r9"),right));
-            global.add(new Sal(new Phyregister("r9"),new Phyregister("cl")));
-            dest = new Phyregister("r9");
+            global.add(new Mov(new Phyregister("r10"),right));
+            global.add(new Sal(new Phyregister("r10"),new Phyregister("cl")));
+            dest = new Phyregister("r10");
         }
         if (node.getOp() == binaryOperation.Op.SHR){
             global.add(new Mov(new Phyregister("rcx"),dest));
@@ -410,8 +406,8 @@ public class codeGenerator2 implements IRBasicVisitor {
         assembly right = getMem(node.getRhs());
         if (left instanceof Address && right instanceof Address){
             //global.add(new Load(new Phyregister("r11"),(Address)right));
-            global.add(new Mov(new Phyregister("r8"),(Address)right));
-            right = new Phyregister("r8");
+            global.add(new Mov(new Phyregister("r11"),(Address)right));
+            right = new Phyregister("r11");
         }
         global.add(new Cmp(left,right));
         Comparison.Condition con = node.cond;
@@ -464,9 +460,9 @@ public class codeGenerator2 implements IRBasicVisitor {
         global.add(new Mov(new Phyregister("r9"),getMem(node.dest)));
         for (Value item : node.space.nArray){
             global.add(new Add(new Phyregister("r9"),new Imm(8)));
-            if (item!=null) global.add(new Mov(new Phyregister("r8"),getMem(item)));
-            else global.add(new Mov(new Phyregister("r8"),new Imm(0)));
-            global.add(new Mov(new Address("+",0,new Phyregister("r9")),new Phyregister("r8")));
+            if (item!=null) global.add(new Mov(new Phyregister("r10"),getMem(item)));
+            else global.add(new Mov(new Phyregister("r10"),new Imm(0)));
+            global.add(new Mov(new Address("+",0,new Phyregister("r9")),new Phyregister("r10")));
             //global.add(new Add(new Phyregister("r9"),new Imm(8)));
         }
         //global.add(new Mov(getMem(node.dest),new Phyregister("rdi")));

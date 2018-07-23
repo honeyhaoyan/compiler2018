@@ -50,8 +50,8 @@ public class Main {
 
         //PrintStream ps = null ;
         ps = new PrintStream("code/out.asm");
-        //codeGenerator generator = new codeGenerator();
-        Generator generator = new Generator();
+        codeGenerator generator = new codeGenerator();
+        //Generator generator = new Generator();
         generator.visit(irRoot,ps);
         //IRPrinter irPrinter = new IRPrinter();
         //irPrinter.print(irRoot);
