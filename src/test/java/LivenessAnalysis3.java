@@ -281,6 +281,9 @@ public class LivenessAnalysis3 {
             /*if (registerList[j]==null){
                 int t=0;
             }*/
+            if (registerList[j].getRegisterName()!=null&&(registerList[j].getRegisterName().equals("i")||registerList[j].getRegisterName().equals("j")||registerList[j].getRegisterName().equals("k"))){
+                registerValue[j]=registerValue[j]+100;
+            }
             registerList[j].registerValue = registerValue[j];
             //System.out.println("---------"+registerValue[j]);
             //if (j!=global) registerList[j].registerValue = registerValue[j];
@@ -305,10 +308,11 @@ public class LivenessAnalysis3 {
             //System.out.println(list2[k].registerValue);
         }
 
+
         //R12,R13,R14,R15,R10,R11
         boolean [] color = new boolean[4];
         //boolean [] color = new boolean[6];
-        for (virtualRegister register : registerList){
+        for (virtualRegister register : registerList2){
             if (register.ifRenamed==false){
                 int number = registerIntegerMap.get(register);
                 int y =1;
