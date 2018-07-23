@@ -305,12 +305,14 @@ public class LivenessAnalysis {
             //System.out.println(list2[k].registerValue);
         }
 
-        //R12,R13,R14,R15
-        boolean [] color = new boolean[4];
+        //R12,R13,R14,R15,R10,R11
+        //boolean [] color = new boolean[4];
+        boolean [] color = new boolean[6];
         for (virtualRegister register : registerList2){
+            if (register.ifRenamed==false){
             int number = registerIntegerMap.get(register);
             int y =1;
-            for (int i = 0;i<4;++i){
+            for (int i = 0;i<6;++i){
                 color[i] = true;
             }
             for (int p = 0;p<global;++p){
@@ -329,11 +331,16 @@ public class LivenessAnalysis {
                             case "R15":
                                 color[3] = false;
                                 break;
+                            case "R10":
+                                color[4] = false;
+                            case "R11":
+                                color[5] = false;
+
                         }
                     }
                 }
             }
-            for (int i = 0;i<4;++i){
+            for (int i = 0;i<6;++i){
                 if (color[i]==true){
                     switch (i){
                         case 0:
@@ -348,11 +355,15 @@ public class LivenessAnalysis {
                         case 3:
                             register.setNewName("R15");
                             break;
+                        case 4:
+                            register.setNewName("R10");
+                        case 5:
+                            register.setNewName("R11");
                     }
                     break;
                 }
             }
-        }
+        }}
     }
 
    /* public List<virtualRegister> dfs(virtualRegister register){

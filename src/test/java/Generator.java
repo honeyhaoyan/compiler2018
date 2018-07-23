@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
-public class codeGenerator2 implements IRBasicVisitor {
+public class Generator implements IRBasicVisitor {
     List<assembly>global = new ArrayList<assembly>();
     List<String>globalNames = new ArrayList<String>();
     BuildinPrinter builtinPrinter = new BuildinPrinter();
