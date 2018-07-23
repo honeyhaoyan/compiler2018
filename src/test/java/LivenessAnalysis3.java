@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
 
+
 public class LivenessAnalysis3 {
     private IRRoot ir;
     public LivenessAnalysis3(IRRoot ir) {
@@ -278,9 +279,7 @@ public class LivenessAnalysis3 {
             //System.out.println(registerNumber[j]+" "+edge[j]);
             if (edge[j] == 0) registerValue[j] = registerNumber[j];
             else registerValue[j] = (double) registerNumber[j]/(double) edge[j];
-            /*if (registerList[j]==null){
-                int t=0;
-            }*/
+
             if (registerList[j].getRegisterName()!=null&&(registerList[j].getRegisterName().equals("i")||registerList[j].getRegisterName().equals("j")||registerList[j].getRegisterName().equals("k"))){
                 registerValue[j]=registerValue[j]+100;
             }
@@ -312,7 +311,12 @@ public class LivenessAnalysis3 {
         //R12,R13,R14,R15,R10,R11
         boolean [] color = new boolean[4];
         //boolean [] color = new boolean[6];
-        for (virtualRegister register : registerList2){
+        List<virtualRegister>registers = new ArrayList<>();
+        for (virtualRegister register:registerList2){
+            registers.add(register);
+        }
+        Collections.shuffle(registers);
+        for (virtualRegister register : registers){
             if (register.ifRenamed==false){
                 int number = registerIntegerMap.get(register);
                 int y =1;
