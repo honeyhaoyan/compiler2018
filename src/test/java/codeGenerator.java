@@ -99,6 +99,7 @@ public class codeGenerator implements IRBasicVisitor {
             if (i==4) global.add(new Mov(getMem(item.va),new Phyregister("rcx")));
             if (i==5) global.add(new Mov(getMem(item.va),new Phyregister("r8")));
             if (i==6) global.add(new Mov(getMem(item.va),new Phyregister("r9")));
+
             if (i>6){
 
                 Address address = new Address("+",(i-5)*8,new Phyregister("rbp"));
@@ -249,6 +250,10 @@ public class codeGenerator implements IRBasicVisitor {
             //j++;
             }
         }
+        global.add(new Push(new Phyregister("r12")));
+        global.add(new Push(new Phyregister("r13")));
+        global.add(new Push(new Phyregister("r14")));
+        global.add(new Push(new Phyregister("r15")));
         if (node.params.size()>6){
             int k = node.params.size();
             k--;
@@ -276,6 +281,10 @@ public class codeGenerator implements IRBasicVisitor {
                 k--;
             }
         }
+        global.add(new Pop(new Phyregister("r15")));
+        global.add(new Pop(new Phyregister("r14")));
+        global.add(new Pop(new Phyregister("r13")));
+        global.add(new Pop(new Phyregister("r12")));
     }
     public void visit(SystemCall node){
 
