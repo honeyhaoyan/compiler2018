@@ -45,7 +45,7 @@ public class Main {
         rename.visit(irRoot,ps);
 
         LivenessAnalysis registerAllocate = new LivenessAnalysis(irRoot);
-        registerAllocate.run();
+        //registerAllocate.run();
         //irRoot.print();
 
         //PrintStream ps = null ;

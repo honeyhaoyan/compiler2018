@@ -474,8 +474,10 @@ class callFunction extends IRInstruction{
     @Override
     public void print(){
 
-        System.out.println("call " + func.functionName);
-
+        System.out.print("call " + func.functionName);
+        System.out.print(" ");
+        for (virtualRegister register:params) {register.print();System.out.print(" ");}
+        System.out.println();
     }
     public void addParam(virtualRegister param){
         params.add(param);

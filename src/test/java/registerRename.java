@@ -107,7 +107,8 @@ public class registerRename implements IRBasicVisitor{
         node.totalOffset = offset;
     }
     public void visit(Branch node){
-
+        irInstruction = node;
+        visit(node.cond);
     }
     public void visit(Jump node){
 

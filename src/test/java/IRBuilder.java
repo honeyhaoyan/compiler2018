@@ -521,8 +521,9 @@ public class IRBuilder implements IRBasicBuilder {
         Jump jumpReturn = new Jump(curBasicBlock, tmpInfor);
         if (!curBasicBlock.isEnded()) curBasicBlock.end(jumpReturn);
         tmpLoop = curBasicBlock;
-        branch.addThen(tmpLoop);
-        //basicBlockList.add(whileBlock);
+
+        //branch.addThen(tmpLoop);
+        branch.addThen(whileBlock);
 
         //basicBlockList.add(tmpInfor);
 
