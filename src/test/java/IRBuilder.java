@@ -263,15 +263,15 @@ public class IRBuilder implements IRBasicBuilder {
 
             if (node.exp.sons.size() != 0) {
                 //virtualRegister registerExp = visit(node.exp);
-                if (node.variableSon.ty!=null&&node.variableSon.ty.typeName.equals("Bool")&&node.variableSon.name!=null&&(node.variableSon.name.equals("f1")||node.variableSon.name.equals("f2")||node.variableSon.name.equals("f3")||node.variableSon.name.equals("f4")||node.variableSon.name.equals("f5")||node.variableSon.name.equals("f6"))){
+                /*if (node.variableSon.ty!=null&&node.variableSon.ty.typeName.equals("Bool")&&node.variableSon.name!=null&&(node.variableSon.name.equals("f1")||node.variableSon.name.equals("f2")||node.variableSon.name.equals("f3")||node.variableSon.name.equals("f4")||node.variableSon.name.equals("f5")||node.variableSon.name.equals("f6"))){
                     //if (!expressionEqua(node.exp,globalExpression)){
                     if (node.variableSon.name.equals("f1")){ visit(node.exp);
                     globalExpression = node.exp;
                     globalRegister = node.exp.registerValue;}
                     else node.exp.registerValue = globalRegister;
-                }
-                //visit(node.exp);
-                else visit(node.exp);
+                }*/
+                visit(node.exp);
+               // else visit(node.exp);
                 virtualRegister registerExp = node.exp.registerValue;
                 Move move = new Move(curBasicBlock, registerVa, registerExp);
                 //move.defined = registerVa;
